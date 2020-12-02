@@ -1,0 +1,101 @@
+incarnation: scafi
+#Distance unit: kilometers
+#Time unit: Seconds
+variables:
+  dronesStationsRation:
+    formula: 0.1
+
+  drones: &drones
+    formula: 100
+
+  stations: &stations
+    formula: drones * dronesStationsRation
+
+  random: &random
+    min: 0
+    max: 100
+    step: 1
+    default: 0
+
+  range: &range
+    formula: 100
+
+  worldSize: &worldSize
+    formula: 500
+
+  originX: &originX
+    formula: worldSize / -2
+
+  originY: &originY
+    formula: worldSize / -2
+
+  combiner: &combiner
+    formula: new it.unibo.alchemist.actions.SumCombiner()
+    language: scala
+
+seeds:
+  scenario: *random
+  simulation: *random
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+network-model:
+  type: ConnectWithinDistance #*connectionType
+  parameters: [*range]
+
+pools:
+  - pool: &program
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [1] #in average, the program is computed each second
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [it.unibo.casestudy.FireFighting, 5.0] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+
+
+reactions: &behavior
+  - time-distribution: 10
+    type: it.unibo.alchemist.reactions.MotorSchemaReaction
+    parameters: [*combiner]
+    actions:
+      - type: it.unibo.alchemist.schemas.Alignment
+        parameters : [0.05]
+      - type: it.unibo.alchemist.schemas.Cohesion
+        parameters : [0.001]
+      - type: it.unibo.alchemist.schemas.Separation
+        parameters : [25.0, 0.01]
+      - type: it.unibo.alchemist.schemas.Wander
+        parameters : [100, 0.01]
+
+
+displacements:
+  - in:
+      type: Rectangle
+      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize ]
+    nodes:
+      type: it.unibo.alchemist.node.DroneNode2D
+      parameters: [2]
+    programs:
+      - *program
+      - *behavior
+    contents:
+      - molecule: drone
+        concentration: true
+
+  - in:
+      type: Rectangle
+      parameters: [ *stations, *originX, *originY, *worldSize, *worldSize ]
+    programs:
+      - *program
+    contents:
+      - molecule: station
+        concentration: true
+
+export:
+  - time
+
+

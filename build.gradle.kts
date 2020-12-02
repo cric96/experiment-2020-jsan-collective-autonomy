@@ -16,8 +16,8 @@ repositories {
 }
 
 dependencies {
-    implementation("it.unibo.alchemist:alchemist:9.2.1")
-    implementation("it.unibo.alchemist:alchemist-incarnation-scafi:9.2.1")
+    implementation("it.unibo.alchemist:alchemist:9.3.0")
+    implementation("it.unibo.alchemist:alchemist-incarnation-scafi:9.3.0")
     implementation("org.scala-lang:scala-library:2.12.2")
     implementation("it.unibo.apice.scafiteam:scafi-core_2.12:0.3.2")
 
@@ -93,6 +93,7 @@ fun makeTest(
         file: String,
         name: String = file,
         sampling: Double = 1.0,
+        effectFile : String = "",
         time: Double = Double.POSITIVE_INFINITY,
         vars: Set<String> = setOf(),
         maxHeap: Long? = null,
@@ -143,6 +144,9 @@ fun makeTest(
         if (vars.isNotEmpty()) {
             args("-b", "-var", *vars.toTypedArray())
         }
+        if(effectFile != "") {
+            args("-g", "src/main/effect/${effectFile}.aes")
+        }
     }
     /*tasks {
         "runTests" {
@@ -151,6 +155,6 @@ fun makeTest(
     }*/
 }
 
-makeTest(name="hello", file = "hello_scafi", time = 100.0, vars = setOf("random"), taskSize = 2800)
+makeTest(name="firefightGUI", file = "firefight", effectFile = "standard")
 
 defaultTasks("fatJar")
