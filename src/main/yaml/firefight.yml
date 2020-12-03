@@ -1,6 +1,7 @@
 incarnation: scafi
 #Distance unit: kilometers
 #Time unit: Seconds
+#Temperature unit: Celsius
 variables:
   dronesStationsRation:
     formula: 0.1
@@ -33,6 +34,9 @@ variables:
     formula: new it.unibo.alchemist.actions.SumCombiner()
     language: scala
 
+  movementRate : &movementRate
+    formula: 10
+
 seeds:
   scenario: *random
   simulation: *random
@@ -55,22 +59,56 @@ pools:
           - type: RunScafiProgram
             parameters: [it.unibo.casestudy.FireFighting, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
+  # Drone behaviour
+  - pool: &explore
+      - time-distribution: *movementRate
+        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        parameters: [ *combiner ]
+        actions:
+          #- type: it.unibo.alchemist.schemas.Alignment
+          #  parameters : [0.1]
+          #- type: it.unibo.alchemist.schemas.Cohesion
+          #  parameters : [0.001]
+          - type: it.unibo.alchemist.schemas.Separation
+            parameters: [ 40.0, 0.001 ]
+          #- type: it.unibo.alchemist.schemas.Seek
+          #  parameters: [ 0.0, 0.0, 0.01 ]
+          - type: it.unibo.alchemist.schemas.ExploreArea
+            parameters: [ 0.0, 0.0, *worldSize, 0.1 ]
+  - pool: &flock
+      - time-distribution: *movementRate
+        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        parameters: [ *combiner ]
+        actions:
+          - type: it.unibo.alchemist.schemas.Alignment
+            parameters : [0.1]
+          - type: it.unibo.alchemist.schemas.Cohesion
+            parameters : [0.001]
+          - type: it.unibo.alchemist.schemas.Separation
+            parameters: [ 40.0, 0.01 ]
+          - type: it.unibo.alchemist.schemas.Wander #work as a wind
+            parameters : [100, 0.01]
+  - pool: &areaExplore
+      - time-distribution: *movementRate
+        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        parameters: [ *combiner ]
+        actions:
+          - type: it.unibo.alchemist.schemas.Seek
+            parameters: [ 0.0, 0.0, 0.05 ]
+          - type: it.unibo.alchemist.schemas.Separation
+            parameters: [ 40.0, 0.003 ]
+          - type: it.unibo.alchemist.schemas.Cohesion
+            parameters: [ 0.001 ]
+          - type: it.unibo.alchemist.schemas.Wander #work as a wind
+            parameters: [ 100, 0.05 ]
 
-
-reactions: &behavior
-  - time-distribution: 10
-    type: it.unibo.alchemist.reactions.MotorSchemaReaction
-    parameters: [*combiner]
-    actions:
-      - type: it.unibo.alchemist.schemas.Alignment
-        parameters : [0.05]
-      - type: it.unibo.alchemist.schemas.Cohesion
-        parameters : [0.001]
-      - type: it.unibo.alchemist.schemas.Separation
-        parameters : [25.0, 0.01]
-      - type: it.unibo.alchemist.schemas.Wander
-        parameters : [100, 0.01]
-
+layers:
+  - type: UniformLayer
+    molecule: constant
+    parameters: [ 25.0 ]
+  - type: BidimensionalGaussianLayer
+    molecule: fire
+    parameters: [ 0, -200.0, -200.0, 15.0, 15.0, 20.0, 20.0]
 
 displacements:
   - in:
@@ -81,7 +119,7 @@ displacements:
       parameters: [2]
     programs:
       - *program
-      - *behavior
+      - *areaExplore
     contents:
       - molecule: drone
         concentration: true
@@ -94,6 +132,11 @@ displacements:
     contents:
       - molecule: station
         concentration: true
+
+  - in:
+      type: Point
+      # Using a constructor taking (x,y) coordinates
+      parameters: [ -200.0, -200.0 ]
 
 export:
   - time

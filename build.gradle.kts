@@ -156,5 +156,5 @@ fun makeTest(
 }
 
 makeTest(name="firefightGUI", file = "firefight", effectFile = "standard")
-
+makeTest(name="firefightGUIPaper", file = "firefight", effectFile = "paper")
 defaultTasks("fatJar")
