@@ -82,9 +82,7 @@ class FireFighting extends AggregateProgram with StandardSensors with ScafiAlche
     val leaderPosition = broadcast(leader, position)
     val goalPosition = broadcast(leader, mux(isDanger(normalized))(normalized._1)(position))
     val danger = G[Boolean](leader, isDanger(normalized), a => a, nbrRange)
-    if(danger) {
-      println(goalPosition, leaderPosition)
-    }
+
     val id = broadcast(leader, mid())
 
 
