@@ -7,7 +7,6 @@ import it.unibo.alchemist._
 case class Cohesion[T](env : Environment[T, Euclidean2DPosition], node : DroneNode[T, Euclidean2DPosition], weight : Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Cohesion[T](env, node, weight)
-
   override def unweightedVector: Euclidean2DPosition = {
     val droneNeighbour = getNeighbourOf(node)
     val centroid = if(droneNeighbour.isEmpty) {
@@ -16,6 +15,6 @@ case class Cohesion[T](env : Environment[T, Euclidean2DPosition], node : DroneNo
       val neighbourPositionSum = droneNeighbour.map(node => env.getPosition(node)).foldLeft(env.origin)(_ + _)
       neighbourPositionSum / droneNeighbour.size
     }
-    (centroid - env.getPosition(node))
+    centroid - env.getPosition(node)
   }
 }

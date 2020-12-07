@@ -18,6 +18,6 @@ case class Seek[T](env : Environment[T, Euclidean2DPosition], node : DroneNode[T
     } else {
       centerOfMass
     }
-    versor(center - env.getPosition(node))
+    unitVector(center - env.getPosition(node))
   }
 }
