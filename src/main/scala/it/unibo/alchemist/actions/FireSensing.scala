@@ -12,7 +12,7 @@ case class FireSensing[T, P <: Position[P]](node : Node[T], env : Environment[T,
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = FireSensing(node, env, baseTemperatureMolecule)
   private val manager = new SimpleNodeManager[T](node)
   override def execute(): Unit = {
-    val fire = env.getNeighborhood(node).getNeighbors.collect { case (fire: FireNode[T, P]) => fire }
+    val fire = FireNode.findFiresInNeighbour(env, node)
     val baseTemperature : Double = findInLayers[java.math.BigDecimal](baseTemperatureMolecule).get.doubleValue()
     val fireIntensity : Double = if (fire.isEmpty) { 0.0 } else { fire.maxBy(_.intensity(env.getPosition(node))).intensity(env.getPosition(node)) }
     manager.put("temperature", baseTemperature + fireIntensity)

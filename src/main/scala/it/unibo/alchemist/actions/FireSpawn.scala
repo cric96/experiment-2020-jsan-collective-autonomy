@@ -12,13 +12,12 @@ case class FireSpawn[T](rand : RandomGenerator, node : Node[T], environment: Env
                         minX : Double, minY : Double, maxX : Double, maxY : Double, expandRate : Double) extends AbstractAction[T](node) {
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = FireSpawn(this.rand, node, environment, minX, minY, maxX, maxY, expandRate)
   override def execute(): Unit = {
-    val node = new FireNode[T, Euclidean2DPosition](environment)
-    val fireExpanded : Action[T] = new ExpandFire(node)
+    val node = new FireNode[T, Euclidean2DPosition](environment, 10, 10)
+    val fireExpanded : Action[T] = ExpandFire(node)
     val reaction = new Event[T](node, new ExponentialTime[T](expandRate, environment.getSimulation.getTime, rand))
     reaction.setActions(List(fireExpanded).asJava)
     node.addReaction(reaction)
     environment.addNode(node, randomPositionInBound)
-
   }
   override def getContext: Context = Context.GLOBAL
   private def randomPositionInBound : Euclidean2DPosition = {

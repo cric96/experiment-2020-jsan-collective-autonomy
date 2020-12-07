@@ -12,7 +12,7 @@ import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
 import it.unibo.alchemist.node.{DroneNode2D, FireNode}
 
 import java.awt.geom.AffineTransform
-import java.awt.{Color, Graphics2D, Point, Polygon, RadialGradientPaint}
+import java.awt.{Color, Graphics2D, Paint, Point, Polygon, RadialGradientPaint}
 class FireFightEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {
@@ -41,16 +41,13 @@ class FireFightEffect extends Effect {
   }
   def drawFire[T](g : Graphics2D, fireNode : FireNode[T, Euclidean2DPosition], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double): Unit = {
     val transform = getTransform(x, y, zoom, 0.0)
-    val red = new Color(255, 0, 0, 125)
-    val orange = new Color(Color.ORANGE.getRed, Color.ORANGE.getGreen, Color.ORANGE.getBlue, 125)
-    val yellow = new Color(Color.YELLOW.getRed, Color.YELLOW.getGreen, Color.YELLOW.getBlue, 125)
-    val paint = new RadialGradientPaint(x, y, fireNode.area.toFloat * zoom.toFloat, Array(0f, 0.5f, 0.75f, 1.0f), Array(red, orange, yellow, TRANSPARENT))
-    val shape = env.getShapeFactory.circle(fireNode.area) match {
+    //TODO create a real gaussian
+    val paint = new RadialGradientPaint(x, y, fireNode.range.toFloat * zoom.toFloat, Array(0f, 0.5f, 0.75f, 1.0f), colorsFromAmplitude(fireNode.amplitude))
+    val shape = env.getShapeFactory.circle(fireNode.range) match {
       case shape : AwtShapeCompatible => shape
     }
     g.setPaint(paint)
     val shapeTransformed = transform.createTransformedShape(shape.asAwtShape())
-
     g.fill(shapeTransformed)
   }
   def drawStation[T](g : Graphics2D, node : Node[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
@@ -95,4 +92,12 @@ object FireFightEffect {
   val DRONE_SIZE = 1.5
   val DRONE_COLOR : Color = Color.BLACK
   val STATION_COLOR : Color = Color.RED
+  def colorsFromAmplitude(amplitude : Double) : Array[Color] = {
+    val alpha = ((amplitude + 25) / 100.0 * 255).toInt
+    val normalizedAlpha = if(alpha > 255) 255 else alpha
+    val RED_ALPHA = new Color(255, 0, 0, normalizedAlpha)
+    val ORANGE_ALPHA = new Color(Color.ORANGE.getRed, Color.ORANGE.getGreen, Color.ORANGE.getBlue, normalizedAlpha)
+    val YELLOW_ALPHA = new Color(Color.YELLOW.getRed, Color.YELLOW.getGreen, Color.YELLOW.getBlue, normalizedAlpha)
+    Array(RED_ALPHA, ORANGE_ALPHA, YELLOW_ALPHA, TRANSPARENT)
+  }
 }

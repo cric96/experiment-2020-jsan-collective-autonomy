@@ -56,6 +56,9 @@ variables:
   environmentTemperature: &environmentTemperature
     formula: 25.0
 
+  waterAmount: &waterAmount
+    formula: 1.0
+
 seeds:
   scenario: *random
   simulation: *random
@@ -85,6 +88,8 @@ pools:
         actions:
           - type: it.unibo.alchemist.actions.FireSensing #sense fire in the forest
             parameters: [ *temperatureLayer ]
+          - type: it.unibo.alchemist.actions.WaterDrop #drop water to stop fire
+            parameters: [ *waterAmount ]
           - type: RunScafiProgram
             parameters: [it.unibo.casestudy.FireFighting, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
