@@ -1,11 +1,7 @@
 package it.unibo.casestudy
-import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{Layer, Position}
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 import it.unibo.scafi.space.Point3D
-
-import scala.util.{Success, Try}
 class FireFighting extends AggregateProgram with StandardSensors with ScafiAlchemistSupport
   with BlockG with BlockS with BlockC with BlockT with CustomSpawn with TimeUtils with FieldUtils
   with StateManagement with ProcessDSL {
@@ -36,7 +32,7 @@ class FireFighting extends AggregateProgram with StandardSensors with ScafiAlche
     node.put("center", goalPosition)
     node.put("leader_id", leaderId)
   }
-  def temperature : Double = senseEnv[Double]("constant") + senseEnv[Double]("fire")
+  def temperature : Double = sense[Double]("temperature")
   def position : P = {
     val alchemist = sense[Euclidean2DPosition](LSNS_POSITION)
     Point3D(alchemist.getX, alchemist.getY, 0.0)
@@ -50,17 +46,5 @@ class FireFighting extends AggregateProgram with StandardSensors with ScafiAlche
         maximum.combine(node)
       case (acc, _) => acc
     }
-  }
-  //TODO fix put in alchemist
-  private def findInLayers[A](name : String) : Option[A] = {
-    val layer : Option[Layer[Any, Position[_]]] = alchemistEnvironment.getLayer(new SimpleMolecule(name))
-    val node = alchemistEnvironment.getNodeByID(mid())
-    layer.map(l => l.getValue(alchemistEnvironment.getPosition(node)))
-      .map(value => Try(value.asInstanceOf[A]))
-      .collect { case Success(value) => value }
-  }
-  //TODO fix in the alchemist
-  def senseEnv[A](name: String): A = {
-    findInLayers[A](name).get
   }
 }

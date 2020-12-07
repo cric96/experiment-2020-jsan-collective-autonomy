@@ -2,17 +2,18 @@ package it.unibo.alchemist.effect
 
 import it.unibo.alchemist.boundary.gui.effects.Effect
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D
-import it.unibo.alchemist.effect.DroneAndStation._
+import it.unibo.alchemist.effect.FireFightEffect._
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
-import it.unibo.alchemist.node.DroneNode2D
+import it.unibo.alchemist.node.{DroneNode2D, FireNode}
 
 import java.awt.geom.AffineTransform
-import java.awt.{Color, Graphics2D, Point, Polygon}
-class DroneAndStation extends Effect {
+import java.awt.{Color, Graphics2D, Point, Polygon, RadialGradientPaint}
+class FireFightEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {
       case env : EuclideanPhysics2DEnvironment[T] =>
@@ -21,12 +22,12 @@ class DroneAndStation extends Effect {
         val (x, y) = (viewPoint.x, viewPoint.y)
         node match {
           case drone : DroneNode2D[T] => drawDrone(g, drone, x, y, wormhole.getZoom)
+          case fire : FireNode[T, Euclidean2DPosition] => drawFire(g, fire, x, y, env, wormhole.getZoom)
           case _ => drawStation(g, node, x, y, env, wormhole.getZoom)
         }
     }
   }
   override def getColorSummary: Color = Color.GREEN
-
   def drawDrone[T](g : Graphics2D, droneNode : DroneNode2D[T], x : Int, y : Int, zoom : Double): Unit = {
     val transform = getTransform(x, y, zoom * DRONE_SIZE, rotation(droneNode))
     val transformedShape = transform.createTransformedShape(DRONE_SHAPE)
@@ -38,7 +39,20 @@ class DroneAndStation extends Effect {
     }
     g.fill(transformedShape)
   }
+  def drawFire[T](g : Graphics2D, fireNode : FireNode[T, Euclidean2DPosition], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double): Unit = {
+    val transform = getTransform(x, y, zoom, 0.0)
+    val red = new Color(255, 0, 0, 125)
+    val orange = new Color(Color.ORANGE.getRed, Color.ORANGE.getGreen, Color.ORANGE.getBlue, 125)
+    val yellow = new Color(Color.YELLOW.getRed, Color.YELLOW.getGreen, Color.YELLOW.getBlue, 125)
+    val paint = new RadialGradientPaint(x, y, fireNode.area.toFloat * zoom.toFloat, Array(0f, 0.5f, 0.75f, 1.0f), Array(red, orange, yellow, TRANSPARENT))
+    val shape = env.getShapeFactory.circle(fireNode.area) match {
+      case shape : AwtShapeCompatible => shape
+    }
+    g.setPaint(paint)
+    val shapeTransformed = transform.createTransformedShape(shape.asAwtShape())
 
+    g.fill(shapeTransformed)
+  }
   def drawStation[T](g : Graphics2D, node : Node[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
     val station = env.getShapeFactory.circle(STATION_SIZE)
     val manager = new SimpleNodeManager[T](node)
@@ -70,8 +84,9 @@ class DroneAndStation extends Effect {
   private def colorFromId(id : Int) : Color = PALETTE(id % MAX_COLOR)
 }
 
-object DroneAndStation {
+object FireFightEffect {
   val MAX_COLOR : Int = 100
+  val TRANSPARENT = new Color(255, 255, 255, 0)
   val PALETTE : Map[Int, Color] = (0 to 100).map(_ -> new Color(Color.HSBtoRGB(math.random() floatValue(), 0.5f, 0.5f))).toMap
   val DRONE_SHAPE : Polygon = new Polygon(Array(-2, 0, 2), Array(0, - 5, 0), 3)
   val DRONE : SimpleMolecule = new SimpleMolecule("drone")

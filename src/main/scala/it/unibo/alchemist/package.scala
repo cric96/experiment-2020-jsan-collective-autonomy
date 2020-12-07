@@ -6,6 +6,7 @@ import org.danilopianini.util.ListSet
 
 import scala.collection.JavaConverters._
 import java.util
+import java.util.Optional
 
 package object alchemist {
   //TYPE ENRICHMENT
@@ -23,4 +24,5 @@ package object alchemist {
   }
   //IMPLICIT CONVERSION
   implicit def toList[E](l : ListSet[E]) : List[E] = new util.ArrayList[E](l).asScala.toList
+  implicit def optionalToOption[E](p : Optional[E]) : Option[E] = if (p.isPresent) Some(p.get()) else None
 }

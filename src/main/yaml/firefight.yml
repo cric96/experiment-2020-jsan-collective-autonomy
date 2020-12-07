@@ -30,12 +30,31 @@ variables:
   originY: &originY
     formula: worldSize / -2
 
+  endX: &endX
+    formula: worldSize / 2
+
+  endY: &endY
+    formula: worldSize / 2
+
   combiner: &combiner
     formula: new it.unibo.alchemist.actions.SumCombiner()
     language: scala
 
   movementRate : &movementRate
     formula: 10
+
+  fireAverageTime : &fireAverageTime
+    formula: 0.01
+
+  expandFireRate: &expandFireRate
+    formula: 1.0
+
+  temperatureLayer: &temperatureLayer
+    formula: >
+      "constant"
+
+  environmentTemperature: &environmentTemperature
+    formula: 25.0
 
 seeds:
   scenario: *random
@@ -49,6 +68,14 @@ network-model:
   type: ConnectWithinDistance #*connectionType
   parameters: [*range]
 
+layers:
+  - type: UniformLayer
+    molecule: constant
+    parameters: [ *environmentTemperature ]
+  - type: BidimensionalGaussianLayer
+    molecule: fire
+    parameters: [ 0, -200.0, -200.0, 15.0, 15.0, 20.0, 20.0]
+
 pools:
   - pool: &program
       - time-distribution:
@@ -56,6 +83,8 @@ pools:
           parameters: [1] #in average, the program is computed each second
         type: Event
         actions:
+          - type: it.unibo.alchemist.actions.FireSensing #sense fire in the forest
+            parameters: [ *temperatureLayer ]
           - type: RunScafiProgram
             parameters: [it.unibo.casestudy.FireFighting, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
@@ -101,19 +130,20 @@ pools:
             parameters: [ 0.001 ]
           - type: it.unibo.alchemist.schemas.Wander #work as a wind
             parameters: [ 100, 0.05 ]
-
-layers:
-  - type: UniformLayer
-    molecule: constant
-    parameters: [ 25.0 ]
-  - type: BidimensionalGaussianLayer
-    molecule: fire
-    parameters: [ 0, -200.0, -200.0, 15.0, 15.0, 20.0, 20.0]
+  #Fire spawner
+  - pool: &fireSpawn
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [ *fireAverageTime ]
+        type: Event
+        actions:
+          - type: it.unibo.alchemist.actions.FireSpawn
+            parameters: [ *originX, *originY, *endX, *endY, *expandFireRate ]
 
 displacements:
   - in:
       type: Rectangle
-      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize ]
+      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
       type: it.unibo.alchemist.node.DroneNode2D
       parameters: [2]
@@ -123,6 +153,8 @@ displacements:
     contents:
       - molecule: drone
         concentration: true
+      - molecule: temperature
+        concentration: *environmentTemperature
 
   - in:
       type: Rectangle
@@ -132,11 +164,15 @@ displacements:
     contents:
       - molecule: station
         concentration: true
+      - molecule: temperature
+        concentration: *environmentTemperature
 
   - in:
       type: Point
       # Using a constructor taking (x,y) coordinates
-      parameters: [ -200.0, -200.0 ]
+      parameters: [ -0.0, -0.0 ] #out of bounds. This node is needed only for spawning fire.
+    programs:
+      - *fireSpawn
 
 export:
   - time
