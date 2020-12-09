@@ -16,7 +16,7 @@ import java.awt.{Color, Graphics2D, Paint, Point, Polygon, RadialGradientPaint}
 class FireFightEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {
-      case env : EuclideanPhysics2DEnvironment[T] =>
+      case env : EuclideanPhysics2DEnvironment[T] if env.getNodes.contains(node) =>
         val nodePosition : P = env.getPosition(node).asInstanceOf[P]
         val viewPoint : Point = wormhole.getViewPoint(nodePosition)
         val (x, y) = (viewPoint.x, viewPoint.y)
@@ -25,6 +25,7 @@ class FireFightEffect extends Effect {
           case fire : FireNode[T, Euclidean2DPosition] => drawFire(g, fire, x, y, env, wormhole.getZoom)
           case _ => drawStation(g, node, x, y, env, wormhole.getZoom)
         }
+      case _ =>
     }
   }
   override def getColorSummary: Color = Color.GREEN
