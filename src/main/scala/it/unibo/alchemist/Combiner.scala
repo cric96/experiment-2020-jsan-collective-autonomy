@@ -1,6 +1,5 @@
-package it.unibo.alchemist.actions
+package it.unibo.alchemist
 
-import it.unibo.alchemist._
 import it.unibo.alchemist.model.implementations.actions.MotorSchema
 import it.unibo.alchemist.model.interfaces.Position
 

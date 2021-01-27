@@ -37,7 +37,7 @@ variables:
     formula: worldSize / 2
 
   combiner: &combiner
-    formula: new it.unibo.alchemist.actions.SumCombiner()
+    formula: new it.unibo.alchemist.SumCombiner()
     language: scala
 
   movementRate : &movementRate
