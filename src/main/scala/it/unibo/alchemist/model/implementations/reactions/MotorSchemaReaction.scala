@@ -1,13 +1,12 @@
-package it.unibo.alchemist.reactions
+package it.unibo.alchemist.model.implementations.reactions
 
-import it.unibo.alchemist.model.implementations.reactions.AbstractReaction
 import it.unibo.alchemist.model.interfaces._
-import it.unibo.alchemist.node.DroneNode
-import it.unibo.alchemist.schemas.MotorSchema
 
 import scala.collection.JavaConverters._
 import it.unibo.alchemist._
 import it.unibo.alchemist.actions.{Actuator, Combiner}
+import it.unibo.alchemist.model.implementations.actions.MotorSchema
+import it.unibo.alchemist.model.implementations.nodes.DroneNode
 class MotorSchemaReaction[T, P <: Position[P]](env : Environment[T, P], drone : DroneNode[T, P], distribution: TimeDistribution[T], combiner: Combiner[P])
   extends AbstractReaction[T](drone, distribution) {
   private def motorSchemas : Seq[MotorSchema[T, P]] = getActions.asScala.collect { case node : MotorSchema[T, P] => node }

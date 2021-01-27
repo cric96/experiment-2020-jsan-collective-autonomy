@@ -86,9 +86,9 @@ pools:
           parameters: [1] #in average, the program is computed each second
         type: Event
         actions:
-          - type: it.unibo.alchemist.actions.FireSensing #sense fire in the forest
+          - type: FireSensing #sense fire in the forest
             parameters: [ *temperatureLayer ]
-          - type: it.unibo.alchemist.actions.WaterDrop #drop water to stop fire
+          - type: WaterDrop #drop water to stop fire
             parameters: [ *waterAmount ]
           - type: RunScafiProgram
             parameters: [it.unibo.casestudy.FireFighting, 5.0] # second argument is retention time
@@ -96,44 +96,44 @@ pools:
   # Drone behaviour
   - pool: &explore
       - time-distribution: *movementRate
-        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        type: MotorSchemaReaction
         parameters: [ *combiner ]
         actions:
-          #- type: it.unibo.alchemist.schemas.Alignment
+          #- type: it.unibo.alchemist.model.implementations.actions.Alignment
           #  parameters : [0.1]
-          #- type: it.unibo.alchemist.schemas.Cohesion
+          #- type: it.unibo.alchemist.model.implementations.actions.Cohesion
           #  parameters : [0.001]
-          - type: it.unibo.alchemist.schemas.Separation
+          - type: Separation
             parameters: [ 40.0, 0.001 ]
-          #- type: it.unibo.alchemist.schemas.Seek
+          #- type: it.unibo.alchemist.model.implementations.actions.Seek
           #  parameters: [ 0.0, 0.0, 0.01 ]
-          - type: it.unibo.alchemist.schemas.ExploreArea
+          - type: ExploreArea
             parameters: [ 0.0, 0.0, *worldSize, 0.1 ]
   - pool: &flock
       - time-distribution: *movementRate
-        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        type: MotorSchemaReaction
         parameters: [ *combiner ]
         actions:
-          - type: it.unibo.alchemist.schemas.Alignment
+          - type: Alignment
             parameters : [0.1]
-          - type: it.unibo.alchemist.schemas.Cohesion
+          - type: Cohesion
             parameters : [0.001]
-          - type: it.unibo.alchemist.schemas.Separation
+          - type: Separation
             parameters: [ 40.0, 0.01 ]
-          - type: it.unibo.alchemist.schemas.Wander #work as a wind
+          - type: Wander #work as a wind
             parameters : [100, 0.01]
   - pool: &areaExplore
       - time-distribution: *movementRate
-        type: it.unibo.alchemist.reactions.MotorSchemaReaction
+        type: MotorSchemaReaction
         parameters: [ *combiner ]
         actions:
-          - type: it.unibo.alchemist.schemas.Seek
+          - type: Seek
             parameters: [ 0.0, 0.0, 0.05 ]
-          - type: it.unibo.alchemist.schemas.Separation
+          - type: Separation
             parameters: [ 40.0, 0.003 ]
-          - type: it.unibo.alchemist.schemas.Cohesion
+          - type: Cohesion
             parameters: [ 0.001 ]
-          - type: it.unibo.alchemist.schemas.Wander #work as a wind
+          - type: Wander #work as a wind
             parameters: [ 100, 0.05 ]
   #Fire spawner
   - pool: &fireSpawn
@@ -142,7 +142,7 @@ pools:
           parameters: [ *fireAverageTime ]
         type: Event
         actions:
-          - type: it.unibo.alchemist.actions.FireSpawn
+          - type: FireSpawn
             parameters: [ *originX, *originY, *endX, *endY, *expandFireRate ]
 
 displacements:
@@ -150,7 +150,7 @@ displacements:
       type: Rectangle
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
-      type: it.unibo.alchemist.node.DroneNode2D
+      type: DroneNode2D
       parameters: [2]
     programs:
       - *program

@@ -1,18 +1,17 @@
-package it.unibo.alchemist.effect
+package it.unibo.alchemist.model.implementations.effects
 
 import it.unibo.alchemist.boundary.gui.effects.Effect
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D
-import it.unibo.alchemist.effect.FireFightEffect._
+import it.unibo.alchemist.model.implementations.effects.FireFightEffect.{DRONE_COLOR, DRONE_SHAPE, DRONE_SIZE, MAX_COLOR, PALETTE, STATION_COLOR, STATION_SIZE, colorsFromAmplitude}
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.SimpleNodeManager
+import it.unibo.alchemist.model.implementations.nodes.{DroneNode2D, FireNode, SimpleNodeManager}
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
-import it.unibo.alchemist.node.{DroneNode2D, FireNode}
 
 import java.awt.geom.AffineTransform
-import java.awt.{Color, Graphics2D, Paint, Point, Polygon, RadialGradientPaint}
+import java.awt._
 class FireFightEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {

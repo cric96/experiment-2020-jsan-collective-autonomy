@@ -1,9 +1,8 @@
-package it.unibo.alchemist.schemas
+package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist._
-import it.unibo.alchemist.model.implementations.actions.AbstractMoveNode
+import it.unibo.alchemist.model.implementations.nodes.DroneNode
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
-import it.unibo.alchemist.node.DroneNode
 
 abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], droneNode: DroneNode[T, P], weight : Double) extends AbstractMoveNode[T, P](env, droneNode) {
   //TEMPLATE METHOD

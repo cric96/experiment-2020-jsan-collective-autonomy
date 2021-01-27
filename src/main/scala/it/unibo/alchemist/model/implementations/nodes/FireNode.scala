@@ -1,8 +1,8 @@
-package it.unibo.alchemist.node
-import it.unibo.alchemist.model.implementations.nodes.{ScafiNode, SimpleNodeManager}
+package it.unibo.alchemist.model.implementations.nodes
+
+import it.unibo.alchemist._
 import it.unibo.alchemist.model.implementations.utils.BidimensionalGaussian
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position}
-import it.unibo.alchemist._
 class FireNode[T, P <: Position[P]](env : Environment[T, P], var initialAmplitude : Double, var initialRange : Double) extends ScafiNode[T, P](env) {
   private lazy val firePosition = env.getPosition(this)
   private lazy val manager = new SimpleNodeManager[T](this)

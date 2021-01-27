@@ -1,4 +1,4 @@
-package it.unibo.alchemist.node
+package it.unibo.alchemist.model.implementations.nodes
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
