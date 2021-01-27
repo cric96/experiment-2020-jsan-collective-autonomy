@@ -4,8 +4,8 @@ import it.unibo.alchemist.model.interfaces._
 
 import scala.collection.JavaConverters._
 import it.unibo.alchemist._
-import it.unibo.alchemist.actions.{Actuator, Combiner}
-import it.unibo.alchemist.model.implementations.actions.MotorSchema
+import it.unibo.alchemist.actions.Combiner
+import it.unibo.alchemist.model.implementations.actions.{Actuator, MotorSchema}
 import it.unibo.alchemist.model.implementations.nodes.DroneNode
 class MotorSchemaReaction[T, P <: Position[P]](env : Environment[T, P], drone : DroneNode[T, P], distribution: TimeDistribution[T], combiner: Combiner[P])
   extends AbstractReaction[T](drone, distribution) {
