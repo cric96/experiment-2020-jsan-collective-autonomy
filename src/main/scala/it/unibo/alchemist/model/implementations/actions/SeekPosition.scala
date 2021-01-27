@@ -1,13 +1,14 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.{DroneNode, SimpleNodeManager}
+import it.unibo.alchemist.model.implementations.nodes.{MobileNode, SimpleNodeManager}
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import it.unibo.scafi.space.Point3D
+import it.unibo.alchemist._
 
-case class Seek[T](env: Environment[T, Euclidean2DPosition], node: DroneNode[T, Euclidean2DPosition], px: Double, py: Double, weight: Double)
+case class SeekPosition[T](env: Environment[T, Euclidean2DPosition], node: MobileNode[T, Euclidean2DPosition], px: Double, py: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
-  override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Seek[T](env, node, px, py, weight: Double)
+  override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new SeekPosition[T](env, node, px, py, weight: Double)
 
   val manager = new SimpleNodeManager[T](node)
   val centerOfMass = new Euclidean2DPosition(px, py)
@@ -19,6 +20,6 @@ case class Seek[T](env: Environment[T, Euclidean2DPosition], node: DroneNode[T, 
     } else {
       centerOfMass
     }
-    unitVector(center - env.getPosition(node))
+    normalizedWithSpeed(center - env.getPosition(node))
   }
 }

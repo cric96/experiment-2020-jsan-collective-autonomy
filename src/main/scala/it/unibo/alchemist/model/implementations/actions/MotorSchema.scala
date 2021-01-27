@@ -1,10 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist._
-import it.unibo.alchemist.model.implementations.nodes.DroneNode
+import it.unibo.alchemist.model.implementations.nodes.MobileNode
 import it.unibo.alchemist.model.interfaces.{Environment, Position}
-
-abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], droneNode: DroneNode[T, P], weight : Double) extends AbstractMoveNode[T, P](env, droneNode) {
+abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], mobileNode: MobileNode[T, P], weight : Double) extends AbstractMoveNode[T, P](env, mobileNode) {
   //TEMPLATE METHOD
   final def velocityVector : P = env.makePosition(unweightedVector.getCartesianCoordinates
     .map(_ * weight)
@@ -12,8 +11,8 @@ abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], droneNo
     .toSeq :_*)
   override def getNextPosition: P = {
     val velocity = velocityVector
-    val droneVelocity = if(velocity.module > droneNode.speed) {
-      unitVector(velocity)
+    val droneVelocity = if(velocity.module > mobileNode.maximumSpeed) {
+      normalizedWithSpeed(velocity)
     } else {
       velocity
     }
@@ -23,15 +22,16 @@ abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], droneNo
   }
   override def execute(): Unit = {
     super.execute()
-    droneNode.setVector(getNextPosition)
+    mobileNode.setVector(getNextPosition)
   }
   protected def unweightedVector : P //abstract method
-  protected def getNeighbourOf(drone : DroneNode[T, P]) : Seq[DroneNode[T, P]] = env.getNeighborhood(drone)
+  protected def getNeighbourOf(drone : MobileNode[T, P]) : Seq[MobileNode[T, P]] = env.getNeighborhood(drone)
     .getNeighbors
-    .collect { case node : DroneNode[T, P] => node }
-  protected def unitVector(p : P) : P = {
+    .collect { case node : MobileNode[T, P] => node }
+    .filter { case (node) => node.group == mobileNode.group}
+  protected def normalizedWithSpeed(p : P) : P = {
     val module = p.module
-    val coordinates = p.getCartesianCoordinates.map(_ / module)
+    val coordinates = p.getCartesianCoordinates.map(cord => (cord / module) * mobileNode.maximumSpeed)
     if(coordinates.exists(value => value.isNaN || value.isInfinite)) {
       env.origin
     } else {

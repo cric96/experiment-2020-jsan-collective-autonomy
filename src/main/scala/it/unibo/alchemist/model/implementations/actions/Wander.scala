@@ -1,19 +1,19 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.DroneNode
+import it.unibo.alchemist.model.implementations.nodes.MobileNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import org.apache.commons.math3.random.RandomGenerator
 
 case class Wander[T](env: Environment[T, Euclidean2DPosition],
                      rand: RandomGenerator,
-                     node: DroneNode[T, Euclidean2DPosition],
+                     node: MobileNode[T, Euclidean2DPosition],
                      howLong: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
   private var randomDirection = createRandomDirection
   private var lastTime = 0.0
 
-  def this(env: Environment[T, Euclidean2DPosition], rand: RandomGenerator, node: DroneNode[T, Euclidean2DPosition], howLong: Double) {
+  def this(env: Environment[T, Euclidean2DPosition], rand: RandomGenerator, node: MobileNode[T, Euclidean2DPosition], howLong: Double) {
     this(env, rand, node, howLong, 1.0)
   }
 

@@ -2,17 +2,16 @@ package it.unibo.alchemist.model.implementations.effects
 
 import it.unibo.alchemist.boundary.gui.effects.Effect
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D
-import it.unibo.alchemist.model.implementations.effects.FireFightEffect.{DRONE_COLOR, DRONE_SHAPE, DRONE_SIZE, MAX_COLOR, PALETTE, STATION_COLOR, STATION_SIZE, colorsFromAmplitude}
+import it.unibo.alchemist.model.implementations.effects.WildLifeEffect._
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{DroneNode2D, FireNode, SimpleNodeManager}
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
+import it.unibo.alchemist.model.implementations.nodes.{DroneNode2D, MobileNode2D, SimpleNodeManager}
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
 
-import java.awt.geom.AffineTransform
 import java.awt._
-class FireFightEffect extends Effect {
+import java.awt.geom.AffineTransform
+class WildLifeEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {
       case env : EuclideanPhysics2DEnvironment[T] if env.getNodes.contains(node) =>
@@ -21,14 +20,13 @@ class FireFightEffect extends Effect {
         val (x, y) = (viewPoint.x, viewPoint.y)
         node match {
           case drone : DroneNode2D[T] => drawDrone(g, drone, x, y, wormhole.getZoom)
-          case fire : FireNode[T, Euclidean2DPosition] => drawFire(g, fire, x, y, env, wormhole.getZoom)
           case _ => drawStation(g, node, x, y, env, wormhole.getZoom)
         }
       case _ =>
     }
   }
   override def getColorSummary: Color = Color.GREEN
-  def drawDrone[T](g : Graphics2D, droneNode : DroneNode2D[T], x : Int, y : Int, zoom : Double): Unit = {
+  def drawDrone[T](g : Graphics2D, droneNode : MobileNode2D[T], x : Int, y : Int, zoom : Double): Unit = {
     val transform = getTransform(x, y, zoom * DRONE_SIZE, rotation(droneNode))
     val transformedShape = transform.createTransformedShape(DRONE_SHAPE)
     val manager = new SimpleNodeManager[T](droneNode)
@@ -39,17 +37,7 @@ class FireFightEffect extends Effect {
     }
     g.fill(transformedShape)
   }
-  def drawFire[T](g : Graphics2D, fireNode : FireNode[T, Euclidean2DPosition], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double): Unit = {
-    val transform = getTransform(x, y, zoom, 0.0)
-    //TODO create a real gaussian
-    val paint = new RadialGradientPaint(x, y, fireNode.range.toFloat * zoom.toFloat, Array(0f, 0.5f, 0.75f, 1.0f), colorsFromAmplitude(fireNode.amplitude))
-    val shape = env.getShapeFactory.circle(fireNode.range) match {
-      case shape : AwtShapeCompatible => shape
-    }
-    g.setPaint(paint)
-    val shapeTransformed = transform.createTransformedShape(shape.asAwtShape())
-    g.fill(shapeTransformed)
-  }
+
   def drawStation[T](g : Graphics2D, node : Node[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
     val station = env.getShapeFactory.circle(STATION_SIZE)
     val manager = new SimpleNodeManager[T](node)
@@ -65,8 +53,8 @@ class FireFightEffect extends Effect {
     }
   }
 
-  private def rotation(node : DroneNode2D[_]) : Double = {
-    val direction = node.currentVector
+  private def rotation(node : MobileNode2D[_]) : Double = {
+    val direction = node.velocity
     math.atan2(direction.getX, direction.getY)
   }
 
@@ -81,7 +69,7 @@ class FireFightEffect extends Effect {
   private def colorFromId(id : Int) : Color = PALETTE(id % MAX_COLOR)
 }
 
-object FireFightEffect {
+object WildLifeEffect {
   val MAX_COLOR : Int = 100
   val TRANSPARENT = new Color(255, 255, 255, 0)
   val PALETTE : Map[Int, Color] = (0 to 100).map(_ -> new Color(Color.HSBtoRGB(math.random() floatValue(), 0.5f, 0.5f))).toMap

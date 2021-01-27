@@ -1,0 +1,130 @@
+incarnation: scafi
+#Distance unit: kilometers
+#Time unit: Seconds
+#Temperature unit: Celsius
+variables:
+  dronesStationsRation:
+    formula: 0.1
+
+  animals: &animals
+    formula: 40
+
+  drones: &drones
+    formula: 20
+
+  stations: &stations
+    formula: drones * dronesStationsRation
+
+  random: &random
+    min: 0
+    max: 100
+    step: 1
+    default: 0
+
+  range: &range
+    formula: 100
+
+  worldSize: &worldSize
+    formula: 500
+
+  explorationRange: &explorationRange
+    formula: worldSize / 2
+
+  originX: &originX
+    formula: worldSize / -2
+
+  originY: &originY
+    formula: worldSize / -2
+
+  combiner: &combiner
+    formula: new it.unibo.alchemist.SumCombiner()
+    language: scala
+
+  movementRate : &movementRate
+    formula: 10
+seeds:
+  scenario: *random
+  simulation: *random
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+network-model:
+  type: ConnectWithinDistance #*connectionType
+  parameters: [*range]
+
+pools:
+  - pool: &program
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [1] #in average, the program is computed each second
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [it.unibo.casestudy.WildLifeMonitoring, 5.0] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+  # Drone behaviour
+  - pool: &areaExplore
+      - time-distribution: *movementRate
+        type: MotorSchemaReaction
+        parameters: [ *combiner ]
+        actions:
+          - type: Separation
+            parameters: [ 40.0, 0.03 ]
+          - type: Alignment
+            parameters: [ 0.003 ]
+          - type: Cohesion
+            parameters: [ 0.001 ]
+          - type: ExploreArea
+            parameters: [ 0, 0, *explorationRange, 0.02, 10]
+  - pool: &swarmWander
+      - time-distribution: *movementRate
+        type: MotorSchemaReaction
+        parameters: [ *combiner ]
+        actions:
+          - type: Separation
+            parameters: [ 40.0, 0.03 ]
+          - type: Alignment
+            parameters: [ 0.003 ]
+          - type: Cohesion
+            parameters: [ 0.001 ]
+          - type: ExploreArea
+            parameters: [ 0, 0, *explorationRange, 0.02, 10]
+
+displacements:
+  - in:
+      type: Rectangle
+      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
+    nodes:
+      type: DroneNode2D
+      parameters: [2]
+    programs:
+      - *program
+      - *areaExplore
+    contents:
+      - molecule: drone
+        concentration: true
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *originX, *originY, *worldSize, *worldSize ]
+    nodes:
+      type: Animal2D
+      parameters: [2]
+    programs:
+      - *swarmWander
+    contents:
+      - molecule: drone
+        concentration: false
+
+  - in:
+      type: Rectangle
+      parameters: [ *stations, *originX, *originY, *worldSize, *worldSize ]
+    programs:
+      - *program
+    contents:
+      - molecule: station
+        concentration: true
+
+export:
+  - time
