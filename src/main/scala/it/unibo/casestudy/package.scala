@@ -21,4 +21,8 @@ package object casestudy {
   }
   //IMPLICIT CONVERSION
   implicit def OptionalToOption[E](p : Optional[E]) : Option[E] = if (p.isPresent) Some(p.get()) else None
+  //TYPE ENRICHMENT
+  implicit class RichPoint3D(p : Point3D) {
+    def /(alpha : Double) : Point3D = Point3D(p.x / alpha, p.y / alpha, p.z / alpha)
+  }
 }

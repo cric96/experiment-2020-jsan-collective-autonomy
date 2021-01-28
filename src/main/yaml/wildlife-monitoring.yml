@@ -13,9 +13,6 @@ variables:
   drones: &drones
     formula: 50
 
-  stations: &stations
-    formula: drones * dronesStationsRation
-
   random: &random
     min: 0
     max: 100
@@ -94,7 +91,7 @@ pools:
           type: DiracComb
           parameters: [ 10 ]
         type: MotorSchemaReaction
-        parameters: [ *animalCombiner ]
+        parameters: [ *boidsCombiner ]
         actions:
           - type: Separation
             parameters: [ 40.0, 0.05 ]
@@ -116,8 +113,12 @@ displacements:
       - *program
       - *areaExplore
     contents:
+      - molecule: station
+        concentration: false
       - molecule: drone
         concentration: true
+      - molecule: danger
+        concentration: false
   - in:
       type: Rectangle
       parameters: [ *animals, *originX, *originY, 200, 200 ]
@@ -127,18 +128,71 @@ displacements:
     programs:
       - *swarmWander
     contents:
+      - molecule: station
+        concentration: false
       - molecule: drone
+        concentration: false
+      - molecule: danger
         concentration: false
   - in:
       type: Rectangle
       parameters: [ *animals, *originX, *minusOriginY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 5.7 , "impala" ]
+      parameters: [ 8.3, "impala" ]
     programs:
       - *swarmWander
     contents:
+      - molecule: station
+        concentration: false
       - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *originX, *originY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "zebras" ]
+    programs:
+      - *swarmWander
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *minusOriginX, *minusOriginY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "elephants" ]
+    programs:
+      - *swarmWander
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *minusOriginX, *originY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "zebras2" ]
+    programs:
+      - *swarmWander
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
         concentration: false
   - in:
       type: Grid
@@ -150,6 +204,9 @@ displacements:
     contents:
       - molecule: station
         concentration: true
-
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
 export:
   - time

@@ -33,8 +33,6 @@ class WildLifeEffect extends Effect {
   def drawDrone[T](g : Graphics2D, droneNode : MobileNode2D[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[T], zoom : Double): Unit = {
     val transform = getTransform(x, y, zoom * DRONE_SIZE, rotation(droneNode))
     val transformedShape = transform.createTransformedShape(DRONE_SHAPE)
-    val shape : AwtShapeCompatible = env.getShapeFactory.circle(100).asInstanceOf[AwtShapeCompatible]
-    val area = transform.createTransformedShape(shape.asAwtShape())
     val manager = new SimpleNodeManager[T](droneNode)
     if(manager.has("leader_id")) {
       g.setColor(colorFromId(manager.get[Int]("leader_id")))
@@ -42,7 +40,6 @@ class WildLifeEffect extends Effect {
       g.setColor(DRONE_COLOR)
     }
     g.fill(transformedShape)
-    g.draw(area)
   }
 
   def drawAnimal[T](g : Graphics2D, node : Animal2D[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
