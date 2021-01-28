@@ -7,6 +7,7 @@ abstract class MotorSchema[T, P <: Position[P]](env : Environment[T, P], mobileN
   //TEMPLATE METHOD
   final def velocityVector : P = env.makePosition(unweightedVector.getCartesianCoordinates
     .map(_ * weight)
+    .map(_ * mobileNode.maximumSpeed)
     .map(x => x : Number)
     .toSeq :_*)
   override def getNextPosition: P = {

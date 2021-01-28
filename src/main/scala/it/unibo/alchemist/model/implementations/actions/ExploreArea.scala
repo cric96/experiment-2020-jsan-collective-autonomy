@@ -7,7 +7,7 @@ import org.apache.commons.math3.random.RandomGenerator
 
 case class ExploreArea[T](env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
                           node: MobileNode[T, Euclidean2DPosition],
-                          centerX: Double, centerY: Double, radius: Double, weight: Double, thr: Double)
+                          centerX: Double, centerY: Double, radius: Double, thr: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
   private val diameter = radius * 2
   private var targetPosition = randomPositionInCircle
@@ -19,10 +19,9 @@ case class ExploreArea[T](env: Environment[T, Euclidean2DPosition], rand: Random
     this(env, rand, node, centerX, centerY, radius, weight, 0.01)
   }
 
-  override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = ExploreArea[T](env, rand, node, centerX, centerY, radius, weight, thr)
+  override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = ExploreArea[T](env, rand, node, centerX, centerY, radius, thr, weight)
 
   override def unweightedVector: Euclidean2DPosition = {
-
     if (reached) {
       targetPosition = randomPositionInCircle
       behaviour = behaviour.copy(px = targetPosition.getX, py = targetPosition.getY)

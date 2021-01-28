@@ -1,16 +1,17 @@
 incarnation: scafi
-#Distance unit: kilometers
+#Distance unit: meters
 #Time unit: Seconds
 #Temperature unit: Celsius
+#Speed unit: m/s
 variables:
   dronesStationsRation:
-    formula: 0.1
+    formula: 0.3
 
   animals: &animals
-    formula: 40
+    formula: 20
 
   drones: &drones
-    formula: 20
+    formula: 50
 
   stations: &stations
     formula: drones * dronesStationsRation
@@ -22,10 +23,10 @@ variables:
     default: 0
 
   range: &range
-    formula: 100
+    formula: 200
 
   worldSize: &worldSize
-    formula: 500
+    formula: 2500
 
   explorationRange: &explorationRange
     formula: worldSize / 2
@@ -36,7 +37,17 @@ variables:
   originY: &originY
     formula: worldSize / -2
 
-  combiner: &combiner
+  minusOriginX: &minusOriginX
+    formula: worldSize / 2
+
+  minusOriginY: &minusOriginY
+    formula: worldSize / 2
+
+  boidsCombiner: &boidsCombiner
+    formula: new it.unibo.alchemist.DifferentialCombiner()
+    language: scala
+
+  animalCombiner: &animalCombiner
     formula: new it.unibo.alchemist.SumCombiner()
     language: scala
 
@@ -51,8 +62,8 @@ environment:
   parameters: []
 
 network-model:
-  type: ConnectWithinDistance #*connectionType
-  parameters: [*range]
+  type: DualRadioLinkingRule #*connectionType
+  parameters: [700, *range]
 
 pools:
   - pool: &program
@@ -68,29 +79,31 @@ pools:
   - pool: &areaExplore
       - time-distribution: *movementRate
         type: MotorSchemaReaction
-        parameters: [ *combiner ]
+        parameters: [ *boidsCombiner ]
         actions:
           - type: Separation
-            parameters: [ 40.0, 0.03 ]
+            parameters: [ 50.0, 0.3 ]
           - type: Alignment
             parameters: [ 0.003 ]
           - type: Cohesion
             parameters: [ 0.001 ]
           - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 0.02, 10]
+            parameters: [ 0, 0, *explorationRange, 10, 0.02]
   - pool: &swarmWander
-      - time-distribution: *movementRate
+      - time-distribution:
+          type: DiracComb
+          parameters: [ 10 ]
         type: MotorSchemaReaction
-        parameters: [ *combiner ]
+        parameters: [ *animalCombiner ]
         actions:
           - type: Separation
-            parameters: [ 40.0, 0.03 ]
-          - type: Alignment
-            parameters: [ 0.003 ]
-          - type: Cohesion
-            parameters: [ 0.001 ]
-          - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 0.02, 10]
+            parameters: [ 40.0, 0.05 ]
+#          - type: Alignment
+#            parameters: [ 0.1 ]
+#          - type: Cohesion
+#            parameters: [ 0.03 ]
+          - type: RandomWayPoint
+            parameters: [ 0, 0, *explorationRange, 5, 50, 0.02 ]
 
 displacements:
   - in:
@@ -98,7 +111,7 @@ displacements:
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [2]
+      parameters: [10]
     programs:
       - *program
       - *areaExplore
@@ -107,19 +120,31 @@ displacements:
         concentration: true
   - in:
       type: Rectangle
-      parameters: [ *animals, *originX, *originY, *worldSize, *worldSize ]
+      parameters: [ *animals, *originX, *originY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [2]
+      parameters: [ 8.3, "zebras"]
     programs:
       - *swarmWander
     contents:
       - molecule: drone
         concentration: false
-
   - in:
       type: Rectangle
-      parameters: [ *stations, *originX, *originY, *worldSize, *worldSize ]
+      parameters: [ *animals, *originX, *minusOriginY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 5.7 , "impala" ]
+    programs:
+      - *swarmWander
+    contents:
+      - molecule: drone
+        concentration: false
+  - in:
+      type: Grid
+      parameters: [ *originX, *originY, *minusOriginX, *minusOriginX, 500, 500, 300, 300]
+    nodes:
+      type: LoraStation
     programs:
       - *program
     contents:
