@@ -15,7 +15,7 @@ variables:
 
   random: &random
     min: 0
-    max: 1
+    max: 10
     step: 1
     default: 0
 
@@ -83,7 +83,7 @@ pools:
   - pool: &animalBehaviour
       - time-distribution:
           type: ExponentialTime
-          parameters: [ 1 ] #in average, the program is computed each second
+          parameters: [ 10 ] #in average, the program is computed each second
         type: Event
         actions:
           - type: RunScafiProgram
@@ -111,13 +111,15 @@ pools:
         parameters: [ *boidsCombiner ]
         actions:
           - type: Separation
-            parameters: [ 40.0, 0.05 ]
+            parameters: [ 40.0, 0.3 ]
 #          - type: Alignment
-#            parameters: [ 0.1 ]
+#            parameters: [ 0.003 ]
 #          - type: Cohesion
-#            parameters: [ 0.03 ]
-          - type: RandomWayPoint
-            parameters: [ 0, 0, *explorationRange, 5, 50, 0.02 ]
+#            parameters: [ 0.001 ]
+#          - type: RandomWayPoint
+#            parameters: [ 0, 0, *explorationRange, 5, 50, 0.02 ]
+          - type: ExploreArea
+            parameters: [ 0, 0, *explorationRange, 10, 0.01]
 
 displacements:
   - in:
@@ -138,7 +140,7 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animals, *originX, *originY, 200, 200 ]
+      parameters: [ *animals, 0, 0, 200, 200 ]
     nodes:
       type: Animal2D
       parameters: [ 8.3, "zebras"]

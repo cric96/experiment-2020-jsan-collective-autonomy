@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist._
-
+//TODO instable, due the concurrency problem, find a solution
 case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
                       node: MobileNode[T, Euclidean2DPosition],
                       centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double)
@@ -54,6 +54,6 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
 }
 
 object RandomWayPoint {
-  private val movementCache : collection.concurrent.Map[String, Euclidean2DPosition] = collection.concurrent.TrieMap()
-  private val sleepCache : collection.concurrent.Map[String, Double] = collection.concurrent.TrieMap()
+  private val movementCache : collection.mutable.Map[String, Euclidean2DPosition] = collection.mutable.HashMap()
+  private val sleepCache : collection.mutable.Map[String, Double] = collection.mutable.HashMap()
 }

@@ -57,7 +57,9 @@ class WildLifeMonitoring extends AggregateProgram with StandardSensors with Scaf
     val plan = G[Option[Plan]](leader, toExecute, a => a, nbrRange)
     val leaderPosition = G[P](leader, currentPosition(), a => a, nbrRange)
     node.put("leader_id", leaderId)
-    node.put("target", None /* Some(leaderId) */)
+    node.put("target",None /*Some(leaderPosition)*/)
+//    node.put("target",Some(leaderPosition))
+
     node.put("hasPlan", plan.isDefined)
     branch(isStation) {} {
       plan.filter(_.isForMe(mid())).foreach(_.perform(this))
