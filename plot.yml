@@ -2,9 +2,8 @@
 the_plots_labels:
   - Time                 #0
   - 'g (sum)'
-  - 'g (mean)'
 the_plots_formats:
-  - [0,1,2]
+  - [0,1]
   #- [0,11,12,13]
 #  - [0,2,3,4,5]
 #y_labels: ['# of requests', '# of requests','','% of utilization of workers']
@@ -20,7 +19,7 @@ legend_position:
   - "upper right"
 legend_size: 12
 force_limit_plot_y:
-#  1: 140
+  1: 25
 #   3: 1000
 #  4: 35
 #  0: 40

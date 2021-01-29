@@ -156,4 +156,5 @@ fun makeTest(
 }
 
 makeTest(name="wildLifeMonitoring", file = "wildlife-monitoring", effectFile = "paper")
+makeTest(name="wildLifeMonitoringData", file = "wildlife-monitoring", time = 50.0, vars = setOf("random"))
 defaultTasks("fatJar")

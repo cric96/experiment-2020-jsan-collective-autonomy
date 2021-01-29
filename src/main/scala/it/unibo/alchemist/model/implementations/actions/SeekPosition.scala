@@ -14,9 +14,12 @@ case class SeekPosition[T](env: Environment[T, Euclidean2DPosition], node: Mobil
   val centerOfMass = new Euclidean2DPosition(px, py)
 
   override def unweightedVector: Euclidean2DPosition = {
-    val center = if (manager.has("center")) {
-      val scafi = manager.get[Point3D]("center")
-      new Euclidean2DPosition(scafi.x, scafi.y)
+    val center = if (manager.has("target")) {
+      val scafi = manager.get[Option[Point3D]]("target")
+      scafi match {
+        case None => centerOfMass
+        case Some(pos) => new Euclidean2DPosition(pos.x, pos.y)
+      }
     } else {
       centerOfMass
     }

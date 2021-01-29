@@ -48,7 +48,11 @@ class WildLifeEffect extends Effect {
     val transform = getTransform(x, y, zoom, 0.0)
     station match {
       case station : AwtShapeCompatible => val transformed = transform.createTransformedShape(station.asAwtShape())
-        g.setColor(ANIMAL_COLOR_CACHE.getOrElseUpdate(node.group, randomColor()))
+        if(manager.get[Boolean]("danger")) {
+          g.setColor(Color.PINK)
+        } else {
+          g.setColor(ANIMAL_COLOR_CACHE.getOrElseUpdate(node.group, randomColor()))
+        }
         g.fill(transformed)
     }
   }

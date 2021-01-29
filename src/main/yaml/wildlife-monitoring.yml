@@ -11,11 +11,11 @@ variables:
     formula: 20
 
   drones: &drones
-    formula: 50
+    formula: 100
 
   random: &random
     min: 0
-    max: 100
+    max: 1
     step: 1
     default: 0
 
@@ -63,6 +63,13 @@ network-model:
   parameters: [700, *range]
 
 pools:
+  - pool: &ill
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [0.01]
+        type: Event
+        actions:
+          - type: IllAnimal
   - pool: &program
       - time-distribution:
           type: ExponentialTime
@@ -73,19 +80,29 @@ pools:
             parameters: [it.unibo.casestudy.WildLifeMonitoring, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
   # Drone behaviour
+  - pool: &animalBehaviour
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [ 1 ] #in average, the program is computed each second
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [ it.unibo.casestudy.AnimalBehaviour, 5.0 ] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+    # Drone behaviour
   - pool: &areaExplore
       - time-distribution: *movementRate
         type: MotorSchemaReaction
         parameters: [ *boidsCombiner ]
         actions:
           - type: Separation
-            parameters: [ 50.0, 0.3 ]
+            parameters: [ 100.0, 0.3 ]
           - type: Alignment
             parameters: [ 0.003 ]
           - type: Cohesion
             parameters: [ 0.001 ]
           - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 10, 0.02]
+            parameters: [ 0, 0, *explorationRange, 10, 0.01]
   - pool: &swarmWander
       - time-distribution:
           type: DiracComb
@@ -108,7 +125,7 @@ displacements:
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [10]
+      parameters: [8.3]
     programs:
       - *program
       - *areaExplore
@@ -127,6 +144,8 @@ displacements:
       parameters: [ 8.3, "zebras"]
     programs:
       - *swarmWander
+      - *ill
+      - *animalBehaviour
     contents:
       - molecule: station
         concentration: false
@@ -142,6 +161,8 @@ displacements:
       parameters: [ 8.3, "impala" ]
     programs:
       - *swarmWander
+      - *ill
+      - *animalBehaviour
     contents:
       - molecule: station
         concentration: false
@@ -157,6 +178,8 @@ displacements:
       parameters: [ 8.3, "zebras" ]
     programs:
       - *swarmWander
+      - *ill
+      - *animalBehaviour
     contents:
       - molecule: station
         concentration: false
@@ -172,6 +195,8 @@ displacements:
       parameters: [ 8.3, "elephants" ]
     programs:
       - *swarmWander
+      - *ill
+      - *animalBehaviour
     contents:
       - molecule: station
         concentration: false
@@ -187,6 +212,8 @@ displacements:
       parameters: [ 8.3, "zebras2" ]
     programs:
       - *swarmWander
+      - *ill
+      - *animalBehaviour
     contents:
       - molecule: station
         concentration: false
@@ -210,3 +237,5 @@ displacements:
         concentration: false
 export:
   - time
+  - molecule: danger
+    aggregators: [ sum ]
