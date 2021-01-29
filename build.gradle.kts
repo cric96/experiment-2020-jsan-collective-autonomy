@@ -155,6 +155,7 @@ fun makeTest(
     }*/
 }
 
-makeTest(name="wildLifeMonitoring", file = "wildlife-monitoring", effectFile = "paper")
-makeTest(name="wildLifeMonitoringData", file = "wildlife-monitoring", time = 100.0, vars = setOf("random"))
+makeTest(name="wildLifeMonitoringGUI", file = "wildlife-monitoring-structure", effectFile = "paper")
+makeTest(name="wildLifeMonitoring", file = "wildlife-monitoring-structure", time = 100.0, vars = setOf("random"))
+makeTest(name="wildLifeMonitoringNoLeader", file = "wildlife-monitoring-structure-no-leader", time = 100.0, vars = setOf("random"))
 defaultTasks("fatJar")

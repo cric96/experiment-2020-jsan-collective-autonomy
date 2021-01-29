@@ -1,0 +1,245 @@
+incarnation: scafi
+#Distance unit: meters
+#Time unit: Seconds
+#Temperature unit: Celsius
+#Speed unit: m/s
+variables:
+  dronesStationsRation:
+    formula: 0.3
+
+  animals: &animals
+    formula: 20
+
+  drones: &drones
+    formula: 100
+
+  random: &random
+    min: 0
+    max: 10
+    step: 1
+    default: 0
+
+  range: &range
+    formula: 200
+
+  worldSize: &worldSize
+    formula: 2500
+
+  explorationRange: &explorationRange
+    formula: worldSize / 2
+
+  originX: &originX
+    formula: worldSize / -2
+
+  originY: &originY
+    formula: worldSize / -2
+
+  minusOriginX: &minusOriginX
+    formula: worldSize / 2
+
+  minusOriginY: &minusOriginY
+    formula: worldSize / 2
+
+  boidsCombiner: &boidsCombiner
+    formula: new it.unibo.alchemist.DifferentialCombiner()
+    language: scala
+
+  animalCombiner: &animalCombiner
+    formula: new it.unibo.alchemist.SumCombiner()
+    language: scala
+
+  movementRate : &movementRate
+    formula: 10
+seeds:
+  scenario: *random
+  simulation: *random
+
+environment:
+  type: Continuous2DEnvironment
+  parameters: []
+
+network-model:
+  type: DualRadioLinkingRule #*connectionType
+  parameters: [700, *range]
+
+pools:
+  - pool: &ill
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [0.01]
+        type: Event
+        actions:
+          - type: IllAnimal
+  - pool: &program
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [1] #in average, the program is computed each second
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [it.unibo.casestudy.WildLifeMonitoring, 5.0] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+  # Drone behaviour
+  - pool: &animalBehaviour
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [ 10 ] #in average, the program is computed each second
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [ it.unibo.casestudy.AnimalBehaviour, 5.0 ] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+    # Drone behaviour
+  - pool: &areaExplore
+      - time-distribution: *movementRate
+        type: MotorSchemaReaction
+        parameters: [ *boidsCombiner ]
+        actions:
+          - type: Separation
+            parameters: [ 100.0, 0.3 ]
+          - type: Alignment
+            parameters: [ 0.003 ]
+          - type: Cohesion
+            parameters: [ 0.001 ]
+          - type: ExploreArea
+            parameters: [ 0, 0, *explorationRange, 10, 0.01]
+  - pool: &swarmWander
+      - time-distribution:
+          type: DiracComb
+          parameters: [ 10 ]
+        type: MotorSchemaReaction
+        parameters: [ *boidsCombiner ]
+        actions:
+          - type: Separation
+            parameters: [ 40.0, 0.3 ]
+#          - type: Alignment
+#            parameters: [ 0.003 ]
+#          - type: Cohesion
+#            parameters: [ 0.001 ]
+#          - type: RandomWayPoint
+#            parameters: [ 0, 0, *explorationRange, 5, 50, 0.02 ]
+          - type: ExploreArea
+            parameters: [ 0, 0, *explorationRange, 10, 0.01]
+
+displacements:
+  - in:
+      type: Rectangle
+      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
+    nodes:
+      type: DroneNode2D
+      parameters: [8.3]
+    programs:
+      - *program
+      - *areaExplore
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: true
+      - molecule: danger
+        concentration: false
+      - molecule: goToLeader
+        concentration: true
+  - in:
+      type: Rectangle
+      parameters: [ *animals, 0, 0, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "zebras"]
+    programs:
+      - *swarmWander
+      - *ill
+      - *animalBehaviour
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *originX, *minusOriginY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "impala" ]
+    programs:
+      - *swarmWander
+      - *ill
+      - *animalBehaviour
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *originX, *originY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "zebras" ]
+    programs:
+      - *swarmWander
+      - *ill
+      - *animalBehaviour
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *minusOriginX, *minusOriginY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "elephants" ]
+    programs:
+      - *swarmWander
+      - *ill
+      - *animalBehaviour
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Rectangle
+      parameters: [ *animals, *minusOriginX, *originY, 200, 200 ]
+    nodes:
+      type: Animal2D
+      parameters: [ 8.3, "zebras2" ]
+    programs:
+      - *swarmWander
+      - *ill
+      - *animalBehaviour
+    contents:
+      - molecule: station
+        concentration: false
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+  - in:
+      type: Grid
+      parameters: [ *originX, *originY, *minusOriginX, *minusOriginX, 500, 500, 300, 300]
+    nodes:
+      type: LoraStation
+    programs:
+      - *program
+    contents:
+      - molecule: station
+        concentration: true
+      - molecule: drone
+        concentration: false
+      - molecule: danger
+        concentration: false
+export:
+  - time
+  - molecule: danger
+    aggregators: [ sum ]
