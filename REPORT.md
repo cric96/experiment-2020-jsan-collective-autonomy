@@ -29,16 +29,16 @@ Conceptually, b. could be must efficient  because nodes avoid wasting time to wa
 
 **Screenshot**
 
-**TODO** 
+![](./assets/result/31-01-21/snapshot.png)
 
 **Plots**
 
 Currently, I plot only the danger count for each experiment. I run 10 simulations (5 with leader-tendency zone and 5 with fully-wander movement). The leader tendency seems to bring a better system performance. In general, the structure has influenced the overall behavior.
 
-![](C:\Users\gianluca.aguzzi\Desktop\mdpi-jsan\assets\result\31-01-21\leader\leader_01_.png)
+![](./assets/result/31-01-21/leader/leader_01_.png)
 
 *The plot of leader tendency tests.*
 
-![](C:\Users\gianluca.aguzzi\Desktop\mdpi-jsan\assets\result\31-01-21\noleader\noleader_01_.png)
+![](./assets/result/31-01-21/noleader/noleader_01_.png)
 
 *The plot of wander tendency tests*
