@@ -1,13 +1,12 @@
 incarnation: scafi
 #Distance unit: meters
 #Time unit: Seconds
-#Temperature unit: Celsius
 #Speed unit: m/s
 variables:
   dronesStationsRation:
     formula: 0.3
 
-  animals: &animals
+  animalsForGroup: &animalsForGroup
     formula: 20
 
   drones: &drones
@@ -15,18 +14,30 @@ variables:
 
   random: &random
     min: 0
-    max: 10
+    max: 5
     step: 1
     default: 0
 
-  range: &range
-    formula: 200
+  bluetoothRange: &bluetoothRange
+    formula: 200 #meter
+
+  loraRange: &loraRange
+    formula: 700 #meter
 
   worldSize: &worldSize
-    formula: 2500
+    formula: 2500 #meter
 
   explorationRange: &explorationRange
-    formula: worldSize / 2
+    formula: worldSize / 2 #meter
+
+  droneVelocity: &droneVelocity
+    formula: 8.3
+
+  impalaVelocity: &impalaVelocity
+    formula: 8.3
+
+  zebraVelocity: &zebraVelocity
+    formula: 8.3
 
   originX: &originX
     formula: worldSize / -2
@@ -40,16 +51,18 @@ variables:
   minusOriginY: &minusOriginY
     formula: worldSize / 2
 
-  boidsCombiner: &boidsCombiner
+  velocityCombiner: &velocityCombiner
     formula: new it.unibo.alchemist.DifferentialCombiner()
     language: scala
 
-  animalCombiner: &animalCombiner
-    formula: new it.unibo.alchemist.SumCombiner()
-    language: scala
+  evaluationRate: &evaluationRate
+    formula: 1
 
-  movementRate : &movementRate
+  movementRate: &movementRate
     formula: 10
+
+  dangerSpawnRate: &dangerSpawnRate
+    formula: 0.01
 seeds:
   scenario: *random
   simulation: *random
@@ -60,40 +73,42 @@ environment:
 
 network-model:
   type: DualRadioLinkingRule #*connectionType
-  parameters: [700, *range]
+  parameters: [*loraRange, *bluetoothRange]
 
 pools:
+  # Danger animal "spawner"
   - pool: &ill
       - time-distribution:
           type: ExponentialTime
-          parameters: [0.01]
+          parameters: [ *dangerSpawnRate ]
         type: Event
         actions:
           - type: IllAnimal
+  # Main aggregate program evaluation
   - pool: &program
       - time-distribution:
           type: ExponentialTime
-          parameters: [1] #in average, the program is computed each second
+          parameters: [ *evaluationRate ]
         type: Event
         actions:
           - type: RunScafiProgram
             parameters: [it.unibo.casestudy.WildLifeMonitoring, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
-  # Drone behaviour
+  # "Collar" aggregate program evaluation
   - pool: &animalBehaviour
       - time-distribution:
           type: ExponentialTime
-          parameters: [ 10 ] #in average, the program is computed each second
+          parameters: [ *evaluationRate ] #in average, the program is computed each second
         type: Event
         actions:
           - type: RunScafiProgram
             parameters: [ it.unibo.casestudy.AnimalBehaviour, 5.0 ] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
-    # Drone behaviour
+  # Drone movement behaviour
   - pool: &areaExplore
       - time-distribution: *movementRate
         type: MotorSchemaReaction
-        parameters: [ *boidsCombiner ]
+        parameters: [ *velocityCombiner ]
         actions:
           - type: Separation
             parameters: [ 100.0, 0.3 ]
@@ -103,25 +118,22 @@ pools:
             parameters: [ 0.001 ]
           - type: ExploreArea
             parameters: [ 0, 0, *explorationRange, 10, 0.01]
-  - pool: &swarmWander
-      - time-distribution:
-          type: DiracComb
-          parameters: [ 10 ]
+  # Animals movement behaviour
+  - pool: &animalsWander
+      #      - time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)
+      #          type: DiracComb
+      #          parameters: [ movementRate ]
+      - time-distribution: *movementRate
         type: MotorSchemaReaction
-        parameters: [ *boidsCombiner ]
+        parameters: [ *velocityCombiner ]
         actions:
           - type: Separation
             parameters: [ 40.0, 0.3 ]
-#          - type: Alignment
-#            parameters: [ 0.003 ]
-#          - type: Cohesion
-#            parameters: [ 0.001 ]
-#          - type: RandomWayPoint
-#            parameters: [ 0, 0, *explorationRange, 5, 50, 0.02 ]
           - type: ExploreArea
             parameters: [ 0, 0, *explorationRange, 10, 0.01]
 
 displacements:
+  # DRONES DISPLACEMENT
   - in:
       type: Rectangle
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
@@ -138,14 +150,15 @@ displacements:
         concentration: true
       - molecule: danger
         concentration: false
+  # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
-      parameters: [ *animals, 0, 0, 200, 200 ]
+      parameters: [ *animalsForGroup, 0, 0, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 8.3, "zebras"]
+      parameters: [ *zebraVelocity, "zebras"]
     programs:
-      - *swarmWander
+      - *animalsWander
       - *ill
       - *animalBehaviour
     contents:
@@ -157,12 +170,12 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animals, *originX, *minusOriginY, 200, 200 ]
+      parameters: [ *animalsForGroup, *originX, *minusOriginY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 8.3, "impala" ]
+      parameters: [ *impalaVelocity, "impala" ]
     programs:
-      - *swarmWander
+      - *animalsWander
       - *ill
       - *animalBehaviour
     contents:
@@ -174,12 +187,12 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animals, *originX, *originY, 200, 200 ]
+      parameters: [ *animalsForGroup, *originX, *originY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 8.3, "zebras" ]
+      parameters: [ *zebraVelocity, "zebras" ]
     programs:
-      - *swarmWander
+      - *animalsWander
       - *ill
       - *animalBehaviour
     contents:
@@ -191,12 +204,12 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animals, *minusOriginX, *minusOriginY, 200, 200 ]
+      parameters: [ *animalsForGroup, *minusOriginX, *minusOriginY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 8.3, "elephants" ]
+      parameters: [ *impalaVelocity, "impala2" ]
     programs:
-      - *swarmWander
+      - *animalsWander
       - *ill
       - *animalBehaviour
     contents:
@@ -208,12 +221,12 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animals, *minusOriginX, *originY, 200, 200 ]
+      parameters: [ *animalsForGroup, *minusOriginX, *originY, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ 8.3, "zebras2" ]
+      parameters: [ *zebraVelocity, "zebras2" ]
     programs:
-      - *swarmWander
+      - *animalsWander
       - *ill
       - *animalBehaviour
     contents:
@@ -223,6 +236,7 @@ displacements:
         concentration: false
       - molecule: danger
         concentration: false
+  # STATIONS DISPLACEMENT
   - in:
       type: Grid
       parameters: [ *originX, *originY, *minusOriginX, *minusOriginX, 500, 500, 300, 300]
@@ -240,4 +254,4 @@ displacements:
 export:
   - time
   - molecule: danger
-    aggregators: [ sum ]
+    aggregators: [ sum ] #Export danger count

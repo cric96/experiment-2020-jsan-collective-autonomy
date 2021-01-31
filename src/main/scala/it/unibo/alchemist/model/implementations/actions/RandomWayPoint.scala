@@ -6,7 +6,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import org.apache.commons.math3.random.RandomGenerator
 import it.unibo.alchemist._
-//TODO instable, due the concurrency problem, find a solution
+//TODO Unstable, due the concurrency problem, find a solution
 case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
                       node: MobileNode[T, Euclidean2DPosition],
                       centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double)

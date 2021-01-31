@@ -15,8 +15,10 @@ class MotorSchemaReaction[T, P <: Position[P]](env : Environment[T, P], drone : 
   override def getRate: Double = distribution.getRate
   override def execute(): Unit = {
     val movement = combiner.combine(drone, motorSchemas)
-    val normalized = env.makePosition(movement.getCartesianCoordinates.map(_ * 1 / rate).map(_.asInstanceOf[Number]):_*)
+    val normalized = env.makePosition(movement.getCartesianCoordinates
+      .map(_ * 1 / rate)
+      .map(_.asInstanceOf[Number]):_*
+    )
     new Actuator[T,P](env, drone, normalized).execute()
   }
-
 }
