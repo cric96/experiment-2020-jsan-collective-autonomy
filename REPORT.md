@@ -20,7 +20,7 @@ The environment is a flat square 2500 meters wides. The system has three nodes t
 The network structure is inspired by this [paper](https://ieeexplore.ieee.org/abstract/document/8328721).
 Mobiles drones are placed randomly. The stations are placed in a grid 5x5 covering the whole 
 environment area.
-The animals are divided into five groups placed, four in the square corner and one in the square 
+The animals are divided into five groups placed, four in the square corners and one in the square 
 centre.
 
 The collective behaves following the SCR-pattern (leader election, data collection, 
@@ -40,7 +40,7 @@ wander around. These two experiments could give us some insight for our research
 - aggregate program for station: WildLifeMonitoring
 - aggregate program for smart collar: AnimalBehaviour
 - movement evaluation update : 10 Hz
-- danger change molecule rate : 0.01 Hz
+- danger molecule change rate : 0.01 Hz
 - simulation length : 300s
 - environment size: 2500x2500 m
 - mobile nodes count: 100
@@ -54,9 +54,9 @@ wander around. These two experiments could give us some insight for our research
 - the "danger" sensing is very simplistic: "mobile nodes" check if the "danger" 
   molecule is set to true;
 - the "rescue" action is also simplistic, it is instantaneous, and it changes *the* 
-  *danger* molecule to false ;
+  *danger* molecule to false;
 - station program evaluation rate is the same as mobile node: here I imagine a program 
-  evaluation frequency  lesser than others nodes;
+  evaluation frequency lesser than others nodes;
 - the collar evaluates an aggregate program for "broadcast" the danger status;
 - the danger changing rate is surrealistic. 
 - animals move like mobile nodes, namely simulating a flocking behavior. 
@@ -75,8 +75,8 @@ In general, the structure has influenced the overall behavior.
 
 ![](./assets/result/31-01-21/leader/leader_01_.png)
 
-*The plot of leader tendency tests.*
+*The plot of leader tendency tests. Result from ./gradlew wildLifeMonitoring *
 
 ![](./assets/result/31-01-21/noleader/noleader_01_.png)
 
-*The plot of wander tendency tests*
+*The plot of wander tendency tests. Result from ./gradlew wildLifeMonitoringNoLeader *
