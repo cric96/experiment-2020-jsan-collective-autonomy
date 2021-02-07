@@ -156,6 +156,8 @@ fun makeTest(
 }
 
 makeTest(name="wildLifeMonitoringGUI", file = "wildlife-monitoring-structure", effectFile = "paper")
+makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
+
 makeTest(name="wildLifeMonitoring", file = "wildlife-monitoring-structure", time = 300.0, vars = setOf("random"))
 makeTest(name="wildLifeMonitoringNoLeader", file = "wildlife-monitoring-structure-noleader", time = 300.0, vars = setOf("random"))
 defaultTasks("fatJar")

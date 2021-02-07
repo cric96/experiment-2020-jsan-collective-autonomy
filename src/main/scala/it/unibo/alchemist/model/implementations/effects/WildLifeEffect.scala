@@ -4,7 +4,7 @@ import it.unibo.alchemist.boundary.gui.effects.Effect
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D
 import it.unibo.alchemist.model.implementations.effects.WildLifeEffect._
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{Animal2D, DroneNode2D, MobileNode2D, SimpleNodeManager}
+import it.unibo.alchemist.model.implementations.nodes.{Animal2D, DroneNode2D, MobileNode2D, NodeManager, SimpleNodeManager}
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
@@ -34,11 +34,7 @@ class WildLifeEffect extends Effect {
     val transform = getTransform(x, y, zoom * DRONE_SIZE, rotation(droneNode))
     val transformedShape = transform.createTransformedShape(DRONE_SHAPE)
     val manager = new SimpleNodeManager[T](droneNode)
-    if(manager.has("leader_id")) {
-      g.setColor(colorFromId(manager.get[Int]("leader_id")))
-    } else {
-      g.setColor(DRONE_COLOR)
-    }
+    g.setColor(getColorFromLeader(manager).getOrElse(DRONE_COLOR))
     g.fill(transformedShape)
   }
 
@@ -61,14 +57,19 @@ class WildLifeEffect extends Effect {
     val station = env.getShapeFactory.circle(STATION_SIZE)
     val manager = new SimpleNodeManager[T](node)
     val transform = getTransform(x, y, zoom, 0.0)
+    val influence = Some(manager)
+      .collect { case node if node.has("area") => node.get[Double]("area")}
+      .map(env.getShapeFactory.circle(_))
+      .map { case area : AwtShapeCompatible => transform.createTransformedShape(area.asAwtShape()) }
     station match {
       case station : AwtShapeCompatible => val transformed = transform.createTransformedShape(station.asAwtShape())
-        if(manager.has("leader_id")) {
-          g.setColor(colorFromId(manager.get[Int]("leader_id")))
-        } else {
-          g.setColor(STATION_COLOR)
-        }
+        val color = getColorFromLeader(manager).getOrElse(STATION_COLOR)
+        g.setColor(color)
         g.fill(transformed)
+        for (shape <- influence) {
+          g.setColor(new Color(color.getRed, color.getGreen, color.getBlue, 50))
+          g.fill(shape)
+        }
     }
   }
 
@@ -85,6 +86,9 @@ class WildLifeEffect extends Effect {
     transform
   }
 
+  private def getColorFromLeader(node : NodeManager) : Option[Color] = Some(node)
+    .collect { case node if node.has("leader_id") => node.get[Int]("leader_id")}
+    .map(colorFromId)
   private def colorFromId(id : Int) : Color = PALETTE(id % MAX_COLOR)
 }
 
