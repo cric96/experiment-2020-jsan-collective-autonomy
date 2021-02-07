@@ -14,7 +14,7 @@ variables:
 
   random: &random
     min: 0
-    max: 5
+    max: 10
     step: 1
     default: 0
 
@@ -139,7 +139,7 @@ displacements:
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [8.3]
+      parameters: [ *droneVelocity ]
     programs:
       - *program
       - *areaExplore
