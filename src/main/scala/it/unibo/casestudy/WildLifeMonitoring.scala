@@ -1,15 +1,15 @@
 package it.unibo.casestudy
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{NodeManager, SimpleNodeManager}
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 import it.unibo.casestudy.WildLifeMonitoring.{MultiTargetPlan, Plan, ProgramType}
 import it.unibo.scafi.space.Point3D
-
 import java.util.UUID
 import scala.collection.JavaConverters.iterableAsScalaIterableConverter
+
 class WildLifeMonitoring extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils
   with BlockC with BlockS with BlockT {
+
   def movingAround(p : P) : Unit = node.put("target",Some(p))
   def noTargetPosition() : Unit = node.put("target",None)
   private val grain = 500 //area for each station

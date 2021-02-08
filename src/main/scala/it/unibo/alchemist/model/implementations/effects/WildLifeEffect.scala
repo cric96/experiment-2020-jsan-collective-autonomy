@@ -10,7 +10,7 @@ import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
 
 import java.awt._
-import java.awt.geom.AffineTransform
+import java.awt.geom.{AffineTransform, Area, Ellipse2D, Rectangle2D}
 import scala.collection.mutable
 class WildLifeEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
@@ -32,8 +32,13 @@ class WildLifeEffect extends Effect {
 
   def drawDrone[T](g : Graphics2D, droneNode : MobileNode2D[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[T], zoom : Double): Unit = {
     val transform = getTransform(x, y, zoom * DRONE_SIZE, rotation(droneNode))
-    val transformedShape = transform.createTransformedShape(DRONE_SHAPE)
     val manager = new SimpleNodeManager[T](droneNode)
+    val shape = if(manager.has("type") && manager.get[String]("type") == "healer") {
+      HEALER_SHAPE
+    } else {
+      DRONE_SHAPE
+    }
+    val transformedShape = transform.createTransformedShape(shape)
     g.setColor(getColorFromLeader(manager).getOrElse(DRONE_COLOR))
     g.fill(transformedShape)
   }
@@ -98,10 +103,16 @@ object WildLifeEffect {
   val PALETTE : Map[Int, Color] = (0 to 100).map(_ -> randomColor).toMap
   val ANIMAL_COLOR_CACHE : mutable.Map[String, Color] = new mutable.HashMap()
   val DRONE_SHAPE : Polygon = new Polygon(Array(-2, 0, 2), Array(0, - 5, 0), 3)
+  val HEALER_SHAPE : Area = {
+    val area = new Area(DRONE_SHAPE)
+    val circle = new Area(new Ellipse2D.Double(-1, -1, 2, 2))
+    area.subtract(circle)
+    area
+  }
   val STATION : SimpleMolecule = new SimpleMolecule("station")
-  val STATION_SIZE = 4.0
+  val STATION_SIZE = 8.0
   val STATION_ANIMAL = 4.0
-  val DRONE_SIZE = 1.5
+  val DRONE_SIZE = 4
   val DRONE_COLOR : Color = Color.BLACK
   val STATION_COLOR : Color = Color.RED
 
