@@ -2,8 +2,7 @@ package it.unibo.casestudy
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 class MutableAreaWildlife extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC
-  with BlockG
-  with ScafiAlchemistSupport with ProcessDSL with StateManagement
+  with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
   val nodeElementsInArea = 5
   val deltaArea = 1.1
@@ -32,7 +31,7 @@ class MutableAreaWildlife extends AggregateProgram with Gradients
     node.put("local", branch(field && !potential.isInfinity) { 1 } { 0 })
     C[Double, Int](potential, _ + _, branch(field && !potential.isInfinity) { 1 } { 0 }, 0)
   }
-
+  //NOT WORK
   def influenceEval : Double = rep(initialArea) {
     area => {
       val influence = broadcastIn[Double](classicGradient(isStationary, nbrRange), area) //influence field: associate for each point a influence area
