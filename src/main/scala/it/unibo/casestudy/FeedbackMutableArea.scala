@@ -7,23 +7,40 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC with BlockS
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
-  def isHealer : Boolean = sense[String]("type") == "healer"
-  def isStationary : Boolean = sense[String]("type") == "stationary"
-  def isExploratory : Boolean = sense[String]("type") == "exploratory"
   def grain : Double = 500 //todo put in a better place
-  def countIn(potential: Double, field: Boolean): Int = {
-    node.put("local", branch(field && !potential.isInfinity) { 1 } { 0 })
-    C[Double, Int](potential, _ + _, branch(field && !potential.isInfinity) { 1 } { 0 }, 0)
-  }
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     rep(0.0) {
       influence => {
-        val potential = G[Double](leader, influence, v => v + nbrRange(), nbrRange)
-        val countHealer = countIn(potential, isHealer)
+        val actualLeader = broadcastPenalized(leader, influence, mid())
+        val potential = distanceTo(mid() == actualLeader)
+        val countHealer = countIn(potential, true)
         val countExploratory = countIn(potential, isExploratory)
-        countHealer + countExploratory
+        if(leader) {
+          node.put("area", grain - (influence * 2))
+          node.put("howMany", influence)
+        }
+        node.put("leader_id", actualLeader)
+        exponentialBackOff(alpha = 0.9, count = countHealer + countExploratory)
       }
     }
+  }
+  def isHealer : Boolean = sense[String]("type") == "healer"
+  def isStationary : Boolean = sense[String]("type") == "stationary"
+  def isExploratory : Boolean = sense[String]("type") == "exploratory"
+  def exponentialBackOff(alpha : Double, count : Double) : Double = rep(count)(c => c * (1 - alpha) + alpha * count)
+  def penalizedGradient(source: Boolean, penalization : Double): Double  = rep(Double.PositiveInfinity){
+    d => mux(source){ penalization }{ minHoodPlus(nbr(d)+nbrRange()) }
+  }
+  def penalizedG[D](source : Boolean, penalization : Double)(field : D)(acc : D => D) : D = {
+    val g = penalizedGradient(source, penalization)
+    rep(field) { case (value) =>
+      mux(source){ field }{ excludingSelf.minHoodSelector[Double,D](nbr{g}+nbrRange())(acc(nbr{value})).getOrElse(field) }
+    }
+  }
+  def broadcastPenalized[D](source : Boolean, penalization : Double, data : D) : D = penalizedG(source, penalization)(data)(d => d)
+  def countIn(potential: Double, field: Boolean): Int = {
+    node.put("local", branch(field) { 1 } { 0 })
+    C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
   }
 }

@@ -107,7 +107,7 @@ pools:
         type: Event
         actions:
           - type: RunScafiProgram
-            parameters: [it.unibo.casestudy.MutableAreaWildlife, 5.0] # second argument is retention time
+            parameters: [it.unibo.casestudy.FeedbackMutableArea, 5.0] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
   # "Collar" aggregate program evaluation
   - pool: &animalBehaviour
