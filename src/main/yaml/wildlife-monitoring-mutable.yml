@@ -144,8 +144,9 @@ pools:
         actions:
           - type: Separation
             parameters: [ 40.0, 0.3 ]
-          - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 10, 0.01]
+          - type: RandomWayPoint
+            #centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double
+            parameters: [ 0, 0, *explorationRange, 10, 100, 0.1]
 
 displacements:
 # DRONES DISPLACEMENT

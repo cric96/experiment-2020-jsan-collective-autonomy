@@ -13,7 +13,11 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
 
   private val diameter = radius * 2
-  var position = movementCache.getOrElseUpdate(node.group, randomPositionInCircle)
+  lazy val groupLeader : MobileNode[T, Euclidean2DPosition] = env.getNodes.toList.collect {
+    case other : MobileNode[T, Euclidean2DPosition] if (node.group == other.group) => other
+  }.minBy(_.getId)
+
+  var position = randomPositionInCircle
   var lastTime = 0.0
 
   def this(env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
@@ -25,22 +29,14 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = RandomWayPoint[T](env, rand, node, centerX, centerY, radius, thr, maxSleep, weight)
 
   override def unweightedVector: Euclidean2DPosition = {
-    sleepCache.get(node.group) match {
-      case None =>
-        if (reached) {
-          movementCache.update(node.group, randomPositionInCircle)
-          sleepCache.update(node.group,rand.nextDouble() * maxSleep)
-        }
-        lastTime = env.getSimulation.getTime.toDouble
-        position = movementCache(node.group)
-        normalizedWithSpeed(position - env.getPosition(node))
-      case Some(time) =>
-        if(isSleepEnded(time)) {
-          sleepCache.remove(node.group)
-        }
-        env.origin
+    if(node.getId == groupLeader.getId) {
+      if(reached) {
+        position = randomPositionInCircle
+      }
+      position - env.getPosition(node)
+    } else {
+      groupLeader.velocity
     }
-
   }
 
   private def reached: Boolean = position.getDistanceTo(env.getPosition(node)) < thr
@@ -55,5 +51,5 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
 
 object RandomWayPoint {
   private val movementCache : collection.mutable.Map[String, Euclidean2DPosition] = collection.mutable.HashMap()
-  private val sleepCache : collection.mutable.Map[String, Double] = collection.mutable.HashMap()
+  private val sleepCache : collection.mutable.Map[String, String] = collection.mutable.HashMap()
 }

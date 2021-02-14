@@ -7,21 +7,21 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC with BlockS
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
-  def grain : Double = 500 //todo put in a better place
+  def grain : Double = 500 //TODO put as molecule?
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     rep(0.0) {
       influence => {
         val actualLeader = broadcastPenalized(leader, influence, mid())
         val potential = distanceTo(mid() == actualLeader)
-        val countHealer = countIn(potential, true)
+        val countHealer = countIn(potential, isStationary)
         val countExploratory = countIn(potential, isExploratory)
         if(leader) {
           node.put("area", grain - (influence * 2))
           node.put("howMany", influence)
         }
         node.put("leader_id", actualLeader)
-        exponentialBackOff(alpha = 0.9, count = countHealer + countExploratory)
+        exponentialBackOff(alpha = 0.1, count = countHealer + countExploratory)
       }
     }
   }
@@ -39,8 +39,5 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     }
   }
   def broadcastPenalized[D](source : Boolean, penalization : Double, data : D) : D = penalizedG(source, penalization)(data)(d => d)
-  def countIn(potential: Double, field: Boolean): Int = {
-    node.put("local", branch(field) { 1 } { 0 })
-    C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
-  }
+  def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
 }
