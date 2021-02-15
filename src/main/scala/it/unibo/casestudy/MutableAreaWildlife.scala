@@ -1,5 +1,7 @@
 package it.unibo.casestudy
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
+
+//A test without using block S and leveraging on process + align.
 class MutableAreaWildlife extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement

@@ -115,7 +115,7 @@ pools:
         type: Event
         actions:
           - type: RunScafiProgram
-            parameters: [ it.unibo.casestudy.AnimalBehaviour, 5.0 ] # second argument is retention time
+            parameters: [ it.unibo.casestudy.SmartCollarBehaviour, 5.0 ] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
   # Drone movement behaviour
   - pool: &areaExplore
