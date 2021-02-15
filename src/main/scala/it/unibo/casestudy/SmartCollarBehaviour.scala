@@ -8,6 +8,9 @@ class SmartCollarBehaviour extends AggregateProgram with StandardSensors with Sc
   def isDanger : Boolean = sense("danger")
   override def main(): Any = {
     SmartCollarBehaviour.dangerAnimalField(this)
+    val save = SmartCollarBehaviour.anyHealer(this)
+    val danger = mux(save) { false } { node.get[Boolean]("danger")}
+    node.put("danger", danger)
   }
   override def currentPosition(): Point3D = { //TODO fix alchemist - ScaFi incarnation
     val position = sense[Euclidean2DPosition](LSNS_POSITION)
@@ -27,6 +30,20 @@ object SmartCollarBehaviour {
           mux(nbr(isDanger)) { Map(nbr(mid()) -> nbr(currentPosition()))} { Map.empty }
         }
       }
+    }
+  }
+
+  def anyHealer(interpreter: AggregateProgram with StandardSensors with FieldUtils with ScafiAlchemistSupport) : Boolean = {
+    import interpreter._
+    import excludingSelf._
+    lazy val isHealer : Boolean = if(node.has("type")) {
+      sense[String]("type") == "healer"
+    } else {
+      false
+    }
+    align[String, Boolean]("heal"){
+      //TODO it is right to do in this way?
+      (k : String) => anyHood(nbr(isHealer))
     }
   }
 
