@@ -70,6 +70,10 @@ variables:
     formula: new it.unibo.alchemist.DifferentialCombiner()
     language: scala
 
+  animalCombiner: &animalCombiner
+    formula: new it.unibo.alchemist.SumCombiner()
+    language: scala
+
   evaluationRate: &evaluationRate
     formula: 1
 
@@ -135,18 +139,18 @@ pools:
             parameters: [ 0, 0, *explorationRange, 10, 0.01]
   # Animals movement behaviour
   - pool: &animalsWander
-#      - time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)
-#          type: DiracComb
-#          parameters: [ movementRate ]
+      #- time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)
+      #    type: DiracComb
+      #    parameters: [ *movementRate ]
       - time-distribution: *movementRate
         type: MotorSchemaReaction
-        parameters: [ *velocityCombiner ]
+        parameters: [ *animalCombiner ]
         actions:
           - type: Separation
-            parameters: [ 40.0, 0.3 ]
+            parameters: [ 40.0, 0.5 ]
           - type: RandomWayPoint
             #centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double
-            parameters: [ 0, 0, *explorationRange, 10, 100, 0.1]
+            parameters: [ 0, 0, *explorationRange, 10, 5, 0.1]
 
 displacements:
 # DRONES DISPLACEMENT
@@ -155,7 +159,7 @@ displacements:
       parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [8.3]
+      parameters: [ *droneVelocity ]
     programs:
       - *program
       - *areaExplore
