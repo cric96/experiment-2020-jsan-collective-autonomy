@@ -37,6 +37,7 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
     }
   }
   private def leaderBehaviour() : Euclidean2DPosition = {
+
     if(isSleeping(maxSleep)) {
       zeroVelocity
     } else {
@@ -55,7 +56,10 @@ case class RandomWayPoint[T](env: Environment[T, Euclidean2DPosition], rand: Ran
   private def reached: Boolean = position.getDistanceTo(env.getPosition(node)) < thr
   private def isSleeping(time : Double): Boolean = env.getSimulation.getTime.toDouble - lastTime < time
   private def randomPositionInCircle = new Euclidean2DPosition(randomCoordInCircle(centerX), randomCoordInCircle(centerY))
-  private def randomCoordInCircle(centerCoord: Double): Double = centerCoord + (radius - rand.nextDouble() * diameter)
+  private def randomCoordInCircle(centerCoord: Double): Double = {
+    val randomPart = rand.nextDouble() * diameter
+    centerCoord + (radius - randomPart)
+  }
 }
 object RandomWayPoint {
   private[RandomWayPoint] val DefaultThr = 5

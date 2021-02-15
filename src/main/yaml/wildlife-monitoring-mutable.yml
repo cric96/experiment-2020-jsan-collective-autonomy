@@ -54,17 +54,11 @@ variables:
   zebraVelocity: &zebraVelocity
     formula: 8.3
 
-  originX: &originX
-    formula: worldSize / -2
-
-  originY: &originY
-    formula: worldSize / -2
-
-  minusOriginX: &minusOriginX
+  top: &top
     formula: worldSize / 2
 
-  minusOriginY: &minusOriginY
-    formula: worldSize / 2
+  bottom: &bottom
+    formula: worldSize / -2
 
   velocityCombiner: &velocityCombiner
     formula: new it.unibo.alchemist.DifferentialCombiner()
@@ -156,7 +150,7 @@ displacements:
 # DRONES DISPLACEMENT
   - in:
       type: Rectangle
-      parameters: [ *drones, *originX, *originY, *worldSize, *worldSize]
+      parameters: [ *drones, *bottom, *bottom, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
       parameters: [ *droneVelocity ]
@@ -174,7 +168,7 @@ displacements:
         concentration: *exploratoryLabel
   - in:
       type: Rectangle
-      parameters: [ *healer, *originX, *originY, *worldSize, *worldSize ]
+      parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
       parameters: [ 8.3 ]
@@ -210,7 +204,7 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animalsForGroup, *originX, *minusOriginY, 200, 200 ]
+      parameters: [ *animalsForGroup, *top, *bottom, 200, 200 ]
     nodes:
       type: Animal2D
       parameters: [ *impalaVelocity, "impala" ]
@@ -227,10 +221,10 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animalsForGroup, *originX, *originY, 200, 200 ]
+      parameters: [ *animalsForGroup, *top, *top, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ *zebraVelocity, "zebras" ]
+      parameters: [ *zebraVelocity, "zebras2" ]
     programs:
       - *animalsWander
       - *ill
@@ -244,7 +238,7 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animalsForGroup, *minusOriginX, *minusOriginY, 200, 200 ]
+      parameters: [ *animalsForGroup, *bottom, *bottom, 200, 200 ]
     nodes:
       type: Animal2D
       parameters: [ *impalaVelocity, "impala2" ]
@@ -261,10 +255,10 @@ displacements:
         concentration: false
   - in:
       type: Rectangle
-      parameters: [ *animalsForGroup, *minusOriginX, *originY, 200, 200 ]
+      parameters: [ *animalsForGroup, *bottom, *top, 200, 200 ]
     nodes:
       type: Animal2D
-      parameters: [ *zebraVelocity, "zebras2" ]
+      parameters: [ *zebraVelocity, "zebras3" ]
     programs:
       - *animalsWander
       - *ill
@@ -279,7 +273,7 @@ displacements:
 # STATIONS DISPLACEMENT
   - in:
       type: Grid
-      parameters: [ *originX, *originY, *minusOriginX, *minusOriginX, 700, 700, 500, 500]
+      parameters: [ *bottom, *bottom, *top, *top, 700, 700, 500, 500]
     nodes:
       type: LoraStation
     programs:
@@ -293,6 +287,7 @@ displacements:
         concentration: false
       - molecule: type
         concentration: *stationaryLabel
+
 export:
   - time
   - molecule: danger

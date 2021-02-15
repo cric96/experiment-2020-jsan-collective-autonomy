@@ -8,6 +8,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
   def grain : Double = 500 //TODO put as molecule?
+  def alpha : Double = 0.1
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     rep(0.0) {
@@ -21,7 +22,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           node.put("howMany", influence)
         }
         node.put("leader_id", actualLeader)
-        exponentialBackOff(alpha = 0.1, count = countHealer + countExploratory)
+        exponentialBackOff(alpha, count = countHealer + countExploratory)
       }
     }
   }

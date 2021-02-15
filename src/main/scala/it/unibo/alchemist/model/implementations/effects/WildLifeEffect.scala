@@ -44,7 +44,7 @@ class WildLifeEffect extends Effect {
   }
 
   def drawAnimal[T](g : Graphics2D, node : Animal2D[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
-    val station = env.getShapeFactory.circle(STATION_SIZE)
+    val station = env.getShapeFactory.rectangle(STATION_SIZE, STATION_SIZE)
     val manager = new SimpleNodeManager[T](node)
     val transform = getTransform(x, y, zoom, 0.0)
     station match {
@@ -72,7 +72,7 @@ class WildLifeEffect extends Effect {
         g.setColor(color)
         g.fill(transformed)
         for (shape <- influence) {
-          g.setColor(new Color(color.getRed, color.getGreen, color.getBlue, 50))
+          g.setColor(new Color(color.getRed, color.getGreen, color.getBlue, STATION_ALPHA))
           g.fill(shape)
         }
     }
@@ -111,6 +111,7 @@ object WildLifeEffect {
   }
   val STATION : SimpleMolecule = new SimpleMolecule("station")
   val STATION_SIZE = 8.0
+  val STATION_ALPHA = 30
   val STATION_ANIMAL = 4.0
   val DRONE_SIZE = 4
   val DRONE_COLOR : Color = Color.BLACK
