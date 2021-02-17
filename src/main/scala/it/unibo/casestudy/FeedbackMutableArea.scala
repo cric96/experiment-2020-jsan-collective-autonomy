@@ -11,7 +11,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
   def grain : Double = 500 //TODO put as molecule?
-  def alpha : Double = 0.01
+  def alpha : Double = 0.1
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
@@ -28,11 +28,12 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
         )
         val areaTask = dangersCollected.toSeq.sortBy(_._1)
           .headOption
-          .map(_._2)
-          .map(rescueTask)
+          .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
         val myTask = broadcastPenalized(leader, influence * 2, areaTask)
-        node.put("target", myTask(this))
+        val taskExecution = myTask(this)
+        node.put("target", taskExecution._1)
+        node.put("targetId", taskExecution._2)
         val countExploratory = countIn(potential, isExploratory)
         node.put("sensed", dangersCollected)
         if(leader) {
@@ -64,11 +65,11 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     penalizedG(source, penalization)(data)(d => d)
   }
   def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
-  def rescueTask(targetPosition : P) : Task[FeedbackMutableArea.Program, Option[P]] = {
-    task[FeedbackMutableArea.Program, Option[P]](p => Some(targetPosition))
-      .where(p => p.sense[String]("type") == "healer")(Option.empty[P])
+  def rescueTask(targetPosition : P, who : ID) : Task[FeedbackMutableArea.Program, (Option[P], ID)] = {
+    task[FeedbackMutableArea.Program, (Option[P], ID)](p => (Some(targetPosition), who))
+      .where(p => p.sense[String]("type") == "healer")(p => (Option.empty[P], p.mid()))
   }
-  def noTask() : Task[FeedbackMutableArea.Program, Option[P]] = task(p => None)
+  def noTask() : Task[FeedbackMutableArea.Program, (Option[P], ID)] = task(p => (None, p.mid()))
   override def currentPosition(): Point3D = { //TODO fix alchemist - ScaFi incarnation
     val position = sense[Euclidean2DPosition](LSNS_POSITION)
     Point3D(position.getX, position.getY, 0.0)

@@ -41,9 +41,14 @@ object SmartCollarBehaviour {
     } else {
       false
     }
+    lazy val healMe : Boolean = if(node.has("targetId")) {
+      interpreter.mid() == node.get[Int]("targetId")
+    } else {
+      false
+    }
     align[String, Boolean]("heal"){
       //TODO it is right to do in this way?
-      (k : String) => anyHood(nbr(isHealer))
+      (k : String) => anyHood(nbr(isHealer) && nbr(healMe))
     }
   }
 
