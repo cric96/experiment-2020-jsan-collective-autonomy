@@ -103,6 +103,7 @@ pools:
         type: Event
         actions:
           - type: IllAnimal
+            parameters: [ 150 ]
   # Main aggregate program evaluation
   - pool: &program
       - time-distribution:
