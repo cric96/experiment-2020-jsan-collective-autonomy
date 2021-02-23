@@ -1,9 +1,10 @@
 # Goal is to show reactivity to spikes of load, withstanding leader failures, and the benefit of an updated metric
 the_plots_labels:
   - Time                 #0
-  - 'danger count'
+  - 'fixed area'
+  - 'variable area'
 the_plots_formats:
-  - [0,1]
+  - [0,1,2]
   #- [0,11,12,13]
 #  - [0,2,3,4,5]
 #y_labels: ['# of requests', '# of requests','','% of utilization of workers']
@@ -19,7 +20,7 @@ legend_position:
   - "upper right"
 legend_size: 12
 force_limit_plot_y:
-  0: 50
+  0: 20
   1: 20
 #   3: 1000
 #  4: 35
