@@ -34,23 +34,23 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
         val taskExecution = myTask(this)
         node.put("target", taskExecution._1)
         node.put("targetId", taskExecution._2)
-        val countExploratory = countIn(potential, isExploratory)
+        val countExplorer = countIn(potential, isExplorer)
         node.put("sensed", dangersCollected)
         if(leader) {
           node.put("sensed", dangersCollected)
-          node.put("area", grain - (influence * 2))
+          node.put("influence", grain - (influence * 2))
           node.put("howMany", influence)
         }
         node.put("leader_id", actualLeader)
-        exponentialBackOff(alpha, count = countHealer + countExploratory)
-        //0
+        mux(mutableAreaBehaviour) { exponentialBackOff(alpha, count = countHealer + countExplorer) } { 0 }
       }
     }
   }
   def isHealer : Boolean = sense[String]("type") == "healer"
   def isStationary : Boolean = sense[String]("type") == "stationary"
   def isStation : Boolean = node.get("station")
-  def isExploratory : Boolean = sense[String]("type") == "exploratory"
+  def isExplorer : Boolean = sense[String]("type") == "explorer"
+  def mutableAreaBehaviour : Boolean = sense[Double]("areaType").toInt == 0
   def exponentialBackOff(alpha : Double, count : Double) : Double = rep(count)(c => c * (1 - alpha) + alpha * count)
   def penalizedGradient(source: Boolean, penalization : Double): Double  = rep(Double.PositiveInfinity){
     d => mux(source){ penalization }{ minHoodPlus(nbr(d)+nbrRange()) }

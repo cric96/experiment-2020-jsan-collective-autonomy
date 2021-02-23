@@ -63,7 +63,7 @@ class WildLifeEffect extends Effect {
     val manager = new SimpleNodeManager[T](node)
     val transform = getTransform(x, y, zoom, 0.0)
     val influence = Some(manager)
-      .collect { case node if node.has("area") => node.get[Double]("area")}
+      .collect { case node if node.has("influence") => node.get[Double]("influence")}
       .map(env.getShapeFactory.circle(_))
       .map { case area : AwtShapeCompatible => transform.createTransformedShape(area.asAwtShape()) }
     station match {

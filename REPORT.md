@@ -1,3 +1,29 @@
+# Experiment #2 (22-02-2021) wildlife monitoring: mutable area formation based on entity capabilities.
+
+## **Research question**: How local behaviour (autonomy) could infect the collective behaviour and structure?
+
+The configuration is similar to #1. The main differences are:
+1. there are two mobility node type, "healer" nodes (i.e. one with the capability to heal animals) and "explorer" nodes (i.e. one with the capability to explore an area). Currently, there are 50 healer nodes and 50 explorer nodes, in the next experiment the capabilities should be found at runtime.
+2. the collective uses SCR-pattern, but the "area of influence" of the leader changes according to the node numbers inside the area (inspired by https://doi.org/10.1016/j.future.2020.07.032). More nodes are inside an area, and more the leader has lesser influence.
+
+Conceptually, using mutable area formation, the data might spread rapidly and go only in the interested devices.
+**Experiment limitations**
+- the node capabilities are fixed.
+- same as #1
+
+**Screenshot**
+![](./assets/result/31-01-21/snapshot.png)
+
+**Plots**
+Again, I plot only the danger count for each experiment.
+I run 200 simulations (100 with fixed area zone and 100 with "mutable" area).
+The mutable area seems to have better performance in terms heal animal, but perhaps a 
+statistical test is needed.
+
+![](./assets/result/22-02-21/result.png)
+
+*The plot of leader tendency tests. Result from ./gradlew wildLifeMonitoring *
+
 # Experiment #1 (31-01-2021) wildlife monitoring: rescue animals in danger. 
 
 ## **Research question**:  How different collectives affect the system? (Autonomy/structure relationship)

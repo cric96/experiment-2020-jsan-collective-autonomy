@@ -18,9 +18,15 @@ variables:
     step: 1
     default: 0
 
-  exploratoryLabel : &exploratoryLabel
+  mutableArea: &mutableArea
+    min: 0
+    max: 1
+    step: 1
+    default: 0
+
+  explorerLabel : &explorerLabel
     formula: >
-      """ "exploratory" """
+      """ "explorer" """
     language: scala
 
   healerLabel: &healerLabel
@@ -165,7 +171,9 @@ displacements:
       - molecule: danger
         concentration: false
       - molecule: type
-        concentration: *exploratoryLabel
+        concentration: *explorerLabel
+      - molecule: areaType
+        concentration: *mutableArea
   - in:
       type: Rectangle
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
@@ -184,6 +192,8 @@ displacements:
         concentration: false
       - molecule: type
         concentration: *healerLabel
+      - molecule: areaType
+        concentration: *mutableArea
 # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -287,6 +297,8 @@ displacements:
         concentration: false
       - molecule: type
         concentration: *stationaryLabel
+      - molecule: areaType
+        concentration: *mutableArea
 
 export:
   - time

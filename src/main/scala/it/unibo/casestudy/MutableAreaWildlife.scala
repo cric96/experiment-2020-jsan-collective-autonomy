@@ -82,7 +82,7 @@ class MutableAreaWildlife extends AggregateProgram with Gradients
     val broadcastArea = broadcastIn(classicGradient(isStationary, nbrRange), area)
     val influenceArea = limitedGradient(isStationary, broadcastArea)
     val inArea = !influenceArea.isInfinity
-    if(isStationary) { node.put("area", area)}
+    if(isStationary) { node.put("influence", area)}
     val leader: Int = broadcastIn[ID](influenceArea, mid())
 
     node.put("areaInfluence", broadcastArea)
