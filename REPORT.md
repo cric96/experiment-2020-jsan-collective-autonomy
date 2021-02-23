@@ -12,7 +12,7 @@ Conceptually, using mutable area formation, the data might spread rapidly and go
 - same as #1
 
 **Screenshot**
-![](./assets/result/31-01-21/snapshot.png)
+![](./assets/result/22-02-21/snapshot.png)
 
 **Plots**
 Again, I plot only the danger count for each experiment.
