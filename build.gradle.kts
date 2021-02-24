@@ -159,6 +159,7 @@ makeTest(name="wildLifeMonitoringGUI", file = "wildlife-monitoring-structure", e
 makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
 
 makeTest(name="wildLifeAreaData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "mutableArea"))
+makeTest(name="wildLifeAreaCheckAlpha", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "alpha"))
 makeTest(name="wildLifeMonitoring", file = "wildlife-monitoring-structure", time = 300.0, vars = setOf("random"))
 makeTest(name="wildLifeMonitoringNoLeader", file = "wildlife-monitoring-structure-noleader", time = 300.0, vars = setOf("random"))
 defaultTasks("fatJar")

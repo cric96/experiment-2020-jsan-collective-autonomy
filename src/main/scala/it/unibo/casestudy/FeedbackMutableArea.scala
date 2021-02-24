@@ -11,7 +11,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
   def grain : Double = 500 //TODO put as molecule?
-  def alpha : Double = 0.1
+  def alpha : Double = sense[Double]("alpha")
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)

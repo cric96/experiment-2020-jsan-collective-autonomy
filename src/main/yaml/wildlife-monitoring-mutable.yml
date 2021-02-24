@@ -14,7 +14,7 @@ variables:
 
   random: &random
     min: 0
-    max: 500
+    max: 10
     step: 1
     default: 0
 
@@ -23,6 +23,12 @@ variables:
     max: 1
     step: 1
     default: 0
+
+  alpha: &alpha
+    min: 0.01
+    max: 0.5
+    step: 0.01
+    default: 0.01
 
   explorerLabel : &explorerLabel
     formula: >
@@ -175,6 +181,8 @@ displacements:
         concentration: *explorerLabel
       - molecule: areaType
         concentration: *mutableArea
+      - molecule: alpha
+        concentration: *alpha
   - in:
       type: Rectangle
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
@@ -195,6 +203,8 @@ displacements:
         concentration: *healerLabel
       - molecule: areaType
         concentration: *mutableArea
+      - molecule: alpha
+        concentration: *alpha
 # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -300,7 +310,8 @@ displacements:
         concentration: *stationaryLabel
       - molecule: areaType
         concentration: *mutableArea
-
+      - molecule: alpha
+        concentration: *alpha
 export:
   - time
   - molecule: danger
