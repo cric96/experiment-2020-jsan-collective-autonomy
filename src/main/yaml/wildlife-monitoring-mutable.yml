@@ -14,7 +14,7 @@ variables:
 
   random: &random
     min: 0
-    max: 100
+    max: 500
     step: 1
     default: 0
 
@@ -103,7 +103,7 @@ pools:
         type: Event
         actions:
           - type: IllAnimal
-            parameters: [ 150 ]
+            parameters: [ 200 ]
   # Main aggregate program evaluation
   - pool: &program
       - time-distribution:

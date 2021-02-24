@@ -1,3 +1,17 @@
+# Experiment #2.1 (24-02-2021) wildlife monitoring: problem with #2
+The plot in #2 was too noisy to make some conclusion. For this reason I try to run multiple run of this simulation.
+Unfortunately, with 500 runs for each configuration, the average results converge.
+
+**Plots**
+
+![](./assets/result/24-02-21/200-iteration.png)
+
+with 200 runs 
+
+![](./assets/result/24-02-21/problem.png)
+
+with 500 runs.
+
 # Experiment #2 (22-02-2021) wildlife monitoring: mutable area formation based on entity capabilities.
 
 ## **Research question**: How local behaviour (autonomy) could infect the collective behaviour and structure?
