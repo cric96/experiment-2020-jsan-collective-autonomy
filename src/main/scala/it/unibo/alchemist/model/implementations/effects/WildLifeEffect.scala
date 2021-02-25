@@ -44,22 +44,25 @@ class WildLifeEffect extends Effect {
   }
 
   def drawAnimal[T](g : Graphics2D, node : Animal2D[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
-    val station = env.getShapeFactory.rectangle(STATION_SIZE, STATION_SIZE)
+    val animal = env.getShapeFactory.circleSector(ANIMAL_SIZE, Math.PI, 0)
+    val danger = env.getShapeFactory.circle(ANIMAL_SIZE)
     val manager = new SimpleNodeManager[T](node)
     val transform = getTransform(x, y, zoom, 0.0)
-    station match {
-      case station : AwtShapeCompatible => val transformed = transform.createTransformedShape(station.asAwtShape())
+    (animal, danger) match {
+      case (animal : AwtShapeCompatible, danger : AwtShapeCompatible) =>
+        val transformedAnimal = transform.createTransformedShape(animal.asAwtShape())
+        val transformedDanger = transform.createTransformedShape(danger.asAwtShape())
         if(manager.get[Boolean]("danger")) {
-          g.setColor(Color.PINK)
-        } else {
-          g.setColor(ANIMAL_COLOR_CACHE.getOrElseUpdate(node.group, randomColor()))
+          g.setColor(Color.RED)
+          g.fill(transformedDanger)
         }
-        g.fill(transformed)
+        g.setColor(ANIMAL_COLOR_CACHE.getOrElseUpdate(node.group, randomColor()))
+        g.fill(transformedAnimal)
     }
   }
 
   def drawStation[T](g : Graphics2D, node : Node[T], x : Int, y : Int, env : EuclideanPhysics2DEnvironment[_], zoom : Double) : Unit = {
-    val station = env.getShapeFactory.circle(STATION_SIZE)
+    val station = env.getShapeFactory.rectangle(STATION_SIZE, STATION_SIZE)
     val manager = new SimpleNodeManager[T](node)
     val transform = getTransform(x, y, zoom, 0.0)
     val influence = Some(manager)
@@ -110,10 +113,10 @@ object WildLifeEffect {
     area
   }
   val STATION : SimpleMolecule = new SimpleMolecule("station")
-  val STATION_SIZE = 8.0
+  val STATION_SIZE = 24.0
   val STATION_ALPHA = 30
-  val STATION_ANIMAL = 4.0
-  val DRONE_SIZE = 4
+  val DRONE_SIZE = 6.0
+  val ANIMAL_SIZE = 12.0
   val DRONE_COLOR : Color = Color.BLACK
   val STATION_COLOR : Color = Color.RED
 

@@ -1,3 +1,32 @@
+# Experiments references
+|   | configuration file            | node / station Scala file | "animal" Scala file  |
+|---|-------------------------------|---------------------------|----------------------|
+| 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour |
+| 2 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      |
+# GUI Shapes explanation
+## Station
+They are fixed nodes. Here, the leader election happens. The circular area is an
+approximation of the zone of leader influence.
+
+<div style = "width : 70px">
+
+![](assets/gui/area.png)
+</div>
+
+## Animal
+Color information: each animal belongs to one group. The animals in the same group have the same color.
+### Healthy
+![](assets/gui/animal.png)
+### In danger
+![](./assets/gui/animal-danger.png)
+
+## Mobile nodes
+Color information: each mobile node belongs to a zone created by sparse choice (S). The color is the same as the leader.
+### Healer
+Since experiment #2, we include node capabilities. In this case, this node could heal an animal.
+![](./assets/gui/healer.png)
+### Explorer
+![](./assets/gui/explorer.png)
 # Experiment #2.1 (24-02-2021) wildlife monitoring: problem with #2
 The plot in #2 was too noisy to make some conclusion. For this reason I try to run multiple run of this simulation.
 Unfortunately, with 500 runs for each configuration, the average results converge.
@@ -115,8 +144,8 @@ In general, the structure has influenced the overall behavior.
 
 ![](./assets/result/31-01-21/leader/leader_01_.png)
 
-*The plot of leader tendency tests. Result from ./gradlew wildLifeMonitoring *
+*The plot of leader tendency tests. Result from ./gradlew wildLifeMonitoring*
 
 ![](./assets/result/31-01-21/noleader/noleader_01_.png)
 
-*The plot of wander tendency tests. Result from ./gradlew wildLifeMonitoringNoLeader *
+*The plot of wander tendency tests. Result from ./gradlew wildLifeMonitoringNoLeader*
