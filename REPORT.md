@@ -27,6 +27,7 @@ Color information: each animal belongs to one group. The animals in the same gro
 Color information: each mobile node belongs to a zone created by sparse choice (S). The color is the same as the leader.
 ### Healer
 Since experiment #2, we include node capabilities. In this case, this node could heal an animal.
+
 ![](./assets/gui/healer.png)
 ### Explorer
 ![](./assets/gui/explorer.png)
