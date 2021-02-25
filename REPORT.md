@@ -4,6 +4,7 @@
 | 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour | SCR + mutable area via feedback loop |       #2    |wildLifeArea              |
 | 2 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
 | 3 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
+
 **NB**: each task name has Data (for data gathering) and GUI (for simulation visualization)
 # GUI Shapes explanation
 ## Station
