@@ -1,8 +1,10 @@
 # Experiments references
-|   | configuration file            | node / station Scala file | "animal" Scala file  |
-|---|-------------------------------|---------------------------|----------------------|
-| 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour |
-| 2 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      |
+|   | Configuration file            | node / station Scala file | "animal" Scala file  | Behaviour                            | Experiments | Task                     |
+|---|-------------------------------|---------------------------|----------------------|--------------------------------------|-------------|--------------------------| 
+| 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour | SCR + mutable area via feedback loop |       #2    |wildLifeArea              |
+| 2 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
+| 3 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
+**NB**: each task name has Data (for data gathering) and GUI (for simulation visualization)
 # GUI Shapes explanation
 ## Station
 They are fixed nodes. Here, the leader election happens. The circular area is an
