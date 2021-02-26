@@ -30,16 +30,20 @@ def process_file_content(filehandle):
   data_rows = np.array([list(map(float, s.strip().split(" "))) for s in lines if len(s)>0 and s[0]!="#"], dtype='float')
   return data_rows
 
-script = sys.argv[0]
+def processFolder(index):
+    return [process_file(f) for f in get_data_files(sys.argv[index])]
+
 if len(sys.argv) < 3:
-  print("USAGE: merge <folder_a> <folder_b> <merge-folder>")
+  print("USAGE: merge <folder_a> <folder_b> <other folder>")
   exit(0)
 
 left_folder = sys.argv[1]
 right_folder = sys.argv[2]
-
-left_matrix = [process_file(f) for f in get_data_files(left_folder)]
-right_matrix = [process_file(f) for f in get_data_files(right_folder)]
+matrices = np.array([processFolder(index + 1) for index in range(len(sys.argv) - 1)])
+rightData = matrices[1:][:, :, 1:]
+leftData = matrices[:1]
+leftDataReshaped = leftData.reshape(*leftData.shape[1:])
+rightDataReshaped = rightData.reshape(rightData.shape[0], rightData.shape[1], rightData.shape[3])
 
 path = "data/merge"
 try:
@@ -48,8 +52,8 @@ except OSError:
     print ("Creation of the directory %s failed" % path)
 else:
     print ("Successfully created the directory %s " % path)
-for i in range(len(left_matrix)):
-    merged = np.concatenate((left_matrix[i], right_matrix[i][1:]))
+for i in range(len(leftDataReshaped)):
+    merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[:, i]))
     pretty_print = np.column_stack(merged)
     file_name = path + "/-merge_random-" + str(i) + ".0.txt"
     np.savetxt(file_name, (pretty_print))
