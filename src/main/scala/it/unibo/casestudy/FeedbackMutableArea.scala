@@ -22,7 +22,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val counter = rep(0)(_ + 1)
     rep(0.0) {
       influence => {
-        val actualLeader = broadcastPenalized(leader, influence * 2, mid())
+        val actualLeader = broadcastPenalized(leader, influence * 4, mid())
         val potential = distanceTo(mid() == actualLeader)
         val countHealer = countIn(potential, isStationary)
         val dangersCollected = C[Double, Map[ID, P]](potential,
@@ -35,8 +35,6 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
         val myTask = broadcastPenalized(mid() == actualLeader, influence * 4, areaTask)
-        val count = broadcastPenalized(mid() == actualLeader, influence * 4, (counter, mid()))
-        node.put("count", count)
         val taskExecution = myTask(this)
         node.put("target", taskExecution._1)
         node.put("targetId", taskExecution._2)
@@ -67,7 +65,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     rep(field) { case value =>
       val neighbourValue = excludingSelf.reifyField(acc(nbr(value)))
       val distances = excludingSelf.reifyField(nbr((g) + nbrRange())) ++ Map(mid() -> Double.PositiveInfinity)
-      mux(penalization == g){ field }{ neighbourValue.getOrElse(distances.minBy(_._1)._1, field) }
+      mux(source){ field }{ neighbourValue.getOrElse(distances.minBy(_._2)._1, field) }
     }
   }
   def broadcastPenalized[D](source : Boolean, penalization : Double, data : D) : D = {

@@ -14,7 +14,7 @@ variables:
 
   random: &random
     min: 0
-    max: 10
+    max: 4
     step: 1
     default: 0
 
@@ -81,7 +81,7 @@ variables:
     language: scala
 
   evaluationRate: &evaluationRate
-    formula: 2
+    formula: 1
 
   movementRate: &movementRate
     formula: 10
