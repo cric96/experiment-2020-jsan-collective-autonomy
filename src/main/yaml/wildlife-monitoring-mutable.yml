@@ -81,7 +81,7 @@ variables:
     language: scala
 
   evaluationRate: &evaluationRate
-    formula: 1
+    formula: 2
 
   movementRate: &movementRate
     formula: 10
@@ -137,13 +137,13 @@ pools:
         parameters: [ *velocityCombiner ]
         actions:
           - type: Separation
-            parameters: [ 100.0, 0.3 ]
+            parameters: [ 60.0, 0.1 ]
           - type: Alignment
-            parameters: [ 0.003 ]
+            parameters: [ 0.03 ]
           - type: Cohesion
             parameters: [ 0.001 ]
           - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 10, 0.01]
+            parameters: [ 0, 0, *explorationRange, 10, 0.5]
   # Animals movement behaviour
   - pool: &animalsWander
       #- time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)

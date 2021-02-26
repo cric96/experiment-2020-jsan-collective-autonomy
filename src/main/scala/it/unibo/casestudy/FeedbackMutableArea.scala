@@ -11,11 +11,15 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
   def grain : Double = 500 //TODO put as molecule?
-  def alpha : Double = sense[Double]("alpha")
+  def alpha : Double = {
+    //sense[Double]("alpha")
+    0.6
+  }
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
     val save = SmartCollarBehaviour.anyHealer(this)
+    val counter = rep(0)(_ + 1)
     rep(0.0) {
       influence => {
         val actualLeader = broadcastPenalized(leader, influence * 2, mid())
@@ -30,7 +34,9 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           .headOption
           .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
-        val myTask = broadcastPenalized(leader, influence * 2, areaTask)
+        val myTask = broadcastPenalized(mid() == actualLeader, influence * 4, areaTask)
+        val count = broadcastPenalized(mid() == actualLeader, influence * 4, (counter, mid()))
+        node.put("count", count)
         val taskExecution = myTask(this)
         node.put("target", taskExecution._1)
         node.put("targetId", taskExecution._2)
@@ -38,7 +44,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
         node.put("sensed", dangersCollected)
         if(leader) {
           node.put("sensed", dangersCollected)
-          node.put("influence", grain - (influence * 2))
+          node.put("influence", grain - (influence * 4))
           node.put("howMany", influence)
         }
         node.put("leader_id", actualLeader)
@@ -57,8 +63,11 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   }
   def penalizedG[D](source : Boolean, penalization : Double)(field : D)(acc : D => D) : D = {
     val g = penalizedGradient(source, penalization)
+
     rep(field) { case value =>
-      mux(source){ field }{ excludingSelf.minHoodSelector[Double,D](nbr{g}+nbrRange())(acc(nbr{value})).getOrElse(field) }
+      val neighbourValue = excludingSelf.reifyField(acc(nbr(value)))
+      val distances = excludingSelf.reifyField(nbr((g) + nbrRange())) ++ Map(mid() -> Double.PositiveInfinity)
+      mux(penalization == g){ field }{ neighbourValue.getOrElse(distances.minBy(_._1)._1, field) }
     }
   }
   def broadcastPenalized[D](source : Boolean, penalization : Double, data : D) : D = {

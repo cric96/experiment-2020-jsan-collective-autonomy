@@ -10,28 +10,28 @@ case class ExploreArea[T](env: Environment[T, Euclidean2DPosition], rand: Random
                           centerX: Double, centerY: Double, radius: Double, thr: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
   private val diameter = radius * 2
-  private var targetPosition = randomPositionInCircle
+  private var targetPosition = randomPositionInCircle()
   private var behaviour : SeekPosition[T] = SeekPosition(env, node, targetPosition.getX, targetPosition.getY, weight)
 
   def this(env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
            node: MobileNode[T, Euclidean2DPosition],
            centerX: Double, centerY: Double, radius: Double, weight: Double) {
-    this(env, rand, node, centerX, centerY, radius, weight, 0.01)
+    this(env, rand, node, centerX, centerY, radius, 0.01, weight)
   }
 
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = ExploreArea[T](env, rand, node, centerX, centerY, radius, thr, weight)
 
   override def unweightedVector: Euclidean2DPosition = {
-    if (reached) {
-      targetPosition = randomPositionInCircle
-      behaviour = behaviour.copy(px = targetPosition.getX, py = targetPosition.getY)
+    if (reached()) {
+      targetPosition = randomPositionInCircle()
+      behaviour = SeekPosition(env, node, targetPosition.getX, targetPosition.getY, weight)
     }
     behaviour.unweightedVector
   }
 
-  private def reached: Boolean = targetPosition.getDistanceTo(env.getPosition(node)) < thr
+  private def reached(): Boolean = targetPosition.getDistanceTo(env.getPosition(node)) < thr
 
-  private def randomPositionInCircle = new Euclidean2DPosition(randomCoordInCircle(centerX), randomCoordInCircle(centerY))
+  private def randomPositionInCircle() = new Euclidean2DPosition(randomCoordInCircle(centerX), randomCoordInCircle(centerY))
 
   private def randomCoordInCircle(centerCoord: Double): Double = centerCoord + (radius - rand.nextDouble() * diameter)
 }
