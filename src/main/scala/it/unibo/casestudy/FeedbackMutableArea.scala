@@ -15,6 +15,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     //sense[Double]("alpha")
     0.6
   }
+  def influenceFactor : Int = 4
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
@@ -22,7 +23,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val counter = rep(0)(_ + 1)
     rep(0.0) {
       influence => {
-        val actualLeader = broadcastPenalized(leader, influence * 4, mid())
+        val actualLeader = broadcastPenalized(leader, influence * influenceFactor, mid())
         val potential = distanceTo(mid() == actualLeader)
         val countHealer = countIn(potential, isStationary)
         val dangersCollected = C[Double, Map[ID, P]](potential,
@@ -34,7 +35,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           .headOption
           .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
-        val myTask = broadcastPenalized(mid() == actualLeader, influence * 4, areaTask)
+        val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
         val taskExecution = myTask(this)
         node.put("target", taskExecution._1)
         node.put("targetId", taskExecution._2)
@@ -42,7 +43,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
         node.put("sensed", dangersCollected)
         if(leader) {
           node.put("sensed", dangersCollected)
-          node.put("influence", grain - (influence * 4))
+          node.put("influence", grain - (influence * influenceFactor))
           node.put("howMany", influence)
         }
         node.put("leader_id", actualLeader)
