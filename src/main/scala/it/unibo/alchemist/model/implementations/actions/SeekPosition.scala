@@ -5,6 +5,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import it.unibo.scafi.space.Point3D
 import it.unibo.alchemist._
+import it.unibo.alchemist.model.implementations.reactions.MotorSchemaReaction
 //TODO add the target molecule argument
 case class SeekPosition[T](env: Environment[T, Euclidean2DPosition], node: MobileNode[T, Euclidean2DPosition], px: Double, py: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
@@ -23,6 +24,7 @@ case class SeekPosition[T](env: Environment[T, Euclidean2DPosition], node: Mobil
     } else {
       centerOfMass
     }
-    normalizedWithSpeed(center - env.getPosition(node))
+
+    MotorSchemaReaction.normalizedWithSpeed(center - env.getPosition(node), node, env)
   }
 }

@@ -58,7 +58,7 @@ variables:
     formula: worldSize / 2 #meter
 
   droneVelocity: &droneVelocity
-    formula: 8.3
+    formula: 16.3
 
   impalaVelocity: &impalaVelocity
     formula: 8.3
@@ -171,6 +171,8 @@ displacements:
       - *program
       - *areaExplore
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -188,11 +190,13 @@ displacements:
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [ 8.3 ]
+      parameters: [ *droneVelocity  ]
     programs:
       - *program
       - *areaExplore
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -217,6 +221,8 @@ displacements:
       - *ill
       - *animalBehaviour
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -234,6 +240,8 @@ displacements:
       - *ill
       - *animalBehaviour
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -251,6 +259,8 @@ displacements:
       - *ill
       - *animalBehaviour
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -268,6 +278,8 @@ displacements:
       - *ill
       - *animalBehaviour
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -285,6 +297,8 @@ displacements:
       - *ill
       - *animalBehaviour
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
@@ -300,6 +314,8 @@ displacements:
     programs:
       - *program
     contents:
+      - molecule: distance
+        concentration: 0.0
       - molecule: station
         concentration: true
       - molecule: drone
@@ -316,3 +332,5 @@ export:
   - time
   - molecule: danger
     aggregators: [ sum ] #Export danger count
+  - molecule: distance
+    aggregators: [ sum ] #Export distance of each elements
