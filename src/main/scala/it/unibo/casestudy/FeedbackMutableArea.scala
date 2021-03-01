@@ -15,7 +15,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     //sense[Double]("alpha")
     0.6
   }
-  def influenceFactor : Int = 4
+  def influenceFactor : Int = 2
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
@@ -62,10 +62,11 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   def penalizedG[D](source : Boolean, penalization : Double)(field : D)(acc : D => D) : D = {
     val g = penalizedGradient(source, penalization)
 
-    rep(field) { case value =>
-      val neighbourValue = excludingSelf.reifyField(acc(nbr(value)))
-      val distances = excludingSelf.reifyField(nbr((g) + nbrRange())) ++ Map(mid() -> Double.PositiveInfinity)
-      mux(source){ field }{ neighbourValue.getOrElse(distances.minBy(_._2)._1, field) }
+    rep(field) { value =>
+      val neighbourValue = excludingSelf.reifyField(acc(nbr(value))) ++ Map(mid() -> field)
+      val distances = excludingSelf.reifyField(nbr(g + nbrRange())) ++ Map(mid() -> Double.PositiveInfinity)
+      //Map(mid() -> field) is the fallback value. When there aren't neighbours, the result is field.
+      mux(source){ field }{ neighbourValue(distances.minBy(_._2)._1) }
     }
   }
   def broadcastPenalized[D](source : Boolean, penalization : Double, data : D) : D = {
