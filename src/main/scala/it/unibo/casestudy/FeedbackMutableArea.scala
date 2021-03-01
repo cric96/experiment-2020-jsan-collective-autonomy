@@ -20,7 +20,6 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
     val save = SmartCollarBehaviour.anyHealer(this)
-    val counter = rep(0)(_ + 1)
     rep(0.0) {
       influence => {
         val actualLeader = broadcastPenalized(leader, influence * influenceFactor, mid())
