@@ -15,7 +15,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     //sense[Double]("alpha")
     0.6
   }
-  def influenceFactor : Int = 2
+  def influenceFactor : Int = 4
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
