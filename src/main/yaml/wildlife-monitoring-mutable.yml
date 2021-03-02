@@ -1,5 +1,5 @@
 incarnation: scafi
-#Distance unit: meters
+#dangerNodeSpawn unit: meters
 #Time unit: Seconds
 #Speed unit: m/s
 variables:
@@ -87,7 +87,7 @@ variables:
     formula: 10
 
   dangerSpawnRate: &dangerSpawnRate
-    formula: 0.01
+    formula: 0.5
 seeds:
   scenario: *random
   simulation: *random
@@ -103,13 +103,11 @@ network-model:
 pools:
   # Danger animal "spawner"
   - pool: &ill
-      - time-distribution:
-          type: ExponentialTime
-          parameters: [ *dangerSpawnRate ]
+      - time-distribution: *dangerSpawnRate
         type: Event
         actions:
           - type: IllAnimal
-            parameters: [ 200 ]
+            parameters: [ 200.0 ]
   # Main aggregate program evaluation
   - pool: &program
       - time-distribution:
@@ -171,7 +169,9 @@ displacements:
       - *program
       - *areaExplore
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -195,10 +195,12 @@ displacements:
       - *program
       - *areaExplore
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
         concentration: 0.0
       - molecule: station
         concentration: false
+      - molecule: healCount
+        concentration: 0.0
       - molecule: drone
         concentration: true
       - molecule: danger
@@ -218,10 +220,11 @@ displacements:
       parameters: [ *zebraVelocity, "zebras"]
     programs:
       - *animalsWander
-      - *ill
       - *animalBehaviour
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -237,10 +240,11 @@ displacements:
       parameters: [ *impalaVelocity, "impala" ]
     programs:
       - *animalsWander
-      - *ill
       - *animalBehaviour
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -256,10 +260,11 @@ displacements:
       parameters: [ *zebraVelocity, "zebras2" ]
     programs:
       - *animalsWander
-      - *ill
       - *animalBehaviour
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -275,10 +280,11 @@ displacements:
       parameters: [ *impalaVelocity, "impala2" ]
     programs:
       - *animalsWander
-      - *ill
       - *animalBehaviour
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -294,10 +300,11 @@ displacements:
       parameters: [ *zebraVelocity, "zebras3" ]
     programs:
       - *animalsWander
-      - *ill
       - *animalBehaviour
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: false
@@ -314,7 +321,9 @@ displacements:
     programs:
       - *program
     contents:
-      - molecule: distance
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
         concentration: 0.0
       - molecule: station
         concentration: true
@@ -328,9 +337,23 @@ displacements:
         concentration: *mutableArea
       - molecule: alpha
         concentration: *alpha
+  - in:
+      type: Point
+      parameters: [0, 0]
+    programs:
+      - *ill
+    contents:
+      - molecule: dangerNodeSpawn
+        concentration: 0.0
+      - molecule: healCount
+        concentration: 0.0
+      - molecule: danger
+        concentration: false
 export:
   - time
   - molecule: danger
     aggregators: [ sum ] #Export danger count
-  - molecule: distance
-    aggregators: [ sum ] #Export distance of each elements
+  - molecule: dangerNodeSpawn
+    aggregators: [ sum ] #Export dangerNodeSpawn of each elements
+  - molecule: healCount
+    aggregators: [ sum ]

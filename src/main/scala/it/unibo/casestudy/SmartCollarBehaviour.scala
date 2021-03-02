@@ -4,12 +4,16 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.scafi.space.Point3D
 
-class SmartCollarBehaviour extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils {
+class SmartCollarBehaviour extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils with BlockT {
   def isDanger : Boolean = sense("danger")
   override def main(): Any = {
     SmartCollarBehaviour.dangerAnimalField(this)
     val save = SmartCollarBehaviour.anyHealer(this)
-    val danger = mux(save) { false } { node.get[Boolean]("danger")}
+    val status = node.get[Boolean]("danger")
+    val (danger, count) = rep(false, 0) {
+      case (_, count) => (mux(save && status) { (false, count + 1) } { (status, count) })
+    }
+    node.put("healCount", count)
     node.put("danger", danger)
   }
   override def currentPosition(): Point3D = { //TODO fix alchemist - ScaFi incarnation

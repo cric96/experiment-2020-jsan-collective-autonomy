@@ -40,10 +40,12 @@ if len(sys.argv) < 3:
 left_folder = sys.argv[1]
 right_folder = sys.argv[2]
 matrices = np.array([processFolder(index + 1) for index in range(len(sys.argv) - 1)])
+
 rightData = matrices[1:][:, :, 1:]
 leftData = matrices[:1]
+
 leftDataReshaped = leftData.reshape(*leftData.shape[1:])
-rightDataReshaped = rightData.reshape(rightData.shape[0], rightData.shape[1], rightData.shape[3])
+rightDataReshaped = rightData.reshape(*rightData.shape[1:])
 
 path = "data/merge"
 try:
@@ -53,7 +55,7 @@ except OSError:
 else:
     print ("Successfully created the directory %s " % path)
 for i in range(len(leftDataReshaped)):
-    merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[:, i]))
+    merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[i][:]))
     pretty_print = np.column_stack(merged)
     file_name = path + "/-merge_random-" + str(i) + ".0.txt"
     np.savetxt(file_name, (pretty_print))

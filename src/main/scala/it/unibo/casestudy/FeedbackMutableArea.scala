@@ -30,10 +30,11 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           dangerAnimal,
           Map.empty
         )
-        val (pos, distance) = rep((currentPosition(), 0.0)){
+        //TODO, fix distance
+        /*val (pos, distance) = rep((currentPosition(), 0.0)){
           case (pos, distance) => (currentPosition(), currentPosition().distance(pos))
         }
-        node.put("distance", distance)
+        node.put("distance", distance)*/
         val areaTask = dangersCollected.toSeq.sortBy(_._1)
           .headOption
           .map { case (id, p) => rescueTask(p, id) }

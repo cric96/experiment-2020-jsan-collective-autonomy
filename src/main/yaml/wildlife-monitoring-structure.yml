@@ -253,6 +253,18 @@ displacements:
         concentration: false
       - molecule: danger
         concentration: false
+  - in:
+      type: Point
+      parameters: [ 0, 0 ]
+    programs:
+      - *ill
+    contents:
+      - molecule: distance
+        concentration: 0.0
+      - molecule: healCount
+        concentration: 0.0
+      - molecule: danger
+        concentration: false
 export:
   - time
   - molecule: danger
