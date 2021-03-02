@@ -11,7 +11,7 @@ the_plots_labels:
   - 'task generated (fixed)'
   - 'task received (fixed)'
 the_plots_formats:
-  - [0,2,3,8]
+  - [0,4,5,9,10]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
 default_colors: &default_colors ["black", "blue", "green", "yellow", "purple", "pink", "red", "violet", "cyan", "orange", "gray"]

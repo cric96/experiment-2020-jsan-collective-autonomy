@@ -9,6 +9,18 @@ variables:
   drones: &drones
     formula: 50
 
+  grain: &grain
+    min: 350
+    max: 750
+    step: 150
+    default: 500
+
+  movementThr: &movementThr
+    min: 1
+    max: 10
+    step: 4
+    default: 1
+
   healer: &healer
     formula: 50
 
@@ -26,9 +38,9 @@ variables:
 
   alpha: &alpha
     min: 0.01
-    max: 0.5
-    step: 0.01
-    default: 0.01
+    max: 0.9
+    step: 0.1
+    default: 0.6
 
   explorerLabel : &explorerLabel
     formula: >
@@ -171,6 +183,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: 0.0
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -185,6 +201,10 @@ displacements:
         concentration: *mutableArea
       - molecule: alpha
         concentration: *alpha
+      - molecule: grain
+        concentration: *grain
+      - molecule: movementThr
+        concentration: *movementThr
   - in:
       type: Rectangle
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
@@ -197,6 +217,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: station
         concentration: false
       - molecule: healCount
@@ -211,6 +235,11 @@ displacements:
         concentration: *mutableArea
       - molecule: alpha
         concentration: *alpha
+      - molecule: grain
+        concentration: *grain
+      - molecule: movementThr
+        concentration: *movementThr
+
 # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -224,6 +253,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -244,6 +277,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -264,6 +301,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -284,6 +325,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -304,6 +349,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -323,6 +372,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: station
@@ -337,6 +390,11 @@ displacements:
         concentration: *mutableArea
       - molecule: alpha
         concentration: *alpha
+      - molecule: grain
+        concentration: *grain
+      - molecule: movementThr
+        concentration: *movementThr
+## SPAWNER
   - in:
       type: Point
       parameters: [0, 0]
@@ -345,6 +403,10 @@ displacements:
     contents:
       - molecule: dangerNodeSpawn
         concentration: 0.0
+      - molecule: taskCreated
+        concentration: 0.0
+      - molecule: taskReceived
+        concentration: false
       - molecule: healCount
         concentration: 0.0
       - molecule: danger
@@ -357,3 +419,8 @@ export:
     aggregators: [ sum ] #Export dangerNodeSpawn of each elements
   - molecule: healCount
     aggregators: [ sum ]
+  - molecule: taskCreated
+    aggregators: [ sum ]
+  - molecule: taskReceived
+    aggregators: [ sum ]
+

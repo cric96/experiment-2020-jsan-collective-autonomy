@@ -51,7 +51,7 @@ path = "data/merge"
 try:
     os.mkdir(path)
 except OSError:
-    print ("Creation of the directory %s failed" % path)
+    print ("...." % path)
 else:
     print ("Successfully created the directory %s " % path)
 for i in range(len(leftDataReshaped)):

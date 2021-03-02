@@ -12,13 +12,10 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC with BlockS
   with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement
   with CustomSpawn with TimeUtils {
-  def grain : Double = 500 //TODO put as molecule?
-  def alpha : Double = {
-    //sense[Double]("alpha")
-    0.6
-  }
+  def grain : Double = sense[Double]("grain")
+  def alpha : Double = sense[Double]("alpha")
   def movementWindow : Int = 10
-  def movementThr : Double = 1
+  def movementThr : Double = sense[Double]("movementThr")
   def influenceFactor : Int = 4
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
@@ -45,11 +42,13 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           .getOrElse(noTask())
         val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
         val taskExecution = myTask(this)
+        node.put("taskReceived", taskExecution._1.nonEmpty)
         node.put("target", taskExecution._1)
         node.put("targetId", taskExecution._2)
         val countExplorer = countIn(potential, isExplorer)
         node.put("sensed", dangersCollected)
         if(leader) {
+          node.put("taskCreated", dangersCollected.size)
           node.put("sensed", dangersCollected)
           node.put("influence", grain - (influence * influenceFactor))
           node.put("howMany", influence)
