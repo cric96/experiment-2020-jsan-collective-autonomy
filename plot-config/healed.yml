@@ -4,7 +4,7 @@ the_plots_labels:
   - 'danger trigger'
   - 'healed count'
 the_plots_formats:
-  - [0,2]
+  - [0,2,3]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
 default_colors: &default_colors ["black", "blue", "green", "purple"]
