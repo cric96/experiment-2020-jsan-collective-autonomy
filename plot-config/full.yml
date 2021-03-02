@@ -1,0 +1,21 @@
+the_plots_labels:
+  - Time
+  - 'danger count (dynamic)'
+  - 'danger trigger'
+  - 'healed count (dynamic)'
+  - 'danger count (fixed)'
+  - 'danger trigger (fixed)'
+  - 'healed count (fixed)'
+the_plots_formats:
+  - [0,1,2,3,4,6]
+line_widths:
+  - [2,2,2,2,2,2,2,2,2,2,2]
+default_colors: &default_colors ["black", "blue", "green", "yellow", "purple", "pink", "black"]
+the_plots_colors:
+  - *default_colors
+legend_position:
+  - "best"
+legend_size: 12
+force_limit_plot_y:
+force_limit_plot_x:
+sampling: true

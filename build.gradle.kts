@@ -154,12 +154,6 @@ fun makeTest(
         }
     }*/
 }
-// Experiment #1
-makeTest(name="wildLifeMonitoringGUI", file = "wildlife-monitoring-structure", effectFile = "paper")
-makeTest(name="wildLifeMonitoringNoLeaderGUI", file = "wildlife-monitoring-structure-noleader", time = 300.0, vars = setOf("random"))
-makeTest(name="wildLifeMonitoringData", file = "wildlife-monitoring-structure", time = 300.0, vars = setOf("random"))
-makeTest(name="wildLifeMonitoringNoLeaderData", file = "wildlife-monitoring-structure-noleader", time = 300.0, vars = setOf("random"))
-// Experiment #2
 makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
 makeTest(name="wildLifeAreaData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "mutableArea"))
 makeTest(name="wildLifeAreaDataFast", file = "wildlife-monitoring-mutable", time = 50.0, vars = setOf("random", "mutableArea"))

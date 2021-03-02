@@ -2,8 +2,10 @@
 |   | Configuration file            | node / station Scala file | "animal" Scala file  | Behaviour                            | Experiments | Task                     |
 |---|-------------------------------|---------------------------|----------------------|--------------------------------------|-------------|--------------------------| 
 | 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour | SCR + mutable area via feedback loop |       #2    |wildLifeArea              |
-| 2 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
-| 3 | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
+| 2* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
+| 3* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
+
+*since commit **81fe172d0abe84c882cec25484a8bd21a6271ef7**. The reference now is wildlife-monitoring-mutable.
 
 **NB**: each task name has Data (for data gathering) and GUI (for simulation visualization)
 # GUI Shapes explanation
@@ -31,6 +33,28 @@ Since experiment #2, we include node capabilities. In this case, this node could
 ![](./assets/gui/healer.png)
 ### Explorer
 ![](./assets/gui/explorer.png)
+# Experiment #2.2 (02-03-2021) wildlife monitoring: add local feedback to global structure.
+After **81fe172d0abe84c882cec25484a8bd21a6271ef7**, The stationary/explorer type depends upon the distance travelled by nodes.
+The hyper-parameters of simulations are:
+- *alpha* : used to tune the feedback loop to compute the leader influence;
+- *grain* : fixed to 500. Used in sparse choice
+- *movementWindow* : used to compute nodes trajectory. default -> 10
+- *influenceFactor* : used to amplify the influence compute by feedback loop. In FGCS Danilo set it at 2.
+- *movementThr* : the value used to identify a node as stationary or explorer
+
+Currently, there is evidence of overall better performance with the dynamic area.
+In the following part, there are some plots made by 30 simulation runs, 15 with a dynamic area and 15 with a fixed area.
+
+![](./assets/result/02-03-21/danger-count_014_.png)
+
+The evolution in time of animals in danger. Dynamic areas succeeds in heal the animals 
+(there is a decreasing tendency).
+
+![](./assets/result/02-03-21/danger-count_0236_.png)
+
+The evolution in time of animals healed by the aggregate. Dynamic areas heal more animals than a fixed area.
+The green line is the "ground truth", namely animals that are turned to "danger" during the simulation.
+
 # Experiment #2.1 (24-02-2021) wildlife monitoring: problem with #2
 The plot in #2 was too noisy to make some conclusion. For this reason I try to run multiple run of this simulation.
 Unfortunately, with 500 runs for each configuration, the average results converge.
