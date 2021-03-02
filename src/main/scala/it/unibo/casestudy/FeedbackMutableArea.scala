@@ -5,6 +5,8 @@ import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.ScafiAlchemis
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
 import CollectiveTask._
 import it.unibo.scafi.space.Point3D
+
+import scala.collection.immutable.Queue
 //Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
 class FeedbackMutableArea extends AggregateProgram with Gradients
   with StandardSensors with FieldUtils with BlockT with BlockC with BlockS
@@ -15,11 +17,18 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     //sense[Double]("alpha")
     0.6
   }
+  def movementWindow : Int = 10
+  def movementThr : Double = 1
   def influenceFactor : Int = 4
   override def main(): Any = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     val dangerAnimal = SmartCollarBehaviour.dangerAnimalField(this)
     val save = SmartCollarBehaviour.anyHealer(this)
+    val trajectory = recentValues(movementWindow, currentPosition())
+    val distance = trajectory.tail.zip(trajectory.dropRight(1))
+      .map { case (a, b) => a.distance(b) }
+      .sum
+
     rep(0.0) {
       influence => {
         val actualLeader = broadcastPenalized(leader, influence * influenceFactor, mid())
@@ -30,11 +39,6 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           dangerAnimal,
           Map.empty
         )
-        //TODO, fix distance
-        /*val (pos, distance) = rep((currentPosition(), 0.0)){
-          case (pos, distance) => (currentPosition(), currentPosition().distance(pos))
-        }
-        node.put("distance", distance)*/
         val areaTask = dangersCollected.toSeq.sortBy(_._1)
           .headOption
           .map { case (id, p) => rescueTask(p, id) }
@@ -54,6 +58,13 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
         mux(mutableAreaBehaviour) { exponentialBackOff(alpha, count = countHealer + countExplorer) } { 0 }
       }
     }
+    val nodeType = mux(isHealer) { "healer" } { typeFromDistance(distance) } //local behaviour influence the global structure
+    node.put("type", nodeType)
+  }
+  def typeFromDistance(distance : Double) : String = if(distance.toInt <= movementThr) {
+    "stationary"
+  } else {
+    "explorer"
   }
   def isHealer : Boolean = sense[String]("type") == "healer"
   def isStationary : Boolean = sense[String]("type") == "stationary"
@@ -66,7 +77,6 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   }
   def penalizedG[D](source : Boolean, penalization : Double)(field : D)(acc : D => D) : D = {
     val g = penalizedGradient(source, penalization)
-
     rep(field) { value =>
       val neighbourValue = excludingSelf.reifyField(acc(nbr(value))) ++ Map(mid() -> field)
       val distances = excludingSelf.reifyField(nbr(g + nbrRange())) ++ Map(mid() -> Double.PositiveInfinity)
@@ -87,6 +97,10 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val position = sense[Euclidean2DPosition](LSNS_POSITION)
     Point3D(position.getX, position.getY, 0.0)
   }
+  def recentValues[T](k: Int, value: T): Queue[T] =
+    rep(Queue[T]()) {
+      case (vls) => (if(vls.size==k) vls.tail else vls) :+ value
+    }
 }
 
 object FeedbackMutableArea {
