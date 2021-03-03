@@ -14,7 +14,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   with CustomSpawn with TimeUtils {
   def grain : Double = sense[Double]("grain")
   def alpha : Double = sense[Double]("alpha")
-  def movementWindow : Int = 10
+  def movementWindow : Int = sense[Double]("movementWindow").toInt
   def movementThr : Double = sense[Double]("movementThr")
   def influenceFactor : Int = 4
   override def main(): Any = {
@@ -36,11 +36,12 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           dangerAnimal,
           Map.empty
         )
+
         val areaTask = dangersCollected.toSeq.sortBy(_._1)
           .headOption
           .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
-        val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
+         val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
         val taskExecution = myTask(this)
         node.put("taskReceived", taskExecution._1.nonEmpty)
         node.put("target", taskExecution._1)
