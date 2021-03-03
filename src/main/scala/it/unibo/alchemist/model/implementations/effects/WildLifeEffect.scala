@@ -4,14 +4,17 @@ import it.unibo.alchemist.boundary.gui.effects.Effect
 import it.unibo.alchemist.boundary.wormhole.interfaces.IWormhole2D
 import it.unibo.alchemist.model.implementations.effects.WildLifeEffect._
 import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
-import it.unibo.alchemist.model.implementations.nodes.{Animal2D, DroneNode2D, MobileNode2D, NodeManager, SimpleNodeManager}
+import it.unibo.alchemist.model.implementations.nodes._
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
 import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
-
 import java.awt._
-import java.awt.geom.{AffineTransform, Area, Ellipse2D, Rectangle2D}
+import java.awt.geom.{AffineTransform, Area, Ellipse2D}
 import scala.collection.mutable
+
+/**
+ * TODO
+ */
 class WildLifeEffect extends Effect {
   override def apply[T, P <: Position2D[P]](g: Graphics2D, node: Node[T], env: Environment[T, P], wormhole: IWormhole2D[P]): Unit = {
     env match {

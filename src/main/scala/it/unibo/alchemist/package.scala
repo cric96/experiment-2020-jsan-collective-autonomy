@@ -21,6 +21,7 @@ package object alchemist {
   }
   implicit class RichEnv[T, P <: Position[P]](env : Environment[T, P]) {
     val origin : P = env.makePosition((1 to env.getDimensions).map(_ => (0.0 : Number)):_*)
+    def makePositionFromSeq(seq : Seq[Double]) : P = env.makePosition(seq.map(x => x : Number):_*)
   }
   //IMPLICIT CONVERSION
   implicit def toList[E](l : ListSet[E]) : List[E] = new util.ArrayList[E](l).asScala.toList

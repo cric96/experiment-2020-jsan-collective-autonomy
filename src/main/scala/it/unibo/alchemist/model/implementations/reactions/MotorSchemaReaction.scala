@@ -26,7 +26,7 @@ class MotorSchemaReaction[T, P <: Position[P]](env : Environment[T, P], mobileNo
       .map(x => (x * (currentTime - lastTime)) : Number)
       .toSeq :_*)
     lastTime = currentTime
-    actuator.unweightedVector = resultingVelocity
+    actuator.velocity = resultingVelocity
     mobileNode.setVector(resultingVelocity)
     actuator.execute()
   }

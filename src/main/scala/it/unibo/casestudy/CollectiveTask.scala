@@ -1,6 +1,6 @@
 package it.unibo.casestudy
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
-
+//TODO
 object CollectiveTask {
   type Task[P <: AggregateProgram, O] = P => O
   case class TaskContinuation[P <: AggregateProgram, O](program : P => O) extends Task[P, O] {

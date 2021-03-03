@@ -3,7 +3,7 @@ package it.unibo.casestudy
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.scafi.space.Point3D
-
+//TODO
 class SmartCollarBehaviour extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils with BlockT {
   def isDanger : Boolean = sense("danger")
   override def main(): Any = {

@@ -7,10 +7,10 @@ variables:
     formula: 20
 
   drones: &drones
-    formula: 10
+    formula: 20
 
   healer: &healer
-    formula: 10
+    formula: 20
 
   grain: &grain
     min: 350
@@ -32,7 +32,7 @@ variables:
 
   random: &random
     min: 0
-    max: 15
+    max: 4
     step: 1
     default: 0
 
@@ -40,7 +40,7 @@ variables:
     min: 0
     max: 1
     step: 1
-    default: 0
+    default: 1
 
   alpha: &alpha
     min: 0.1
