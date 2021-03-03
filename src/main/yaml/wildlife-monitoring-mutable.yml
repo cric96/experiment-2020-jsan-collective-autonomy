@@ -7,10 +7,10 @@ variables:
     formula: 20
 
   drones: &drones
-    formula: 50
+    formula: 10
 
   healer: &healer
-    formula: 50
+    formula: 10
 
   grain: &grain
     min: 350
