@@ -111,8 +111,8 @@ seeds:
   simulation: *random
 
 environment:
-  type: Continuous2DEnvironment
-  parameters: []
+  type: ImageEnvironment
+  parameters: [assets/savana.png, 10, 0, 0]
 
 network-model:
   type: DualRadioLinkingRule #*connectionType
@@ -259,7 +259,7 @@ displacements:
     programs:
       - *animalsWander
       - *animalBehaviour
-    contents:
+    contents: &animalContent
       - molecule: dangerNodeSpawn
         concentration: 0.0
       - molecule: taskCreated
@@ -283,21 +283,7 @@ displacements:
     programs:
       - *animalsWander
       - *animalBehaviour
-    contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
-      - molecule: station
-        concentration: false
-      - molecule: drone
-        concentration: false
-      - molecule: danger
-        concentration: false
+    contents: *animalContent
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *top, *top, 200, 200 ]
@@ -307,21 +293,7 @@ displacements:
     programs:
       - *animalsWander
       - *animalBehaviour
-    contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
-      - molecule: station
-        concentration: false
-      - molecule: drone
-        concentration: false
-      - molecule: danger
-        concentration: false
+    contents: *animalContent
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *bottom, *bottom, 200, 200 ]
@@ -331,21 +303,7 @@ displacements:
     programs:
       - *animalsWander
       - *animalBehaviour
-    contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
-      - molecule: station
-        concentration: false
-      - molecule: drone
-        concentration: false
-      - molecule: danger
-        concentration: false
+    contents: *animalContent
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *bottom, *top, 200, 200 ]
@@ -355,21 +313,7 @@ displacements:
     programs:
       - *animalsWander
       - *animalBehaviour
-    contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
-      - molecule: station
-        concentration: false
-      - molecule: drone
-        concentration: false
-      - molecule: danger
-        concentration: false
+    contents: *animalContent
 # STATIONS DISPLACEMENT
   - in:
       type: Grid
