@@ -78,6 +78,9 @@ variables:
   droneVelocity: &droneVelocity
     formula: 16.3
 
+  healerVelocity: &healerVelocity
+    formula: 10.0
+
   impalaVelocity: &impalaVelocity
     formula: 8.3
 
@@ -106,13 +109,26 @@ variables:
 
   dangerSpawnRate: &dangerSpawnRate
     formula: 0.5
+
 seeds:
   scenario: *random
   simulation: *random
 
-environment:
-  type: ImageEnvironment
-  parameters: [assets/savana.png, 10, 0, 0]
+export:
+  - time
+  - molecule: danger
+    aggregators: [ sum ] #Export danger count
+  - molecule: dangerNodeSpawn
+    aggregators: [ sum ] #Export dangerNodeSpawn of each elements
+  - molecule: healCount
+    aggregators: [ sum ]
+  - molecule: taskCreated
+    aggregators: [ sum ]
+  - molecule: taskReceived
+    aggregators: [ sum ]
+#environment:
+#  type: ImageEnvironment
+#  parameters: [assets/savana.png, 10, 0, 0]
 
 network-model:
   type: DualRadioLinkingRule #*connectionType
@@ -175,6 +191,35 @@ pools:
             #centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double
             parameters: [ 0, 0, *explorationRange, 10, 5, 0.1]
 
+
+dangerNodeSpawn: &dangerNodeSpawn
+  molecule: dangerNodeSpawn
+  concentration: 0.0
+taskCreated : &taskCreated
+  molecule: taskCreated
+  concentration: 0.0
+taskReceived : &taskReceived
+  molecule: taskReceived
+  concentration: 0.0
+healCount : &healCount
+  molecule: healCount
+  concentration: 0.0
+areaType : &areaType
+  molecule: areaType
+  concentration: *mutableArea
+alphaMolecule: &alphaMolecule
+  molecule: alpha
+  concentration: *alpha
+grainMolecule: &grainMolecule
+  molecule: grain
+  concentration: *grain
+movementThrMolecule: &movementThrMolecule
+  molecule: movementThr
+  concentration: *movementThr
+movementWindowMolecule: &movementWindowMolecule
+  molecule: movementWindow
+  concentration: *movementWindow
+
 displacements:
 # DRONES DISPLACEMENT
   - in:
@@ -187,14 +232,7 @@ displacements:
       - *program
       - *areaExplore
     contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: 0.0
-      - molecule: healCount
-        concentration: 0.0
+      #Domain logic
       - molecule: station
         concentration: false
       - molecule: drone
@@ -205,34 +243,31 @@ displacements:
         concentration: *explorerLabel
       - molecule: areaType
         concentration: *mutableArea
-      - molecule: alpha
-        concentration: *alpha
-      - molecule: grain
-        concentration: *grain
-      - molecule: movementThr
-        concentration: *movementThr
-      - molecule: movementWindow
-        concentration: *movementWindow
+      #Configuration
+      - *alphaMolecule
+      - *grainMolecule
+      - *areaType
+      - *movementWindowMolecule
+      - *movementThrMolecule
+      #Export
+      - *dangerNodeSpawn
+      - *taskCreated
+      - *taskReceived
+      - *healCount
+
   - in:
       type: Rectangle
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
     nodes:
       type: DroneNode2D
-      parameters: [ *droneVelocity  ]
+      parameters: [ *healerVelocity ]
     programs:
       - *program
       - *areaExplore
     contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
+      #Domain logic
       - molecule: station
         concentration: false
-      - molecule: healCount
-        concentration: 0.0
       - molecule: drone
         concentration: true
       - molecule: danger
@@ -241,14 +276,17 @@ displacements:
         concentration: *healerLabel
       - molecule: areaType
         concentration: *mutableArea
-      - molecule: alpha
-        concentration: *alpha
-      - molecule: grain
-        concentration: *grain
-      - molecule: movementThr
-        concentration: *movementThr
-      - molecule: movementWindow
-        concentration: *movementWindow
+      #Configuration
+      - *alphaMolecule
+      - *grainMolecule
+      - *areaType
+      - *movementWindowMolecule
+      - *movementThrMolecule
+      #Export
+      - *dangerNodeSpawn
+      - *taskCreated
+      - *taskReceived
+      - *healCount
 # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -260,20 +298,17 @@ displacements:
       - *animalsWander
       - *animalBehaviour
     contents: &animalContent
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
       - molecule: station
         concentration: false
       - molecule: drone
         concentration: false
       - molecule: danger
         concentration: false
+      #Export
+      - *dangerNodeSpawn
+      - *taskCreated
+      - *taskReceived
+      - *healCount
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *top, *bottom, 200, 200 ]
@@ -323,14 +358,6 @@ displacements:
     programs:
       - *program
     contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
       - molecule: station
         concentration: true
       - molecule: drone
@@ -339,16 +366,17 @@ displacements:
         concentration: false
       - molecule: type
         concentration: *stationaryLabel
-      - molecule: areaType
-        concentration: *mutableArea
-      - molecule: alpha
-        concentration: *alpha
-      - molecule: grain
-        concentration: *grain
-      - molecule: movementThr
-        concentration: *movementThr
-      - molecule: movementWindow
-        concentration: *movementWindow
+      #Configuration
+      - *alphaMolecule
+      - *grainMolecule
+      - *areaType
+      - *movementWindowMolecule
+      - *movementThrMolecule
+      #Export
+      - *dangerNodeSpawn
+      - *taskCreated
+      - *taskReceived
+      - *healCount
 ## SPAWNER
   - in:
       type: Point
@@ -356,26 +384,10 @@ displacements:
     programs:
       - *ill
     contents:
-      - molecule: dangerNodeSpawn
-        concentration: 0.0
-      - molecule: taskCreated
-        concentration: 0.0
-      - molecule: taskReceived
-        concentration: false
-      - molecule: healCount
-        concentration: 0.0
       - molecule: danger
         concentration: false
-export:
-  - time
-  - molecule: danger
-    aggregators: [ sum ] #Export danger count
-  - molecule: dangerNodeSpawn
-    aggregators: [ sum ] #Export dangerNodeSpawn of each elements
-  - molecule: healCount
-    aggregators: [ sum ]
-  - molecule: taskCreated
-    aggregators: [ sum ]
-  - molecule: taskReceived
-    aggregators: [ sum ]
-
+      #Export
+      - *dangerNodeSpawn
+      - *taskCreated
+      - *taskReceived
+      - *healCount

@@ -42,7 +42,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           .headOption
           .map { case (id, p) => rescueTask(p, id) }
           .getOrElse(noTask())
-         val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
+        val myTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
         val taskExecution = myTask(this)
         node.put("taskReceived", taskExecution._1.nonEmpty)
         node.put("target", taskExecution._1)
