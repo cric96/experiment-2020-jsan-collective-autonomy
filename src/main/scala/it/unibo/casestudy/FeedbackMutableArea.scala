@@ -32,7 +32,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val status = node.get[Boolean]("danger")
     branch(isAnimal) {
       val (danger, count) = rep(false, 0) {
-        case (_, count) => (mux(save) { (false, count + 1) } { (status, count) })
+        case (_, count) => (mux(save && status) { (false, count + 1) } { (status, count) })
       }
       node.put("healCount", count)
       node.put("danger", danger)
