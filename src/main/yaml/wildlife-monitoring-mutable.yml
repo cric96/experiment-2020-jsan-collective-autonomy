@@ -7,16 +7,16 @@ variables:
     formula: 20
 
   drones: &drones
-    formula: 20
+    formula: 40
 
   healer: &healer
-    formula: 20
+    formula: 40
 
   grain: &grain
     min: 350
     max: 750
     step: 150
-    default: 500
+    default: 350
 
   movementThr: &movementThr
     min: 1
@@ -40,7 +40,7 @@ variables:
     min: 0
     max: 1
     step: 1
-    default: 1
+    default: 0
 
   alpha: &alpha
     min: 0.1
@@ -79,7 +79,7 @@ variables:
     formula: 16.3
 
   healerVelocity: &healerVelocity
-    formula: 10.0
+    formula: 16.3
 
   impalaVelocity: &impalaVelocity
     formula: 8.3
@@ -109,6 +109,9 @@ variables:
 
   dangerSpawnRate: &dangerSpawnRate
     formula: 0.5
+
+  noTarget: &noTarget
+    formula: -1
 
 seeds:
   scenario: *random
@@ -160,7 +163,7 @@ pools:
         type: Event
         actions:
           - type: RunScafiProgram
-            parameters: [ it.unibo.casestudy.SmartCollarBehaviour, 5.0 ] # second argument is retention time
+            parameters: [ it.unibo.casestudy.FeedbackMutableArea, 5.0 ] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
   # Drone movement behaviour
   - pool: &areaExplore
@@ -219,6 +222,9 @@ movementThrMolecule: &movementThrMolecule
 movementWindowMolecule: &movementWindowMolecule
   molecule: movementWindow
   concentration: *movementWindow
+targetId: &targetId
+  molecule: targetId
+  concentration: *noTarget
 
 displacements:
 # DRONES DISPLACEMENT
@@ -243,6 +249,7 @@ displacements:
         concentration: *explorerLabel
       - molecule: areaType
         concentration: *mutableArea
+      - *targetId
       #Configuration
       - *alphaMolecule
       - *grainMolecule
@@ -276,6 +283,7 @@ displacements:
         concentration: *healerLabel
       - molecule: areaType
         concentration: *mutableArea
+      - *targetId
       #Configuration
       - *alphaMolecule
       - *grainMolecule
@@ -304,6 +312,7 @@ displacements:
         concentration: false
       - molecule: danger
         concentration: false
+      - *targetId
       #Export
       - *dangerNodeSpawn
       - *taskCreated
@@ -366,6 +375,7 @@ displacements:
         concentration: false
       - molecule: type
         concentration: *stationaryLabel
+      - *targetId
       #Configuration
       - *alphaMolecule
       - *grainMolecule

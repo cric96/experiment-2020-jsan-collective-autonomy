@@ -43,6 +43,9 @@ class WildLifeEffect extends Effect {
     }
     val transformedShape = transform.createTransformedShape(shape)
     g.setColor(getColorFromLeader(manager).getOrElse(DRONE_COLOR))
+    if(manager.has("target")) {
+      g.setColor(Color.CYAN)
+    }
     g.fill(transformedShape)
   }
 

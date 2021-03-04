@@ -23,11 +23,8 @@ case class SeekSchema[T](env: Environment[T, Euclidean2DPosition], node: MobileN
   private val centerOfMass = new Euclidean2DPosition(px, py)
   override def unweightedVector: Euclidean2DPosition = {
     val center = if (manager.has(targetMolecule)) {
-      val targetPosition = manager.get[Option[Point3D]](targetMolecule)
-      targetPosition match {
-        case None => centerOfMass
-        case Some(pos) => new Euclidean2DPosition(pos.x, pos.y)
-      }
+      val targetPosition = manager.get[Point3D](targetMolecule)
+      new Euclidean2DPosition(targetPosition.x, targetPosition.y)
     } else {
       centerOfMass
     }
