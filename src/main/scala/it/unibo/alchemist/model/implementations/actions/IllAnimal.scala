@@ -18,11 +18,12 @@ case class IllAnimal[T, P <: Position[P]](env : Environment[T, P], rand: RandomG
   }
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = IllAnimal(env, rand, node, timeLimit)
   private lazy val animals : List[Animal2D[T]] = env.getNodes.collect { case n : Animal2D[T] => n }
-  private lazy val shuffledAnimals = shuffle(animals).map(new SimpleNodeManager[T](_)) //avoid to compute random number each time
   private lazy val manager = new SimpleNodeManager[T](node)
   private var fireCount = 0
   override def execute(): Unit = {
+
     if(env.getSimulation.getTime.toDouble < timeLimit) {
+      val shuffledAnimals = shuffle(animals).map(new SimpleNodeManager[T](_)) //avoid to compute random number each time
       shuffledAnimals.filter(_.has("danger"))
         .filterNot(_.get[Boolean]("danger"))
         .headOption

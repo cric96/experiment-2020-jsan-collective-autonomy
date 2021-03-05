@@ -3,13 +3,13 @@ package it.unibo.casestudy
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.casestudy.CollectiveTask._
-import it.unibo.casestudy.FeedbackMutableArea.Program
-import it.unibo.casestudy.WildLifeTasks.{ExploreTask, HealTask, NoTask}
+import it.unibo.casestudy.WildlifeMonitoring.Program
+import it.unibo.casestudy.WildlifeTasks.{ExploreTask, HealTask, NoTask}
 import it.unibo.scafi.space.Point3D
 //TODO
 //Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
-class FeedbackMutableArea extends AggregateProgram with Gradients
-  with StandardSensors with FieldUtils with RichBlockT with BlockC with BlockS with BlockG
+class WildlifeMonitoring extends AggregateProgram with Gradients
+  with StandardSensors with FieldUtils with RichStateManagement with BlockC with BlockS with BlockG
   with ScafiAlchemistSupport with ProcessDSL with StateManagement with SmartCollarBehaviour
   with CustomSpawn with TimeUtils with PenalizedG {
   lazy val grain : Double = sense[Double]("grain")
@@ -25,7 +25,6 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     val dangerAnimal = animalBehaviour()
     branch(!isAnimal) { rescueBehaviour(dangerAnimal) } { }
   }
-
   def animalBehaviour(): Map[ID, P] = {
     val dangerAnimal = dangerAnimalField()
     val save = canHealAnimal()
@@ -39,40 +38,49 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     } { }
     dangerAnimal
   }
-
   def rescueBehaviour(dangerAnimal : Map[ID, P]) = {
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     rep(0.0) {
       influence => {
-        val actualLeader = broadcastPenalized(leader, influence * influenceFactor, mid())
-        val potential = distanceTo(mid() == actualLeader)
-        val countHealer = countIn(potential, isStationary)
-        val countExplorer = countIn(potential, isExplorer)
-        val dangersCollected = C[Double, Map[ID, P]](potential,
-          acc = (left, right) => combineDangerMap(left, right),
-          dangerAnimal,
-          Map.empty
-        )
-        val areaTask : CollectiveTask[Program, Actuation] = dangersCollected.toSeq.sortBy { case (id, p) => p.distance(currentPosition()) }
-          .headOption
-          .map { case (id, p) => HealTask(mid(), id, p) }
-          .getOrElse(NoTask(mid()))
-        val exploreTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, ExploreTask(mid(), currentPosition(), grain - influenceFactor))
-        val healTask : CollectiveTask[Program, Actuation] = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
-        val selectedTask = Planner.eval(actualLeader, capability, Seq(healTask, exploreTask))
-        val actuation = selectedTask.call(this)
-        Actuator.act(node, actuation)
-        //Data exported
-        node.put("taskReceived", !selectedTask.isInstanceOf[NoTask])
-        node.put("sensed", dangersCollected)
-        node.put("leader_id", actualLeader)
-        if(leader) {
-          node.put("taskCreated", dangersCollected.size)
+        val influencePenalization = influence * influenceFactor
+        val actualLeader = broadcastPenalized(leader, influencePenalization, mid())
+        align(actualLeader) { actualLeader => {
+          val sourceArea = mid() == actualLeader
+          val potential = distanceTo(sourceArea)
+          val countHealer = countIn(potential, isStationary)
+          val countExplorer = countIn(potential, isExplorer)
+          val dangersCollected = C[Double, Map[ID, P]](potential,
+            acc = (left, right) => combineDangerMap(left, right),
+            dangerAnimal,
+            Map.empty
+          )
+          val dangersInArea = broadcastPenalized(sourceArea, influencePenalization, dangersCollected)
+          val localTask = dangersInArea.toSeq.sortBy { case (id, p) => p.distance(currentPosition()) }
+            .headOption
+            .map { case (id, p) => HealTask(mid(), id, p) }
+            .getOrElse(NoTask(mid()))
+          val areaTask : CollectiveTask[Program, Actuation] = dangersCollected.toSeq.sortBy { case (id, p) => id }
+            .headOption
+            .map { case (id, p) => HealTask(mid(), id, p) }
+            .getOrElse(NoTask(mid()))
+          //val exploreTask = broadcastPenalized(sourceArea, influencePenalization, ExploreTask(mid(), currentPosition(), grain))
+          val healTask : CollectiveTask[Program, Actuation] = broadcastPenalized(sourceArea, influencePenalization, areaTask)
+          val selectedTask = Planner.eval(mid(), actualLeader, capability, Seq(healTask, localTask), collective)
+          val actuation = selectedTask.call(this)
+          Actuator.act(node, actuation)
+          //Data exported
+          node.put("taskReceived", !selectedTask.isInstanceOf[NoTask])
           node.put("sensed", dangersCollected)
-          node.put("influence", grain - (influence * influenceFactor))
-          node.put("howMany", countHealer + countExplorer)
-        }
-        mux(mutableAreaBehaviour) { exponentialBackOff(alpha, count = countHealer + countExplorer) } { 0 }
+          node.put("leader_id", actualLeader)
+          if(leader) {
+            node.put("taskCreated", dangersCollected.size)
+            node.put("sensed", dangersCollected)
+            node.put("influence", grain - (influencePenalization))
+            node.put("howMany", countHealer + countExplorer)
+          }
+          mux(mutableArea) { exponentialBackOff(alpha, count = countHealer + countExplorer) } { 0 }
+        }}
+
       }
     }
     //Capability sensing
@@ -90,14 +98,10 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
     mux(isHealer) { "healer" } { typeFromDistance(distance) } //local behaviour influence the global structure
   }
   def capability : Set[Capability] = Set(Specific(sense[String]("type")))
-  def mutableAreaBehaviour : Boolean = sense[Double]("areaType").toInt == 0
+  def mutableArea : Boolean = sense[Double]("areaType").toInt == 0
+  def collective : Boolean = sense[Double]("behaviourType").toInt == 0
   def exponentialBackOff(alpha : Double, count : Double) : Double = rep(count)(c => c * (1 - alpha) + alpha * count)
   def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
-  def rescueTask(targetPosition : P, who : ID) : Task[FeedbackMutableArea.Program, (Option[P], ID)] = {
-    task[FeedbackMutableArea.Program, (Option[P], ID)](p => (Some(targetPosition), who))
-      .where(p => p.sense[String]("type") == "healer")(p => (Option.empty[P], p.mid()))
-  }
-  def noTask() : Task[FeedbackMutableArea.Program, (Option[P], ID)] = task(p => (None, p.mid()))
   def typeFromDistance(distance : Double) : String = if(distance.toInt <= movementThr) {
     "stationary"
   } else {
@@ -105,7 +109,7 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
   }
 }
 
-object FeedbackMutableArea {
+object WildlifeMonitoring {
   type Program = AggregateProgram with Gradients
     with StandardSensors with FieldUtils with BlockT with BlockC with BlockS
     with BlockG with ScafiAlchemistSupport with ProcessDSL with StateManagement

@@ -3,7 +3,7 @@ package it.unibo.casestudy
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 //TODO
 trait SmartCollarBehaviour extends AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils with BlockT {
-  self :  AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils with BlockT =>
+  self :  AggregateProgram with StandardSensors with ScafiAlchemistSupport with FieldUtils with BlockT with RichStateManagement =>
   def isDanger : Boolean = sense("danger")
 
   def dangerAnimalField() : Map[ID, P] = {
@@ -22,7 +22,7 @@ trait SmartCollarBehaviour extends AggregateProgram with StandardSensors with Sc
 
   def canHealAnimal() : Boolean = {
     val targetIdField : Map[ID, Int] = excludingSelf.reifyField(nbr(sense[Int]("targetId")))
-    targetIdField.values.toSet.count(_ == mid()) == 2
+    targetIdField.values.count(_ == mid()) >= 1 //put molecule
   }
 
   def combineDangerMap(left : Map[ID, P], right : Map[ID, P]) : Map[ID, P] = {
