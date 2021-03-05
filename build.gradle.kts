@@ -156,6 +156,7 @@ fun makeTest(
 }
 makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
 makeTest(name="wildLifeAreaData", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "mutableArea"))
+makeTest(name="wildLifeLocalGlobal", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "collectiveBehaviour"))
 makeTest(name="wildLifeAreaDataFast", file = "wildlife-monitoring-mutable", time = 50.0, vars = setOf("random", "mutableArea"))
 makeTest(name="wildLifeAreaCheckAlpha", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "alpha"))
 makeTest(name="wildLifeAreaCheckGrain", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "grain"))
