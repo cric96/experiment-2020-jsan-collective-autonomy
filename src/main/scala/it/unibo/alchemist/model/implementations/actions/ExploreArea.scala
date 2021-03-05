@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.MobileNode
+import it.unibo.alchemist.model.implementations.nodes.{MobileNode, SimpleNodeManager}
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 import org.apache.commons.math3.random.RandomGenerator
@@ -17,9 +17,13 @@ import org.apache.commons.math3.random.RandomGenerator
  * @tparam T
  */
 case class ExploreArea[T](env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,
-                          node: MobileNode[T, Euclidean2DPosition], centerX: Double, centerY: Double, radius: Double,
+                          node: MobileNode[T, Euclidean2DPosition], centerXCoord: Double, centerYCoord: Double, radiusCircle: Double,
                           thr: Double, weight: Double)
   extends MotorSchema[T, Euclidean2DPosition](env, node, weight) with ExploreLikeBehaviour[T] {
+  private lazy val manager = new SimpleNodeManager[T](node)
+  override def centerX : Double = if(manager.has("center")) { manager.get[(Double, Double)]("center")._1 } else { centerXCoord }
+  override def centerY  : Double = if(manager.has("center")) { manager.get[(Double, Double)]("center")._2 } else { centerYCoord }
+  override def radius : Double = if(manager.has("radius")) { manager.get[Double]("radius") } else { radiusCircle }
   private var targetPosition : Euclidean2DPosition = randomPositionInCircle()
   private var behaviour : SeekSchema[T] = SeekSchema(env, node, targetPosition.getX, targetPosition.getY, weight, "target")
   def this(env: Environment[T, Euclidean2DPosition], rand: RandomGenerator,

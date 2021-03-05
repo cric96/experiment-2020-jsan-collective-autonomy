@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.casestudy.CollectiveTask._
 import it.unibo.casestudy.FeedbackMutableArea.Program
-import it.unibo.casestudy.WildLifeTasks.{HealTask, NoTask}
+import it.unibo.casestudy.WildLifeTasks.{ExploreTask, HealTask, NoTask}
 import it.unibo.scafi.space.Point3D
 //TODO
 //Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
@@ -53,12 +53,13 @@ class FeedbackMutableArea extends AggregateProgram with Gradients
           dangerAnimal,
           Map.empty
         )
-        val areaTask : CollectiveTask[Program, Actuation] = dangersCollected.toSeq.sortBy { case (id, p) => p.distance(currentPosition())}
+        val areaTask : CollectiveTask[Program, Actuation] = dangersCollected.toSeq.sortBy { case (id, p) => p.distance(currentPosition()) }
           .headOption
           .map { case (id, p) => HealTask(mid(), id, p) }
           .getOrElse(NoTask(mid()))
-        val myTask : CollectiveTask[Program, Actuation] = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
-        val selectedTask = Planner.eval(actualLeader, capability, Seq(myTask))
+        val exploreTask = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, ExploreTask(mid(), currentPosition(), grain - influenceFactor))
+        val healTask : CollectiveTask[Program, Actuation] = broadcastPenalized(mid() == actualLeader, influence * influenceFactor, areaTask)
+        val selectedTask = Planner.eval(actualLeader, capability, Seq(healTask, exploreTask))
         val actuation = selectedTask.call(this)
         Actuator.act(node, actuation)
         //Data exported

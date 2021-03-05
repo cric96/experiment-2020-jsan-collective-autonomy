@@ -22,7 +22,7 @@ trait SmartCollarBehaviour extends AggregateProgram with StandardSensors with Sc
 
   def canHealAnimal() : Boolean = {
     val targetIdField : Map[ID, Int] = excludingSelf.reifyField(nbr(sense[Int]("targetId")))
-    targetIdField.values.toSet.contains(mid())
+    targetIdField.values.toSet.count(_ == mid()) == 2
   }
 
   def combineDangerMap(left : Map[ID, P], right : Map[ID, P]) : Map[ID, P] = {

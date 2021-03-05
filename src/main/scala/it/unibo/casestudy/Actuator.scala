@@ -14,7 +14,7 @@ object Actuator {
       removeIfPresent(nodeManager, "radius")
     case Heal(id, target) => nodeManager.put("target", target)
       nodeManager.put("targetId", id)
-    case Explore(center, radius) => nodeManager.put("center", center)
+    case Explore(center, radius) => nodeManager.put("center", (center.x, center.y))
       nodeManager.put("radius", radius)
   }
 }
