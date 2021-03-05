@@ -32,7 +32,7 @@ variables:
 
   random: &random
     min: 0
-    max: 15
+    max: 4
     step: 1
     default: 0
 
@@ -45,8 +45,8 @@ variables:
   collectiveBehaviour: &collectiveBehaviour
     min: 0
     max: 1
-    step: 1
-    default: 0
+    step: 0.5
+    default: 1
 
   alpha: &alpha
     min: 0.1
@@ -114,7 +114,7 @@ variables:
     formula: 10
 
   dangerSpawnRate: &dangerSpawnRate
-    formula: 0.2
+    formula: 0.5
 
   noTarget: &noTarget
     formula: -1
@@ -181,11 +181,11 @@ pools:
         parameters: [ *velocityCombiner ]
         actions:
           - type: Separation
-            parameters: [ 60.0, 0.1 ]
+            parameters: [ 60.0, 0.6 ]
           - type: Alignment
-            parameters: [ 0.03 ]
+            parameters: [ 0.3 ]
           - type: Cohesion
-            parameters: [ 0.001 ]
+            parameters: [ 0.01 ]
           - type: ExploreArea
             parameters: [ 0, 0, *explorationRange, 10, 0.5]
   # Animals movement behaviour

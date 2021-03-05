@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.casestudy.CollectiveTask._
 import it.unibo.casestudy.WildlifeMonitoring.Program
-import it.unibo.casestudy.WildlifeTasks.{ExploreTask, HealTask, NoTask}
+import it.unibo.casestudy.WildlifeTasks.{HealTask, NoTask}
 import it.unibo.scafi.space.Point3D
 //TODO
 //Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
@@ -17,6 +17,7 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
   lazy val movementWindow : Int = sense[Double]("movementWindow").toInt
   lazy val movementThr : Double = sense[Double]("movementThr")
   lazy val influenceFactor : Double = 2
+  lazy val planner = Planner(randomGen)
   def isHealer : Boolean = sense[String]("type") == "healer"
   def isStationary : Boolean = sense[String]("type") == "stationary"
   def isExplorer : Boolean = sense[String]("type") == "explorer"
@@ -42,6 +43,7 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
     val leader = branch(isStationary) { S(grain, nbrRange) } { false }
     rep(0.0) {
       influence => {
+        randomGen
         val influencePenalization = influence * influenceFactor
         val actualLeader = broadcastPenalized(leader, influencePenalization, mid())
         align(actualLeader) { actualLeader => {
@@ -54,8 +56,8 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
             dangerAnimal,
             Map.empty
           )
-          val dangersInArea = broadcastPenalized(sourceArea, influencePenalization, dangersCollected)
-          val localTask = dangersInArea.toSeq.sortBy { case (id, p) => p.distance(currentPosition()) }
+          //val dangersInArea = G[Map[ID, P]](sourceArea, dangersCollected, v => v, nbrRange)
+          val localTask = dangerAnimal.toSeq.sortBy { case (id, p) => p.distance(currentPosition()) }
             .headOption
             .map { case (id, p) => HealTask(mid(), id, p) }
             .getOrElse(NoTask(mid()))
@@ -64,8 +66,9 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
             .map { case (id, p) => HealTask(mid(), id, p) }
             .getOrElse(NoTask(mid()))
           //val exploreTask = broadcastPenalized(sourceArea, influencePenalization, ExploreTask(mid(), currentPosition(), grain))
-          val healTask : CollectiveTask[Program, Actuation] = broadcastPenalized(sourceArea, influencePenalization, areaTask)
-          val selectedTask = Planner.eval(mid(), actualLeader, capability, Seq(healTask, localTask), collective)
+          val healTask : CollectiveTask[Program, Actuation] = G[CollectiveTask[Program, Actuation]](sourceArea, areaTask, v => v, nbrRange)
+          val leaderCount = G[Long](sourceArea,  roundCounter(), v => v, nbrRange)
+          val selectedTask = planner.eval(mid(), actualLeader, capability, Seq(healTask, localTask), collective)
           val actuation = selectedTask.call(this)
           Actuator.act(node, actuation)
           //Data exported
@@ -99,7 +102,7 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
   }
   def capability : Set[Capability] = Set(Specific(sense[String]("type")))
   def mutableArea : Boolean = sense[Double]("areaType").toInt == 0
-  def collective : Boolean = sense[Double]("behaviourType").toInt == 0
+  def collective : Double = sense[Double]("behaviourType")
   def exponentialBackOff(alpha : Double, count : Double) : Double = rep(count)(c => c * (1 - alpha) + alpha * count)
   def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field) { 1 } { 0 }, 0)
   def typeFromDistance(distance : Double) : String = if(distance.toInt <= movementThr) {
