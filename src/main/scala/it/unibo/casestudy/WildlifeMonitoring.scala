@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 import it.unibo.casestudy.CollectiveTask._
 import it.unibo.casestudy.WildlifeMonitoring.Program
-import it.unibo.casestudy.WildlifeTasks.{HealTask, NoTask}
+import it.unibo.casestudy.WildlifeTasks.{ExploreTask, HealTask, NoTask}
 import it.unibo.scafi.space.Point3D
 //TODO
 //Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
@@ -65,10 +65,10 @@ class WildlifeMonitoring extends AggregateProgram with Gradients
             .headOption
             .map { case (id, p) => HealTask(mid(), id, p) }
             .getOrElse(NoTask(mid()))
-          //val exploreTask = broadcastPenalized(sourceArea, influencePenalization, ExploreTask(mid(), currentPosition(), grain))
+          val exploreTask = broadcastPenalized(sourceArea, influencePenalization, ExploreTask(mid(), currentPosition(), grain))
           val healTask : CollectiveTask[Program, Actuation] = G[CollectiveTask[Program, Actuation]](sourceArea, areaTask, v => v, nbrRange)
           val leaderCount = G[Long](sourceArea,  roundCounter(), v => v, nbrRange)
-          val selectedTask = planner.eval(mid(), actualLeader, capability, Seq(healTask, localTask), collective)
+          val selectedTask = planner.eval(mid(), actualLeader, capability, Seq(healTask, exploreTask, localTask), collective)
           val actuation = selectedTask.call(this)
           Actuator.act(node, actuation)
           //Data exported
