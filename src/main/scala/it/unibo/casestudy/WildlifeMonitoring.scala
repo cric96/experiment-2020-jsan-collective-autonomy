@@ -34,7 +34,7 @@ class WildlifeMonitoring
 
   lazy val movementThr: Double = sense[Double]("movementThr")
 
-  lazy val influenceFactor: Double = 2
+  lazy val influenceFactor: Double = 4
 
   lazy val planner = Planner(randomGen, node)
 
@@ -42,8 +42,6 @@ class WildlifeMonitoring
 
   override def main(): Any = {
     val dangerAnimal = animalBehaviour()
-    val trajectory = recentValues(5, currentPosition())
-    node.put("trajectory", trajectory.last - trajectory.head)
     branch(!isAnimal)(rescueBehaviour(dangerAnimal)) {}
   }
 
@@ -73,8 +71,8 @@ class WildlifeMonitoring
         val sourceArea = mid() == actualLeader
         val potential = distanceTo(sourceArea)
         //mutable area section
-        val (healer, explorer) = branch(mutableArea) {
-          (countIn(potential, healer), countIn(potential, isExplorer))
+        val (healer, explorer): (Int, Int) = branch(mutableArea) {
+          (countIn(potential, isHealer), countIn(potential, isExplorer))
         } {
           (0, 0)
         }
@@ -100,7 +98,7 @@ class WildlifeMonitoring
           broadcastPenalized(
             sourceArea,
             influencePenalization,
-            ExploreTask(mid(), currentPosition(), grain - influence)
+            ExploreTask(mid(), currentPosition(), grain /*- influence*/ )
           )
         ).filterNot(_.source == mid()) //safety reason
         //broadcast the collective task choose by leader
@@ -111,7 +109,6 @@ class WildlifeMonitoring
         Actuator.act(node, actuation)
         //Data exported
         node.put("task", selectedTask)
-        node.put("taskReceived", !selectedTask.isInstanceOf[NoTask])
         node.put("sensed", dangersCollected)
         node.put("leader_id", actualLeader)
         if (leader) {
@@ -137,6 +134,7 @@ class WildlifeMonitoring
 
   def localCapabilitySensing(): String = {
     val trajectory = recentValues(movementWindow, currentPosition())
+    node.put("trajectory", trajectory.last - trajectory.head)
     val distance = trajectory.tail.zip(trajectory.dropRight(1)).map { case (a, b) => a.distance(b) }.sum
     mux(isHealer)("healer")(typeFromDistance(distance)) //local behaviour influence the global structure
   }
