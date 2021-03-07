@@ -54,7 +54,7 @@ variables:
     step: 0.1
     default: 0.3
 
-  explorerLabel : &explorerLabel
+  explorerLabel: &explorerLabel
     formula: >
       """ "explorer" """
     language: scala
@@ -144,7 +144,7 @@ export:
 
 network-model:
   type: DualRadioLinkingRule #*connectionType
-  parameters: [*loraRange, *bluetoothRange]
+  parameters: [ *loraRange, *bluetoothRange ]
 
 pools:
   # Danger animal "spawner"
@@ -169,7 +169,7 @@ pools:
         type: Event
         actions:
           - type: RunScafiProgram
-            parameters: [it.unibo.casestudy.WildlifeMonitoring, 5.0] # second argument is retention time
+            parameters: [ it.unibo.casestudy.WildlifeMonitoring, 5.0 ] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
   # "Collar" aggregate program evaluation
   - pool: &animalBehaviour
@@ -194,7 +194,7 @@ pools:
           #- type: Cohesion
           #  parameters: [ 0.001 ]
           - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 30, 0.1]
+            parameters: [ 0, 0, *explorationRange, 30, 0.1 ]
   # Animals movement behaviour
   - pool: &animalsWander
       #- time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)
@@ -208,25 +208,25 @@ pools:
             parameters: [ 60.0, 0.5 ]
           - type: RandomWayPoint
             #centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double
-            parameters: [ 0, 0, *explorationRange, 10, 2, 0.1]
+            parameters: [ 0, 0, *explorationRange, 10, 2, 0.1 ]
 
 
 dangerNodeSpawn: &dangerNodeSpawn
   molecule: dangerNodeSpawn
   concentration: 0.0
-taskCreated : &taskCreated
+taskCreated: &taskCreated
   molecule: taskCreated
   concentration: 0.0
-taskReceived : &taskReceived
+taskReceived: &taskReceived
   molecule: taskReceived
   concentration: 0.0
-healCount : &healCount
+healCount: &healCount
   molecule: healCount
   concentration: 0.0
-areaType : &areaType
+areaType: &areaType
   molecule: areaType
   concentration: *mutableArea
-behaviourType : &behaviourType
+behaviourType: &behaviourType
   molecule: behaviourType
   concentration: *collectiveBehaviour
 alphaMolecule: &alphaMolecule
@@ -246,10 +246,10 @@ targetId: &targetId
   concentration: *noTarget
 
 displacements:
-# DRONES DISPLACEMENT
+  # DRONES DISPLACEMENT
   - in:
       type: Rectangle
-      parameters: [ *drones, *bottom, *bottom, *worldSize, *worldSize]
+      parameters: [ *drones, *bottom, *bottom, *worldSize, *worldSize ]
     nodes:
       type: DroneNode2D
       parameters: [ *droneVelocity ]
@@ -284,7 +284,7 @@ displacements:
 
   - in:
       type: Rectangle
-      parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize]
+      parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize ]
     nodes:
       type: DroneNode2D
       parameters: [ *healerVelocity ]
@@ -316,13 +316,13 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
-# ANIMALS DISPLACEMENT
+  # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, 0, 0, *animalsDisplacementWidth, *animalsDisplacementWidth ]
     nodes:
       type: Animal2D
-      parameters: [ *zebraVelocity, "zebras"]
+      parameters: [ *zebraVelocity, "zebras" ]
     programs:
       - *animalsWander
       - *animalBehaviour
@@ -379,10 +379,10 @@ displacements:
       - *animalsWander
       - *animalBehaviour
     contents: *animalContent
-# STATIONS DISPLACEMENT
+  # STATIONS DISPLACEMENT
   - in:
       type: Grid
-      parameters: [ *bottom, *bottom, *top, *top, 700, 700, 500, 500]
+      parameters: [ *bottom, *bottom, *top, *top, 700, 700, 500, 500 ]
     nodes:
       type: LoraStation
     programs:
@@ -409,10 +409,10 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
-## SPAWNER
+  ## SPAWNER
   - in:
       type: Point
-      parameters: [0, 0]
+      parameters: [ 0, 0 ]
     programs:
       - *ill
       - *taskNormalization

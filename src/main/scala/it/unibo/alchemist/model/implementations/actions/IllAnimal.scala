@@ -21,10 +21,15 @@ case class IllAnimal[T, P <: Position[P]](
   def this(env: Environment[T, P], node: Node[T], rand: RandomGenerator) {
     this(env, rand, node, Double.PositiveInfinity)
   }
+
   private lazy val animals: List[Animal2D[T]] = env.getNodes.collect { case n: Animal2D[T] => n }
+
   private lazy val manager = new SimpleNodeManager[T](node)
+
   private var fireCount = 0
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = IllAnimal(env, rand, node, timeLimit)
+
   override def execute(): Unit = {
     if (env.getSimulation.getTime.toDouble < timeLimit) {
       val shuffledAnimals = shuffle(animals).map(new SimpleNodeManager[T](_)) //avoid to compute random number each time
@@ -39,7 +44,9 @@ case class IllAnimal[T, P <: Position[P]](
     }
     manager.put("dangerNodeSpawn", fireCount)
   }
+
   override def getContext: Context = Context.LOCAL
+
   //take from
   private def shuffle(animals: List[Animal2D[T]]): List[Animal2D[T]] = {
     val buf = new ArrayBuffer[Animal2D[T]] ++= animals
@@ -54,4 +61,5 @@ case class IllAnimal[T, P <: Position[P]](
     }
     (buf).result().toList
   }
+
 }

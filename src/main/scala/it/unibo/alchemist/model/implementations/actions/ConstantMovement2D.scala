@@ -17,6 +17,9 @@ case class ConstantMovement2D[T](
   vy: Double,
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new ConstantMovement2D[T](env, node, vx, vy, weight)
+
   override protected def unweightedVector: Euclidean2DPosition = env.makePosition(vx, vy)
+
 }

@@ -7,23 +7,40 @@ import it.unibo.scafi.space.Point3D
 import java.util.Optional
 
 package object casestudy {
+
   type Bounded[P] = ScafiIncarnationForAlchemist.Builtins.Bounded[P]
+
   //TYPE CLASSES
   implicit val pointBound = new Bounded[P] {
+
     override def bottom: Point3D = Point3D(-500, -500, -500)
+
     override def top: Point3D = Point3D(500, 500, 500)
+
     override def compare(a: Point3D, b: Point3D): Int = positionOrdering.compare(a, b)
+
   }
+
   implicit val booleanBound = new Bounded[Boolean] {
+
     override def top: Boolean = true
+
     override def bottom: Boolean = false
+
     override def compare(a: Boolean, b: Boolean): Int = Ordering.Boolean.compare(a, b)
+
   }
+
   //IMPLICIT CONVERSION
   implicit def OptionalToOption[E](p: Optional[E]): Option[E] = if (p.isPresent) Some(p.get()) else None
+
   //TYPE ENRICHMENT
   implicit class RichPoint3D(p: Point3D) {
+
     def /(alpha: Double): Point3D = Point3D(p.x / alpha, p.y / alpha, p.z / alpha)
+
     def -(o: Point3D): Point3D = Point3D(p.x - o.x, p.y - o.y, p.z - o.z)
+
   }
+
 }

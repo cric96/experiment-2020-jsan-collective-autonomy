@@ -10,6 +10,9 @@ import it.unibo.alchemist.model.interfaces._
  */
 class Actuator[T, P <: Position[P]](env: Environment[T, P], mobileNode: MobileNode[T, P], var velocity: P)
     extends AbstractMoveNode[T, P](env, mobileNode) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Actuator(env, mobileNode, velocity)
+
   override def getNextPosition: P = velocity
+
 }

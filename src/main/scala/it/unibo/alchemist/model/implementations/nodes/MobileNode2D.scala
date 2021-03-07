@@ -14,7 +14,11 @@ class MobileNode2D[T](
   override val maximumSpeed: Double = 1.0,
   val group: String
 ) extends MobileNode[T, Euclidean2DPosition](env) {
+
   private var vector: Euclidean2DPosition = new Euclidean2DPosition(0.0, 0.0)
+
   override def setVector(v: Euclidean2DPosition): Unit = vector = v
+
   override def velocity: Euclidean2DPosition = vector
+
 }

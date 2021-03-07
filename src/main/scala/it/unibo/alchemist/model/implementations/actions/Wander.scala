@@ -17,8 +17,11 @@ case class Wander[T](
   howLong: Double,
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   private var randomDirection = createRandomDirection
+
   private var lastTime = 0.0
+
   def this(
     env: Environment[T, Euclidean2DPosition],
     rand: RandomGenerator,
@@ -27,7 +30,9 @@ case class Wander[T](
   ) {
     this(env, rand, node, howLong, 1.0)
   }
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Wander[T](env, rand, node, howLong, weight)
+
   override def unweightedVector: Euclidean2DPosition = {
     if (changeDirectionTime) {
       lastTime = env.getSimulation.getTime.toDouble
@@ -35,6 +40,9 @@ case class Wander[T](
     }
     randomDirection
   }
+
   private def createRandomDirection = new Euclidean2DPosition(rand.nextDouble() - 0.5, rand.nextDouble() - 0.5)
+
   private def changeDirectionTime: Boolean = env.getSimulation.getTime.toDouble - lastTime > howLong
+
 }

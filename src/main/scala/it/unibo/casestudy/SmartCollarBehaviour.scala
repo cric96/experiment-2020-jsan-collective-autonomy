@@ -1,6 +1,7 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ ScafiAlchemistSupport, _ }
+
 //TODO
 trait SmartCollarBehaviour
     extends AggregateProgram
@@ -14,7 +15,9 @@ trait SmartCollarBehaviour
     with FieldUtils
     with BlockT
     with RichStateManagement =>
+
   def isDanger: Boolean = sense("danger")
+
   def dangerAnimalField(): Map[ID, P] = {
     val isStation: Boolean = node.get("station")
     val isDanger: Boolean = sense("danger")
@@ -28,14 +31,17 @@ trait SmartCollarBehaviour
       }
     }
   }
+
   def canHealAnimal(): Boolean = {
     val targetIdField: Map[ID, Int] = excludingSelf.reifyField(nbr(sense[Int]("targetId")))
     targetIdField.values.count(_ == mid()) >= 4 //put molecule
   }
+
   def combineDangerMap(left: Map[ID, P], right: Map[ID, P]): Map[ID, P] = {
     val same = left.keySet intersect right.keySet
     val union = left ++ right
     val mergeSameNode = same.map(id => id -> (left(id) + right(id)) / 2)
     union ++ mergeSameNode
   }
+
 }

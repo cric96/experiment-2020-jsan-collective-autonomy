@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces.{ Action, Environment, Node, Reaction
 import it.unibo.scafi.space.Point3D
 import it.unibo.alchemist._
 import it.unibo.alchemist.model.implementations.reactions.MotorSchemaReaction
+
 //TODO, find a better way to express the target position, you should use two different behaviour? Or two constructors?
 /**
  * MOTOR SCHEMA BEHAVIOUR
@@ -23,10 +24,14 @@ case class SeekSchema[T](
   weight: Double,
   targetMolecule: String
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] =
     new SeekSchema[T](env, node, px, py, weight, targetMolecule: String)
+
   private val manager = new SimpleNodeManager[T](node)
+
   private val centerOfMass = new Euclidean2DPosition(px, py)
+
   override def unweightedVector: Euclidean2DPosition = {
     val center = if (manager.has(targetMolecule)) {
       val targetPosition = manager.get[Point3D](targetMolecule)
@@ -35,4 +40,5 @@ case class SeekSchema[T](
       centerOfMass
     MotorSchemaReaction.normalizedWithSpeed(center - env.getPosition(node), node, env)
   }
+
 }

@@ -42,17 +42,25 @@ case class RandomWayPoint[T](
   ) {
     this(env, rand, node, centerX, centerY, radius, RandomWayPoint.DefaultThr, RandomWayPoint.DefaultTime, weight)
   }
+
   private lazy val groupLeader: MobileNode[T, Euclidean2DPosition] = env.getNodes.toList.collect {
     case other: MobileNode[T, Euclidean2DPosition] if (node.group == other.group) =>
       other //take the node in the same group
   }.minBy(_.getId)
+
   private val velocityMolecule = "velocity"
+
   private lazy val groupLeaderManger = new SimpleNodeManager[T](groupLeader)
-  private var position = randomPositionInCircle
+
+  private var position = randomPositionInCircle()
+
   private var lastTime = 0.0
+
   private val zeroVelocity = new Euclidean2DPosition(0, 0)
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] =
     RandomWayPoint[T](env, rand, node, centerX, centerY, radius, thr, maxSleep, weight)
+
   override def unweightedVector: Euclidean2DPosition =
     if (node.getId == groupLeader.getId) {
       val leaderUnweightedVector = leaderBehaviour()
@@ -60,6 +68,7 @@ case class RandomWayPoint[T](
       leaderUnweightedVector
     } else
       slaveBehaviour()
+
   private def leaderBehaviour(): Euclidean2DPosition =
     if (isSleeping(maxSleep))
       zeroVelocity
@@ -70,14 +79,21 @@ case class RandomWayPoint[T](
       }
       position - env.getPosition(node)
     }
+
   private def slaveBehaviour(): Euclidean2DPosition =
     if (groupLeaderManger.has(velocityMolecule))
       groupLeaderManger.get[Euclidean2DPosition](velocityMolecule)
     else
       zeroVelocity
+
   private def isSleeping(time: Double): Boolean = env.getSimulation.getTime.toDouble - lastTime < time
+
 }
+
 object RandomWayPoint {
+
   private[RandomWayPoint] val DefaultThr = 5
+
   private[RandomWayPoint] val DefaultTime = 1
+
 }

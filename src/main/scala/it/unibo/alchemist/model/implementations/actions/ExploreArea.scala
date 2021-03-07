@@ -38,15 +38,23 @@ case class ExploreArea[T](
   ) {
     this(env, rand, node, centerX, centerY, radius, thr = 0.01, weight)
   }
+
   private lazy val manager = new SimpleNodeManager[T](node)
+
   private var targetPosition: Euclidean2DPosition = randomPositionInCircle()
+
   private var behaviour: SeekSchema[T] =
     SeekSchema(env, node, targetPosition.getX, targetPosition.getY, weight, "target")
+
   override def centerX: Double = if (manager.has("center")) manager.get[(Double, Double)]("center")._1 else centerXCoord
+
   override def centerY: Double = if (manager.has("center")) manager.get[(Double, Double)]("center")._2 else centerYCoord
+
   override def radius: Double = if (manager.has("radius")) manager.get[Double]("radius") else radiusCircle
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] =
     ExploreArea[T](env, rand, node, centerX, centerY, radius, thr, weight)
+
   override def unweightedVector: Euclidean2DPosition = {
     if (reached(targetPosition)) {
       targetPosition = randomPositionInCircle()
@@ -55,4 +63,5 @@ case class ExploreArea[T](
     }
     behaviour.unweightedVector
   }
+
 }

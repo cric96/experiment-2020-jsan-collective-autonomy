@@ -18,6 +18,7 @@ import scala.collection.mutable
  * TODO
  */
 class WildLifeEffect extends Effect {
+
   override def apply[T, P <: Position2D[P]](
     g: Graphics2D,
     node: Node[T],
@@ -136,26 +137,42 @@ class WildLifeEffect extends Effect {
       .map(colorFromId)
 
   private def colorFromId(id: Int): Color = PALETTE(id % MAX_COLOR)
+
 }
 
 object WildLifeEffect {
+
   val MAX_COLOR: Int = 100
+
   val TRANSPARENT = new Color(255, 255, 255, 0)
+
   val PALETTE: Map[Int, Color] = (0 to 100).map(_ -> randomColor).toMap
+
   val ANIMAL_COLOR_CACHE: mutable.Map[String, Color] = new mutable.HashMap()
+
   val DRONE_SHAPE: Polygon = new Polygon(Array(-2, 0, 2), Array(0, -5, 0), 3)
+
   val HEALER_SHAPE: Area = {
     val area = new Area(DRONE_SHAPE)
     val circle = new Area(new Ellipse2D.Double(-1, -1, 2, 2))
     area.subtract(circle)
     area
   }
+
   val STATION: SimpleMolecule = new SimpleMolecule("station")
+
   val STATION_SIZE = 24.0
+
   val STATION_ALPHA = 30
+
   val DRONE_SIZE = 6.0
+
   val ANIMAL_SIZE = 12.0
+
   val DRONE_COLOR: Color = Color.BLACK
+
   val STATION_COLOR: Color = Color.RED
+
   def randomColor(): Color = new Color(Color.HSBtoRGB(math.random() floatValue (), 0.5f, 0.5f))
+
 }

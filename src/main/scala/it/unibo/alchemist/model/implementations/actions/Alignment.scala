@@ -14,7 +14,9 @@ case class Alignment[T](
   node: MobileNode[T, Euclidean2DPosition],
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Alignment[T](env, node, weight)
+
   override def unweightedVector: Euclidean2DPosition = {
     val neighbourhood = getNeighbourOf(node)
     if (neighbourhood.isEmpty)
@@ -24,4 +26,5 @@ case class Alignment[T](
       avgVelocity - node.velocity
     }
   }
+
 }

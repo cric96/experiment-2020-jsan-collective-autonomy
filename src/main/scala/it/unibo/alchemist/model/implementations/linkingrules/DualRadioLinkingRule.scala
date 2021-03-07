@@ -13,6 +13,7 @@ import scala.collection.JavaConverters.{ asScalaBufferConverter, bufferAsJavaLis
  * @param ble the range of bluetooth node
  */
 private class DualRadioLinkingRule[T, P <: Position[P]](lora: Double, ble: Double) extends LinkingRule[T, P] {
+
   override def computeNeighborhood(center: Node[T], env: Environment[T, P]): Neighborhood[T] =
     center match {
       case node: LoraStation[T, P] => Neighborhoods.make(env, center, env.getNodesWithinRange(node, lora))
@@ -20,5 +21,7 @@ private class DualRadioLinkingRule[T, P <: Position[P]](lora: Double, ble: Doubl
         val stations = env.getNodesWithinRange(node, lora).asScala.collect { case node: LoraStation[T, P] => node }
         Neighborhoods.make(env, center, (stations ++ env.getNodesWithinRange(node, ble).asScala).asJava)
     }
+
   override def isLocallyConsistent: Boolean = true
+
 }

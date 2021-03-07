@@ -18,7 +18,11 @@ case class FleeSchema[T](
   py: Double,
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   private val direction = new Euclidean2DPosition(px, py)
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new FleeSchema[T](env, node, px, py, weight: Double)
+
   override def unweightedVector: Euclidean2DPosition = env.getPosition(node) - direction
+
 }

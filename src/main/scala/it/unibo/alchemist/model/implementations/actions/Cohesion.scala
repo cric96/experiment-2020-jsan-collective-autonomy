@@ -14,7 +14,9 @@ case class Cohesion[T](
   node: MobileNode[T, Euclidean2DPosition],
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = new Cohesion[T](env, node, weight)
+
   override def unweightedVector: Euclidean2DPosition = {
     val droneNeighbour = getNeighbourOf(node)
     val centroid =
@@ -26,4 +28,5 @@ case class Cohesion[T](
       }
     centroid - env.getPosition(node)
   }
+
 }

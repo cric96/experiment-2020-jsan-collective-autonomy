@@ -6,18 +6,25 @@ import it.unibo.alchemist.model.interfaces._
 
 import scala.collection.JavaConverters._
 import it.unibo.alchemist.{ Combiner, _ }
+
 class MotorSchemaReaction[T, P <: Position[P]](
   env: Environment[T, P],
   mobileNode: MobileNode[T, P],
   distribution: TimeDistribution[T],
   combiner: Combiner[P]
 ) extends AbstractReaction[T](mobileNode, distribution) {
+
   private var lastTime: Double = 0.0
+
   private lazy val actuator = new Actuator[T, P](env, mobileNode, env.makePosition(0, 0))
+
   override def updateInternalStatus(curTime: Time, executed: Boolean, env: Environment[T, _]): Unit = {}
+
   override def cloneOnNewNode(n: Node[T], currentTime: Time): Reaction[T] =
     new MotorSchemaReaction(env, mobileNode, distribution.clone(currentTime), combiner)
+
   override def getRate: Double = distribution.getRate
+
   override def execute(): Unit = {
     val combinedVelocity = combiner.combine(mobileNode, motorSchemas)
     val normalized: P =
@@ -36,10 +43,13 @@ class MotorSchemaReaction[T, P <: Position[P]](
     mobileNode.setVector(resultingVelocity)
     actuator.execute()
   }
+
   private def motorSchemas: Seq[MotorSchema[T, P]] = getActions.asScala.collect { case node: MotorSchema[T, P] => node }
+
 }
 
 object MotorSchemaReaction {
+
   def normalizedWithSpeed[T, P <: Position[P]](velocity: P, mobileNode: MobileNode[T, P], env: Environment[T, P]): P = {
     val module = velocity.module
     val coordinates = velocity.getCartesianCoordinates.map(cord => (cord / module) * mobileNode.maximumSpeed)
@@ -48,4 +58,5 @@ object MotorSchemaReaction {
     else
       env.makePosition(coordinates.map(_.asInstanceOf[Number]).toSeq: _*)
   }
+
 }

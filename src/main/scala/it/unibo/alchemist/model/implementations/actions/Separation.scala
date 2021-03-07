@@ -15,8 +15,10 @@ case class Separation[T](
   separationDistance: Double,
   weight: Double
 ) extends MotorSchema[T, Euclidean2DPosition](env, node, weight) {
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] =
     new Separation[T](env, node, separationDistance, weight)
+
   override def unweightedVector: Euclidean2DPosition = {
     val neighborhood = getNeighbourOf(node)
     val nodePosition = env.getPosition(node)
@@ -25,4 +27,5 @@ case class Separation[T](
       .filter(node => node.getDistanceTo(nodePosition) < separationDistance)
       .foldLeft(env.origin)((acc, point) => acc - (point - nodePosition))
   }
+
 }
