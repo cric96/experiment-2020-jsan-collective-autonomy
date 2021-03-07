@@ -1,7 +1,7 @@
 package it.unibo
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{P, positionOrdering}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ positionOrdering, P }
 import it.unibo.scafi.space.Point3D
 
 import java.util.Optional
@@ -20,9 +20,10 @@ package object casestudy {
     override def compare(a: Boolean, b: Boolean): Int = Ordering.Boolean.compare(a, b)
   }
   //IMPLICIT CONVERSION
-  implicit def OptionalToOption[E](p : Optional[E]) : Option[E] = if (p.isPresent) Some(p.get()) else None
+  implicit def OptionalToOption[E](p: Optional[E]): Option[E] = if (p.isPresent) Some(p.get()) else None
   //TYPE ENRICHMENT
-  implicit class RichPoint3D(p : Point3D) {
-    def /(alpha : Double) : Point3D = Point3D(p.x / alpha, p.y / alpha, p.z / alpha)
+  implicit class RichPoint3D(p: Point3D) {
+    def /(alpha: Double): Point3D = Point3D(p.x / alpha, p.y / alpha, p.z / alpha)
+    def -(o: Point3D): Point3D = Point3D(p.x - o.x, p.y - o.y, p.z - o.z)
   }
 }

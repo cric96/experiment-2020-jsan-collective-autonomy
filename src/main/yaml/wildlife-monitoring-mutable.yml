@@ -45,7 +45,7 @@ variables:
   collectiveBehaviour: &collectiveBehaviour
     min: 0
     max: 1
-    step: 0.2
+    step: 1
     default: 1
 
   alpha: &alpha
@@ -154,6 +154,13 @@ pools:
         actions:
           - type: IllAnimal
             parameters: [ 100.0 ]
+  # Danger animal "spawner"
+  - pool: &taskNormalization
+      - time-distribution: 1
+        type: Event
+        actions:
+          - type: NormalizeTasks
+            parameters: [ ]
   # Main aggregate program evaluation
   - pool: &program
       - time-distribution:
@@ -181,13 +188,13 @@ pools:
         parameters: [ *velocityCombiner ]
         actions:
           - type: Separation
-            parameters: [ 60.0, 0.6 ]
+            parameters: [ 30.0, 0.2 ]
           - type: Alignment
-            parameters: [ 0.3 ]
-          - type: Cohesion
-            parameters: [ 0.01 ]
+            parameters: [ 0.001 ]
+          #- type: Cohesion
+          #  parameters: [ 0.001 ]
           - type: ExploreArea
-            parameters: [ 0, 0, *explorationRange, 10, 0.5]
+            parameters: [ 0, 0, *explorationRange, 30, 0.1]
   # Animals movement behaviour
   - pool: &animalsWander
       #- time-distribution: ##### FOR RandomWayPoint, but currently it is not deterministic (due the concurrency)
@@ -408,6 +415,7 @@ displacements:
       parameters: [0, 0]
     programs:
       - *ill
+      - *taskNormalization
     contents:
       - molecule: danger
         concentration: false

@@ -9,6 +9,7 @@ plugins {
     id("com.github.johnrengelman.shadow") version "4.0.3"
     idea
     kotlin("jvm") version "1.3.50"
+    id("cz.alenkacz.gradle.scalafmt") version "1.14.0"
 }
 
 repositories {
@@ -44,7 +45,6 @@ idea {
         isDownloadSources = true
     }
 }
-
 sourceSets.getByName("main") {
     resources {
         srcDirs("src/main/protelis")
