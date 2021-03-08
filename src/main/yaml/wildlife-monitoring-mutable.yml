@@ -3,21 +3,7 @@ incarnation: scafi
 #Time unit: Seconds
 #Speed unit: m/s
 variables:
-  animalsForGroup: &animalsForGroup
-    formula: 20
-
-  drones: &drones
-    formula: 40
-
-  healer: &healer
-    formula: 40
-
-  grain: &grain
-    min: 350
-    max: 750
-    step: 150
-    default: 500
-
+  ### variable elements
   movementThr: &movementThr
     min: 1
     max: 10
@@ -45,7 +31,7 @@ variables:
   collectiveBehaviour: &collectiveBehaviour
     min: 0
     max: 1
-    step: 0.25
+    step: 1
     default: 1
 
   alpha: &alpha
@@ -54,6 +40,29 @@ variables:
     step: 0.1
     default: 0.3
 
+  healerNecessary: &healerNecessary
+    min: 1
+    max: 6
+    step: 1
+    default: 4
+
+  grain: &grain
+    min: 350
+    max: 750
+    step: 150
+    default: 500
+
+  ### nodes number for category
+  animalsForGroup: &animalsForGroup
+    formula: 20
+
+  drones: &drones
+    formula: 40
+
+  healer: &healer
+    formula: 40
+
+  ### label information
   explorerLabel: &explorerLabel
     formula: >
       """ "explorer" """
@@ -69,6 +78,7 @@ variables:
       """ "stationary" """
     language: scala
 
+  ### environment configuration data (size, range)
   bluetoothRange: &bluetoothRange
     formula: 200 #meter
 
@@ -82,30 +92,25 @@ variables:
     formula: worldSize / 2 #meter
 
   droneVelocity: &droneVelocity
-    formula: 16.3
+    formula: 16.3 #m/s
 
   healerVelocity: &healerVelocity
-    formula: 16.3
+    formula: 16.3 #m/s
 
   impalaVelocity: &impalaVelocity
-    formula: 8.3
+    formula: 8.3 #m/s
 
   zebraVelocity: &zebraVelocity
-    formula: 8.3
+    formula: 8.3 #m/s
 
   top: &top
-    formula: worldSize / 2
+    formula: worldSize / 2 #m/s
 
   bottom: &bottom
-    formula: worldSize / -2
+    formula: worldSize / -2 #m/s
 
-  velocityCombiner: &velocityCombiner
-    formula: new it.unibo.alchemist.DifferentialCombiner()
-    language: scala
-
-  animalCombiner: &animalCombiner
-    formula: new it.unibo.alchemist.SumCombiner()
-    language: scala
+  animalsDisplacementWidth: &animalsDisplacementWidth
+    formula: 300 #meter
 
   evaluationRate: &evaluationRate
     formula: 1
@@ -116,11 +121,17 @@ variables:
   dangerSpawnRate: &dangerSpawnRate
     formula: 0.5
 
+  ##other information
+  velocityCombiner: &velocityCombiner
+    formula: new it.unibo.alchemist.DifferentialCombiner()
+    language: scala
+
+  animalCombiner: &animalCombiner
+    formula: new it.unibo.alchemist.SumCombiner()
+    language: scala
+
   noTarget: &noTarget
     formula: -1
-
-  animalsDisplacementWidth: &animalsDisplacementWidth
-    formula: 300
 
 seeds:
   scenario: *random
@@ -134,15 +145,16 @@ export:
     aggregators: [ sum ] #Export dangerNodeSpawn of each elements
   - molecule: healCount
     aggregators: [ sum ]
-  - molecule: taskCreated
+  - molecule: dangerDetected
     aggregators: [ sum ]
-  - molecule: taskReceived
+  - molecule: animalTargeted
     aggregators: [ sum ]
   - molecule: meanDistance
     aggregators: [ sum ]
-#environment:
-#  type: ImageEnvironment
-#  parameters: [assets/savana.png, 10, 0, 0]
+  - molecule: healerForArea
+    aggregators: [ sum ]
+  - molecule: emptyZoneCount
+    aggregators: [ sum ]
 
 network-model:
   type: DualRadioLinkingRule #*connectionType
@@ -212,15 +224,15 @@ pools:
             #centerX: Double, centerY: Double, radius: Double, thr: Double, maxSleep : Double, weight: Double
             parameters: [ 0, 0, *explorationRange, 10, 2, 0.1 ]
 
-
+### common molecule
 dangerNodeSpawn: &dangerNodeSpawn
   molecule: dangerNodeSpawn
   concentration: 0.0
-taskCreated: &taskCreated
-  molecule: taskCreated
+dangerDetected: &dangerDetected
+  molecule: dangerDetected
   concentration: 0.0
-taskReceived: &taskReceived
-  molecule: taskReceived
+animalTargeted: &animalTargeted
+  molecule: animalTargeted
   concentration: 0.0
 healCount: &healCount
   molecule: healCount
@@ -249,7 +261,15 @@ targetId: &targetId
 meanDistance: &meanDistance
   molecule: meanDistance
   concentration: 0.0
-
+healerNecessaryMolecule: &healerNecessaryMolecule
+  molecule: healerNecessary
+  concentration: *healerNecessary
+healerForArea: &healerForArea
+  molecule: healerForArea
+  concentration: 0.0
+emptyZoneCount: &emptyZoneCount
+  molecule: emptyZoneCount
+  concentration: 0.0
 
 displacements:
   # DRONES DISPLACEMENT
@@ -282,12 +302,15 @@ displacements:
       - *behaviourType
       - *movementWindowMolecule
       - *movementThrMolecule
+      - *healerNecessaryMolecule
       #Export
       - *dangerNodeSpawn
-      - *taskCreated
-      - *taskReceived
+      - *dangerDetected
+      - *animalTargeted
       - *healCount
       - *meanDistance
+      - *emptyZoneCount
+      - *healerForArea
 
   - in:
       type: Rectangle
@@ -318,12 +341,15 @@ displacements:
       - *behaviourType
       - *movementWindowMolecule
       - *movementThrMolecule
+      - *healerNecessaryMolecule
       #Export
       - *dangerNodeSpawn
-      - *taskCreated
-      - *taskReceived
+      - *dangerDetected
+      - *animalTargeted
       - *healCount
       - *meanDistance
+      - *emptyZoneCount
+      - *healerForArea
   # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -341,13 +367,17 @@ displacements:
         concentration: false
       - molecule: danger
         concentration: false
+      #Configuration
       - *targetId
+      - *healerNecessaryMolecule
       #Export
       - *dangerNodeSpawn
-      - *taskCreated
-      - *taskReceived
+      - *dangerDetected
+      - *animalTargeted
       - *healCount
       - *meanDistance
+      - *emptyZoneCount
+      - *healerForArea
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *top, *bottom, *animalsDisplacementWidth, *animalsDisplacementWidth ]
@@ -391,7 +421,7 @@ displacements:
   # STATIONS DISPLACEMENT
   - in:
       type: Grid
-      parameters: [ *bottom, *bottom, *top, *top, 700, 700, 500, 500 ]
+      parameters: [ -1500, -1500, 1500, 1500, 700, 700, 200, 200 ]
     nodes:
       type: LoraStation
     programs:
@@ -413,12 +443,15 @@ displacements:
       - *behaviourType
       - *movementWindowMolecule
       - *movementThrMolecule
+      - *healerNecessaryMolecule
       #Export
       - *dangerNodeSpawn
-      - *taskCreated
-      - *taskReceived
+      - *dangerDetected
+      - *animalTargeted
       - *healCount
       - *meanDistance
+      - *emptyZoneCount
+      - *healerForArea
   ## SPAWNER
   - in:
       type: Point
@@ -429,9 +462,12 @@ displacements:
     contents:
       - molecule: danger
         concentration: false
+      - *healerNecessaryMolecule
       #Export
       - *dangerNodeSpawn
-      - *taskCreated
-      - *taskReceived
+      - *dangerDetected
+      - *animalTargeted
       - *healCount
       - *meanDistance
+      - *emptyZoneCount
+      - *healerForArea

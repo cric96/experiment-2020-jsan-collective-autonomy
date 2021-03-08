@@ -13,10 +13,11 @@ import org.apache.commons.math3.random.RandomGenerator
  * This behaviour is attached to the entire group, namely collectively the nodes behaves as random way point.
  * The key idea here is that the group used the same velocity of the leader (i.e. the node with the lowest id in the group).
  * As Explore Area, the nodes move randomly inside a circle.
- * @param centerX @see ExploreArea
- * @param centerY @see ExploreArea
- * @param radius @see ExploreArea
- * @param thr @see ExploreArea
+ *
+ * @param centerX  @see ExploreArea
+ * @param centerY  @see ExploreArea
+ * @param radius   @see ExploreArea
+ * @param thr      @see ExploreArea
  * @param maxSleep the delta time in which the group stand still
  */
 case class RandomWayPoint[T](

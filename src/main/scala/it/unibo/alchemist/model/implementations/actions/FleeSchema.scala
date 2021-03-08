@@ -8,6 +8,7 @@ import it.unibo.alchemist._
 /**
  * MOTOR SCHEMA BEHAVIOUR
  * move the node far from a position.
+ *
  * @param px
  * @param py
  */

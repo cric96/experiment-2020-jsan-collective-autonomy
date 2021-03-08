@@ -11,7 +11,7 @@ import it.unibo.alchemist.model.interfaces.{ Environment, Node, Position2D }
 import it.unibo.scafi.space.Point3D
 
 import java.awt._
-import java.awt.geom.{ AffineTransform, Area, Ellipse2D }
+import java.awt.geom.{ AffineTransform, Arc2D, Area, Ellipse2D, Rectangle2D }
 import scala.collection.mutable
 
 /**
@@ -33,7 +33,8 @@ class WildLifeEffect extends Effect {
         node match {
           case drone: DroneNode2D[T] => drawDrone(g, drone, x, y, env, wormhole.getZoom)
           case animal: Animal2D[T]   => drawAnimal(g, animal, x, y, env, wormhole.getZoom)
-          case _                     => drawStation(g, node, x, y, env, wormhole.getZoom)
+          case _: LoraStation[T, P]  => drawStation(g, node, x, y, env, wormhole.getZoom)
+          case _                     =>
         }
       case _ =>
     }
@@ -56,9 +57,12 @@ class WildLifeEffect extends Effect {
       else
         DRONE_SHAPE
     val transformedShape = transform.createTransformedShape(shape)
+    if (manager.has("target")) {
+      val crossShape = transform.createTransformedShape(HEALER_TASK)
+      g.setColor(Color.GREEN)
+      g.fill(crossShape)
+    }
     g.setColor(getColorFromLeader(manager).getOrElse(DRONE_COLOR))
-    if (manager.has("target"))
-      g.setColor(Color.CYAN)
     g.fill(transformedShape)
   }
 
@@ -95,23 +99,22 @@ class WildLifeEffect extends Effect {
     env: EuclideanPhysics2DEnvironment[_],
     zoom: Double
   ): Unit = {
-    val station = env.getShapeFactory.rectangle(STATION_SIZE, STATION_SIZE)
+    val station = STATION_SHAPE
     val manager = new SimpleNodeManager[T](node)
-    val transform = getTransform(x, y, zoom, 0.0)
+    val transform = getTransform(x, y, zoom * STATION_SIZE, 0.0)
+    val areaTransform = getTransform(x, y, zoom, 0.0)
     val influence = Some(manager).collect { case node if node.has("influence") => node.get[Double]("influence") }
       .map(env.getShapeFactory.circle(_))
-      .map { case area: AwtShapeCompatible => transform.createTransformedShape(area.asAwtShape()) }
-    station match {
-      case station: AwtShapeCompatible =>
-        val transformed = transform.createTransformedShape(station.asAwtShape())
-        val color = getColorFromLeader(manager).getOrElse(STATION_COLOR)
-        g.setColor(color)
-        g.fill(transformed)
-        for (shape <- influence) {
-          g.setColor(new Color(color.getRed, color.getGreen, color.getBlue, STATION_ALPHA))
-          g.fill(shape)
-        }
+      .map { case area: AwtShapeCompatible => areaTransform.createTransformedShape(area.asAwtShape()) }
+    val transformed = transform.createTransformedShape(station)
+    val color = getColorFromLeader(manager).getOrElse(STATION_COLOR)
+    g.setColor(color)
+    g.fill(transformed)
+    for (shape <- influence) {
+      g.setColor(new Color(color.getRed, color.getGreen, color.getBlue, STATION_ALPHA))
+      g.fill(shape)
     }
+
   }
 
   private def rotation[T](node: MobileNode2D[T]): Double = {
@@ -156,6 +159,22 @@ object WildLifeEffect {
     val area = new Area(DRONE_SHAPE)
     val circle = new Area(new Ellipse2D.Double(-1, -1, 2, 2))
     area.subtract(circle)
+    area
+  }
+
+  val HEALER_TASK: Area = {
+    val horizontal = new Area(new Rectangle2D.Double(-1.5, 0.5, 3, 1))
+    val vertical = new Area(new Rectangle2D.Double(-0.5, -0.5, 1, 3))
+    horizontal.add(vertical)
+    horizontal
+  }
+
+  val STATION_SHAPE: Shape = {
+    val circle = new Area(new Ellipse2D.Double(-1, -1, 2, 2))
+    val innerCircle = new Area(new Ellipse2D.Double(-.5, -.5, 1, 1))
+    val area = new Area(new Arc2D.Double(-1.5, -1.5, 3, 3, 30, 120, Arc2D.PIE))
+    area.subtract(circle)
+    area.add(innerCircle)
     area
   }
 

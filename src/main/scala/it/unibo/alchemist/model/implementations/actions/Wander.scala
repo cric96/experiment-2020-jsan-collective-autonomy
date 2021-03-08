@@ -8,6 +8,7 @@ import org.apache.commons.math3.random.RandomGenerator
 /**
  * MOTOR SCHEMA BEHAVIOUR
  * move randomly in the space. Internally it computes a velocity vector and use it for howLong time.
+ *
  * @param howLong the time in which the velocity remains the same.
  */
 case class Wander[T](

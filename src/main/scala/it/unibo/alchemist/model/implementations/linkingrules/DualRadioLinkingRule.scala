@@ -9,8 +9,9 @@ import scala.collection.JavaConverters.{ asScalaBufferConverter, bufferAsJavaLis
 /**
  * Simulates a network in which nodes have two time of connection, LoRa and Bluetooth low energy.
  * The LoRa nodes work as station.
+ *
  * @param lora the range of lora station
- * @param ble the range of bluetooth node
+ * @param ble  the range of bluetooth node
  */
 private class DualRadioLinkingRule[T, P <: Position[P]](lora: Double, ble: Double) extends LinkingRule[T, P] {
 

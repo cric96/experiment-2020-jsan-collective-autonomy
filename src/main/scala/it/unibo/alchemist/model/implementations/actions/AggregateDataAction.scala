@@ -10,6 +10,8 @@ import it.unibo.casestudy.WildlifeTasks.HealTask
 case class AggregateDataAction[T, P <: Position[P]](env: Environment[T, P], node: Node[T])
     extends AbstractAction[T](node) {
 
+  private lazy val manager = new SimpleNodeManager[T](node)
+
   override def cloneAction(n: Node[T], r: Reaction[T]): Action[T] = AggregateDataAction(env, node)
 
   def nodesForLeader: Map[Int, List[(SimpleNodeManager[T], Node[T])]] =
@@ -28,25 +30,44 @@ case class AggregateDataAction[T, P <: Position[P]](env: Environment[T, P], node
       .keySet
       .size
 
-  lazy val manager = new SimpleNodeManager[T](node)
-
   override def execute(): Unit = {
-    val meanTaskReceived = nodesForLeader.map {
+    val meanTaskReceived = computeTaskReceived()
+    val meanDistance = computeMeanDistance()
+    val healerForArea = computeMeanHealer()
+    val emptyZone = computeEmptyZoneCount()
+    manager.put("animalTargeted", meanTaskReceived)
+    manager.put("meanDistance", meanDistance)
+    manager.put("healerForArea", healerForArea)
+    manager.put("emptyZoneCount", emptyZone)
+  }
+
+  override def getContext: Context = Context.LOCAL
+
+  private def computeTaskReceived(): Int =
+    nodesForLeader.map {
       case (key, elements) =>
         key -> elements.collect { case (manager, _) if manager.has("task") => manager.get[Any]("task") }.collect {
           case HealTask(leader_id, target, _) => (leader_id, target)
         }.toSet
     }.map(_._2.size).sum
-    val meanDistance = nodesForLeader.map {
+
+  private def computeMeanDistance(): Double =
+    nodesForLeader.map {
       case (leader, elements) =>
         val leaderNode = env.getNodeByID(leader)
         val distances = elements.map { case (_, node) => env.getDistanceBetweenNodes(leaderNode, node) }.sum
         leader -> distances / elements.size
-    }.values.sum / nodesForLeader.size
-    manager.put("taskReceived", meanTaskReceived)
-    manager.put("meanDistance", meanDistance)
-  }
+    }.values.filterNot(_.isNaN).sum / nodesForLeader.size
 
-  override def getContext: Context = Context.LOCAL
+  private def computeMeanHealer(): Double =
+    nodesForLeader.map {
+      case (_, elements) =>
+        val healerCount = elements
+          .filter(_._1.has("type"))
+          .count(_._1.get[String]("type") == "healer")
+        healerCount
+    }.filter(_ < manager.get[Double]("healerNecessary")).sum / nodesForLeader.size
+
+  private def computeEmptyZoneCount(): Int = nodesForLeader.count(_._2.isEmpty)
 
 }

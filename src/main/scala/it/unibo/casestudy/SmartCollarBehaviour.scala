@@ -19,8 +19,7 @@ trait SmartCollarBehaviour
   def isDanger: Boolean = sense("danger")
 
   def dangerAnimalField(): Map[ID, P] = {
-    val isStation: Boolean = node.get("station")
-    val isDanger: Boolean = sense("danger")
+    val isStation: Boolean = sense[Boolean]("station")
     branch(isStation)(Map.empty[ID, P]) {
       foldhood(Map.empty[ID, P])((left, right) => combineDangerMap(left, right)) {
         mux(nbr(isDanger)) {
@@ -34,7 +33,7 @@ trait SmartCollarBehaviour
 
   def canHealAnimal(): Boolean = {
     val targetIdField: Map[ID, Int] = excludingSelf.reifyField(nbr(sense[Int]("targetId")))
-    targetIdField.values.count(_ == mid()) >= 4 //put molecule
+    targetIdField.values.count(_ == mid()) >= sense[Double]("healerNecessary")
   }
 
   def combineDangerMap(left: Map[ID, P], right: Map[ID, P]): Map[ID, P] = {

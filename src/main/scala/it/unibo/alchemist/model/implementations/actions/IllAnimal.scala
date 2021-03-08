@@ -10,6 +10,7 @@ import scala.collection.mutable.ArrayBuffer
  * MOTOR SCHEMA BEHAVIOUR
  * a "ill" animal generator. When executed, peek a random animal and change its status to danger.
  * NB! this action should be attach only to one node in the system.
+ *
  * @param timeLimit describe the temporal window in which the action produce danger animal. When timeLimit passed, no animal change its status.
  */
 case class IllAnimal[T, P <: Position[P]](
@@ -50,11 +51,13 @@ case class IllAnimal[T, P <: Position[P]](
   //take from
   private def shuffle(animals: List[Animal2D[T]]): List[Animal2D[T]] = {
     val buf = new ArrayBuffer[Animal2D[T]] ++= animals
+
     def swap(i1: Int, i2: Int) {
       val tmp = buf(i1)
       buf(i1) = buf(i2)
       buf(i2) = tmp
     }
+
     for (n <- buf.length to 2 by -1) {
       val k = rand.nextInt(n)
       swap(n - 1, k)

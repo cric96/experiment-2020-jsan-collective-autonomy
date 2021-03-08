@@ -6,11 +6,12 @@ the_plots_labels:
   - 'dangers detected'
   - 'animals rescue count'
   - 'average distance'
+  - 'empty zone count'
 the_plots_formats:
-  - [0,1]
+  - [0,7]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
-default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan"]
+default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan", "magenta", "red"]
 the_plots_colors:
   - *default_colors
 legend_position:

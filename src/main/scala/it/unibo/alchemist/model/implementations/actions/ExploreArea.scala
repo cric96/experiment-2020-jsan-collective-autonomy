@@ -10,6 +10,7 @@ import org.apache.commons.math3.random.RandomGenerator
  * Describe a behaviour that, in time, explore a circular area. Internally, compute a point inside the area and produce a
  * vector toward it. When the node reach the target (i.e. the distance is smaller then a threshold passed), a new position is
  * computed.
+ *
  * @param centerX
  * @param centerY
  * @param radius

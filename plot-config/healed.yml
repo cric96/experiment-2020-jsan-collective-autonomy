@@ -3,11 +3,14 @@ the_plots_labels:
   - 'danger count'
   - 'danger trigger'
   - 'healed count'
+  - 'dangers detected'
+  - 'animals rescue count'
+  - 'average distance'
 the_plots_formats:
   - [0,2,3]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
-default_colors: &default_colors ["black", "blue", "green", "purple"]
+default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan"]
 the_plots_colors:
   - *default_colors
 legend_position:

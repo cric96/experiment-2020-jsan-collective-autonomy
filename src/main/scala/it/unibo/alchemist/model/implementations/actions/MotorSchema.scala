@@ -8,6 +8,7 @@ import it.unibo.alchemist.model.interfaces.{ Context, Environment, Position }
  * This action cannot be used outside of a MotorSchemaReaction.
  * This action family is used to describe a motor schema like behaviour. Each action can use some local information to compute an unweighted velocity vector.
  * Combining these actions, some interesting behaviour should be made, as the flocking behaviour of Craig Raylods.
+ *
  * @param weight normalizes the velocity computed by the action.
  */
 abstract class MotorSchema[T, P <: Position[P]](env: Environment[T, P], mobileNode: MobileNode[T, P], weight: Double)

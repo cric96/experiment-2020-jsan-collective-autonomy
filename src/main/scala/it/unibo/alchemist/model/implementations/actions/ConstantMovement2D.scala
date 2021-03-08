@@ -7,6 +7,7 @@ import it.unibo.alchemist.model.interfaces.{ Action, Environment, Node, Reaction
 /**
  * MOTOR SCHEMA BEHAVIOUR
  * Describe a constant velocity movement.
+ *
  * @param vx velocity component x
  * @param vy velocity component y
  */

@@ -7,7 +7,7 @@ the_plots_labels:
   - 'animals rescue count'
   - 'average distance'
 the_plots_formats:
-  - [0,1]
+  - [0,6]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
 default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan"]

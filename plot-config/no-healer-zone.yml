@@ -3,13 +3,16 @@ the_plots_labels:
   - 'danger count'
   - 'danger trigger'
   - 'healed count'
-  - 'task generated'
-  - 'task received'
+  - 'dangers detected'
+  - 'animals rescue count'
+  - 'average distance'
+  - 'empty zone count'
+  - 'no leader zone count'
 the_plots_formats:
-  - [0,4,5]
+  - [0,8]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
-default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow"]
+default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan", "magenta", "red"]
 the_plots_colors:
   - *default_colors
 legend_position:

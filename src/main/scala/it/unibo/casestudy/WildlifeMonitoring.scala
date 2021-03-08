@@ -34,7 +34,7 @@ class WildlifeMonitoring
 
   lazy val movementThr: Double = sense[Double]("movementThr")
 
-  lazy val influenceFactor: Double = 4
+  lazy val influenceFactor: Double = 2
 
   lazy val planner = Planner(randomGen, node)
 
@@ -98,7 +98,7 @@ class WildlifeMonitoring
           broadcastPenalized(
             sourceArea,
             influencePenalization,
-            ExploreTask(mid(), currentPosition(), grain /*- influence*/ )
+            ExploreTask(mid(), currentPosition(), grain - influence)
           )
         ).filterNot(_.source == mid()) //safety reason
         //broadcast the collective task choose by leader
@@ -112,7 +112,7 @@ class WildlifeMonitoring
         node.put("sensed", dangersCollected)
         node.put("leader_id", actualLeader)
         if (leader) {
-          node.put("taskCreated", dangersCollected.size)
+          node.put("dangerDetected", dangersCollected.size)
           node.put("sensed", dangersCollected)
           node.put("influence", grain - (influencePenalization))
           node.put("howMany", healer + explorer)
@@ -120,11 +120,10 @@ class WildlifeMonitoring
         mux(mutableArea)(exponentialBackOff(alpha, count = explorer + healer))(0)
       }
     }
-    //Capability sensing
-    node.put(
-      "type",
-      localCapabilitySensing()
-    ) //change the type of node by the behaviour observed during the computation
+    /*Capability sensing
+      change the type of node by the behaviour observed during the computation
+     */
+    node.put("type", localCapabilitySensing())
   }
 
   override def currentPosition(): Point3D = { //TODO fix alchemist - ScaFi incarnation

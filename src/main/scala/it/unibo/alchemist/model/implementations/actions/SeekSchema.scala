@@ -12,6 +12,7 @@ import it.unibo.alchemist.model.implementations.reactions.MotorSchemaReaction
  * MOTOR SCHEMA BEHAVIOUR
  * move toward a position. The position could be expressed as (px, py) or by a molecule value (targetMolecule name).
  * The molecule value should be Option[Point3D].
+ *
  * @param px
  * @param py
  * @param targetMolecule
