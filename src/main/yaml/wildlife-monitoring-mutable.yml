@@ -20,7 +20,7 @@ variables:
 
   movementThr: &movementThr
     min: 1
-    max: 4
+    max: 10
     step: 1
     default: 1
 
@@ -45,7 +45,7 @@ variables:
   collectiveBehaviour: &collectiveBehaviour
     min: 0
     max: 1
-    step: 1
+    step: 0.25
     default: 1
 
   alpha: &alpha
@@ -138,6 +138,8 @@ export:
     aggregators: [ sum ]
   - molecule: taskReceived
     aggregators: [ sum ]
+  - molecule: meanDistance
+    aggregators: [ sum ]
 #environment:
 #  type: ImageEnvironment
 #  parameters: [assets/savana.png, 10, 0, 0]
@@ -159,7 +161,7 @@ pools:
       - time-distribution: 1
         type: Event
         actions:
-          - type: NormalizeTasks
+          - type: AggregateDataAction
             parameters: [ ]
   # Main aggregate program evaluation
   - pool: &program
@@ -244,6 +246,10 @@ movementWindowMolecule: &movementWindowMolecule
 targetId: &targetId
   molecule: targetId
   concentration: *noTarget
+meanDistance: &meanDistance
+  molecule: meanDistance
+  concentration: 0.0
+
 
 displacements:
   # DRONES DISPLACEMENT
@@ -281,6 +287,7 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
+      - *meanDistance
 
   - in:
       type: Rectangle
@@ -316,6 +323,7 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
+      - *meanDistance
   # ANIMALS DISPLACEMENT
   - in:
       type: Rectangle
@@ -339,6 +347,7 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
+      - *meanDistance
   - in:
       type: Rectangle
       parameters: [ *animalsForGroup, *top, *bottom, *animalsDisplacementWidth, *animalsDisplacementWidth ]
@@ -409,6 +418,7 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
+      - *meanDistance
   ## SPAWNER
   - in:
       type: Point
@@ -424,3 +434,4 @@ displacements:
       - *taskCreated
       - *taskReceived
       - *healCount
+      - *meanDistance
