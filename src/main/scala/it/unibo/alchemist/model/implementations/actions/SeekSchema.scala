@@ -1,13 +1,12 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.{ MobileNode, NodeManager, SimpleNodeManager }
-import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{ Action, Environment, Node, Reaction }
-import it.unibo.scafi.space.Point3D
 import it.unibo.alchemist._
+import it.unibo.alchemist.model.implementations.nodes.{MobileNode, SimpleNodeManager}
+import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.implementations.reactions.MotorSchemaReaction
+import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
+import it.unibo.scafi.space.Point3D
 
-//TODO, find a better way to express the target position, you should use two different behaviour? Or two constructors?
 /**
  * MOTOR SCHEMA BEHAVIOUR
  * move toward a position. The position could be expressed as (px, py) or by a molecule value (targetMolecule name).

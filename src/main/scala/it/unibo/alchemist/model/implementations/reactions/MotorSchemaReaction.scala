@@ -1,11 +1,11 @@
 package it.unibo.alchemist.model.implementations.reactions
 
-import it.unibo.alchemist.model.implementations.actions.{ Actuator, MotorSchema }
+import it.unibo.alchemist.model.implementations.actions.{Actuator, MotorSchema}
 import it.unibo.alchemist.model.implementations.nodes.MobileNode
 import it.unibo.alchemist.model.interfaces._
 
 import scala.collection.JavaConverters._
-import it.unibo.alchemist.{ Combiner, _ }
+import it.unibo.alchemist.{Combiner, _}
 
 class MotorSchemaReaction[T, P <: Position[P]](
   env: Environment[T, P],

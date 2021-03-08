@@ -1,12 +1,12 @@
 package it.unibo
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{ Environment, Position }
+import it.unibo.alchemist.model.interfaces.{Environment, Position}
 import org.danilopianini.util.ListSet
 
-import scala.collection.JavaConverters._
 import java.util
 import java.util.Optional
+import scala.collection.JavaConverters._
 
 package object alchemist {
 

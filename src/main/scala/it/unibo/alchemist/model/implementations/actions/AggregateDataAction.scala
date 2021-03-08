@@ -6,6 +6,7 @@ import it.unibo.alchemist.model.interfaces._
 import it.unibo.casestudy.WildlifeTasks.HealTask
 
 /**
+ * utility to aggregate data useful for simulation explanation
  */
 case class AggregateDataAction[T, P <: Position[P]](env: Environment[T, P], node: Node[T])
     extends AbstractAction[T](node) {

@@ -1,14 +1,33 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ ScafiAlchemistSupport, _ }
-import it.unibo.casestudy.CollectiveTask._
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
+import it.unibo.casestudy.Task._
 import it.unibo.casestudy.WildlifeMonitoring.Program
-import it.unibo.casestudy.WildlifeTasks.{ ExploreTask, HealTask, NoTask }
+import it.unibo.casestudy.WildlifeTasks.{ExploreTask, HealTask}
 import it.unibo.scafi.space.Point3D
 
-//TODO
-//Example taken from https://www.sciencedirect.com/science/article/pii/S0167739X20304775
+//Example inspired by https://www.sciencedirect.com/science/article/pii/S0167739X20304775
+/**
+ * The aggregate program for the wildlife monitoring application.
+ * There is three nodes type:
+ *  - animal: a node that needs to be rescued if it is in danger. The danger status is domain-specific. It could be a sort of "smart collar";
+ *  - mobile node:  a node that moves around the world and could have the capability to heal an animal;
+ *  - station: a fixed node that works as a gateway for mobile nodes;
+ *
+ * At runtime, the program identifies nodes capability (healer, explorer, stationary) according to the local behaviour sensed.
+ * In general, to rescue an animal, we need n healer (n is a domain parameter).
+ * The program follows the SCR pattern:
+ *  - a leader election is made in the stationary nodes (via S);
+ *  - mobile node sense the animal in danger and send the local information to the leader (via C);
+ *  - the leader chooses what is the animal that needs to be rescued;
+ *  - the leader shares its choose (via G)
+ * Each agent has some level of local autonomy (e.g. explore the world, avoid other nodes) and the program tries to coordinate the "aggregate" to pursuit the application goal.
+ * We identify two scenarios for the collective autonomy aspect:
+ *    - "structural" scenario: The leaders' influence changes according to the type of nodes inside its area. So the collective structure change according to local/global choices.
+ *    - "local/collective" scenario: Agents have a probability of not listen to the collective choose and could act selfishly (e.g. trying to heal the nearest animal). This
+ *    choice is regulated by a probability p. We check how the behaviour of collective change according to the parameter p.
+ */
 class WildlifeMonitoring
     extends AggregateProgram
     with Gradients
@@ -21,7 +40,7 @@ class WildlifeMonitoring
     with ScafiAlchemistSupport
     with ProcessDSL
     with StateManagement
-    with SmartCollarBehaviour
+    with SmartCollarUtils
     with CustomSpawn
     with TimeUtils
     with PenalizedG {
@@ -36,16 +55,17 @@ class WildlifeMonitoring
 
   lazy val influenceFactor: Double = 2
 
-  lazy val planner = Planner(randomGen, node)
+  lazy val planner = Planner(randomGen)
 
-  override def nbrRange(): Double = super.nbrRange() + 20 //in FGCS there is similar instruction, why?
+  override def nbrRange(): Double = super.nbrRange() + 20 //ad a penality of each hop
 
   override def main(): Any = {
     val dangerAnimal = animalBehaviour()
     branch(!isAnimal)(rescueBehaviour(dangerAnimal)) {}
   }
 
-  def animalBehaviour(): Map[ID, P] = {
+  //check if an animal could be rescue and compute the animal in danger map (id -> position)
+  private def animalBehaviour(): Map[ID, P] = {
     val dangerAnimal = dangerAnimalField()
     val save = canHealAnimal()
     val status = node.get[Boolean]("danger")
@@ -61,7 +81,7 @@ class WildlifeMonitoring
     dangerAnimal
   }
 
-  def rescueBehaviour(dangerAnimal: Map[ID, P]): Unit = {
+  private def rescueBehaviour(dangerAnimal: Map[ID, P]): Unit = {
     val leader = branch(isStationary)(S(grain, nbrRange))(false)
     rep(0.0) { influence =>
       val influencePenalization = influence * influenceFactor
@@ -102,7 +122,7 @@ class WildlifeMonitoring
           )
         ).filterNot(_.source == mid()) //safety reason
         //broadcast the collective task choose by leader
-        val healTask = G[Option[CollectiveTask[Program, Actuation]]](sourceArea, leaderHealTask, v => v, nbrRange)
+        val healTask = G[Option[Task[Program, Actuation]]](sourceArea, leaderHealTask, v => v, nbrRange)
         val tasks = Seq(healTask, localHealTask, exploreTaskArea).collect { case Some(task) => task }
         val selectedTask = planner.eval(mid(), actualLeader, capability, tasks, collective)
         val actuation = selectedTask.call(this) //exec the task
@@ -138,25 +158,26 @@ class WildlifeMonitoring
     mux(isHealer)("healer")(typeFromDistance(distance)) //local behaviour influence the global structure
   }
 
-  def isHealer: Boolean = sense[String]("type") == "healer"
+  private def isHealer: Boolean = sense[String]("type") == "healer"
 
-  def isStationary: Boolean = sense[String]("type") == "stationary"
+  private def isStationary: Boolean = sense[String]("type") == "stationary"
 
-  def isExplorer: Boolean = sense[String]("type") == "explorer"
+  private def isExplorer: Boolean = sense[String]("type") == "explorer"
 
-  def isAnimal: Boolean = !node.has("type")
+  private def isAnimal: Boolean = !node.has("type")
 
-  def capability: Set[Capability] = Set(Specific(sense[String]("type")))
+  private def capability: Set[Capability] = Set(Specific(sense[String]("type")))
 
-  def mutableArea: Boolean = sense[Double]("areaType").toInt == 0
+  private def mutableArea: Boolean = sense[Double]("areaType").toInt == 0
 
-  def collective: Double = sense[Double]("behaviourType")
+  private def collective: Double = sense[Double]("behaviourType")
 
-  def exponentialBackOff(alpha: Double, count: Double): Double = rep(count)(c => c * (1 - alpha) + alpha * count)
+  private def exponentialBackOff(alpha: Double, count: Double): Double =
+    rep(count)(c => c * (1 - alpha) + alpha * count)
 
-  def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field)(1)(0), 0)
+  private def countIn(potential: Double, field: Boolean): Int = C[Double, Int](potential, _ + _, mux(field)(1)(0), 0)
 
-  def typeFromDistance(distance: Double): String =
+  private def typeFromDistance(distance: Double): String =
     if (distance.toInt <= movementThr)
       "stationary"
     else
