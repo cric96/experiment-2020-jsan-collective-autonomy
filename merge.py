@@ -34,20 +34,20 @@ def processFolder(index):
     return [process_file(f) for f in get_data_files(sys.argv[index])]
 
 if len(sys.argv) < 3:
-  print("USAGE: merge <folder_a> <folder_b> <other folder>")
+  print("USAGE: merge <folder-target> <folder_a> <folder_b> <other folder>")
   exit(0)
 
-left_folder = sys.argv[1]
-right_folder = sys.argv[2]
-matrices = np.array([processFolder(index + 1) for index in range(len(sys.argv) - 1)])
+path = sys.argv[1]
+left_folder = sys.argv[2]
+right_folder = sys.argv[3]
+matrices = np.array([processFolder(index + 2) for index in range(len(sys.argv) - 2)])
 
 rightData = matrices[1:][:, :, 1:]
 leftData = matrices[:1]
 
 leftDataReshaped = leftData.reshape(*leftData.shape[1:])
-rightDataReshaped = rightData.reshape(*rightData.shape[1:])
+rightDataReshaped = rightData
 
-path = "data/merge"
 try:
     os.mkdir(path)
 except OSError:
@@ -55,7 +55,10 @@ except OSError:
 else:
     print ("Successfully created the directory %s " % path)
 for i in range(len(leftDataReshaped)):
-    merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[i][:]))
+    merged = leftDataReshaped[i]
+    for f in range(rightDataReshaped.shape[0]):
+        merged = np.concatenate((merged, rightDataReshaped[f - 1][i][:]))
+    #merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[i][:]))
     pretty_print = np.column_stack(merged)
     file_name = path + "/-merge_random-" + str(i) + ".0.txt"
     np.savetxt(file_name, (pretty_print))
