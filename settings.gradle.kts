@@ -1,1 +1,1 @@
-rootProject.name = "scafi-alchemist-skeleton"
+rootProject.name = "mdpi-jsan-2020"
