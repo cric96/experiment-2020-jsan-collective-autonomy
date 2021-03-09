@@ -89,6 +89,7 @@ class WildLifeEffect extends Effect {
         }
         g.setColor(ANIMAL_COLOR_CACHE.getOrElseUpdate(node.group, randomColor()))
         g.fill(transformedAnimal)
+      case _ =>
     }
   }
 
