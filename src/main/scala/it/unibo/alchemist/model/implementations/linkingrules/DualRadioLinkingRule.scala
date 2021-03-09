@@ -4,7 +4,7 @@ import it.unibo.alchemist.model.implementations.neighborhoods.Neighborhoods
 import it.unibo.alchemist.model.implementations.nodes.LoraStation
 import it.unibo.alchemist.model.interfaces._
 
-import scala.collection.JavaConverters.{ asScalaBufferConverter, bufferAsJavaListConverter }
+import scala.collection.JavaConverters.{asScalaBufferConverter, bufferAsJavaListConverter}
 
 /**
  * Simulates a network in which nodes have two time of connection, LoRa and Bluetooth low energy.

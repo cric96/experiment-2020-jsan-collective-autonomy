@@ -7,15 +7,15 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes._
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.{ Environment, Node, Position2D }
+import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
 import it.unibo.scafi.space.Point3D
 
 import java.awt._
-import java.awt.geom.{ AffineTransform, Arc2D, Area, Ellipse2D, Rectangle2D }
+import java.awt.geom._
 import scala.collection.mutable
 
 /**
- * TODO
+ * ad-hoc effect to draw drones, animal and station.
  */
 class WildLifeEffect extends Effect {
 
@@ -29,12 +29,13 @@ class WildLifeEffect extends Effect {
       case env: EuclideanPhysics2DEnvironment[T] if env.getNodes.contains(node) =>
         val nodePosition: P = env.getPosition(node).asInstanceOf[P]
         val viewPoint: Point = wormhole.getViewPoint(nodePosition)
+        val manager = new SimpleNodeManager[T](node)
         val (x, y) = (viewPoint.x, viewPoint.y)
         node match {
-          case drone: DroneNode2D[T] => drawDrone(g, drone, x, y, env, wormhole.getZoom)
-          case animal: Animal2D[T]   => drawAnimal(g, animal, x, y, env, wormhole.getZoom)
-          case _: LoraStation[T, P]  => drawStation(g, node, x, y, env, wormhole.getZoom)
-          case _                     =>
+          case animal: Animal2D[T]     => drawAnimal(g, animal, x, y, env, wormhole.getZoom)
+          case _: LoraStation[T, P]    => drawStation(g, node, x, y, env, wormhole.getZoom)
+          case mobile: MobileNode2D[T] => drawDrone(g, mobile, x, y, env, wormhole.getZoom)
+          case _                       =>
         }
       case _ =>
     }

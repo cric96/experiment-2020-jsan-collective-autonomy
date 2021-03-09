@@ -1,7 +1,7 @@
 package it.unibo
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ positionOrdering, P }
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{P, positionOrdering}
 import it.unibo.scafi.space.Point3D
 
 import java.util.Optional

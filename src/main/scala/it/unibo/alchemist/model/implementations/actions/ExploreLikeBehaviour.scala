@@ -5,6 +5,10 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 import org.apache.commons.math3.random.RandomGenerator
 
+/**
+ * a common interface to describe an exploring node behaviour
+ * @tparam T
+ */
 trait ExploreLikeBehaviour[T] {
 
   def env: Environment[T, Euclidean2DPosition]

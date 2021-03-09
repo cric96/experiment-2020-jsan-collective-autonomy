@@ -1,9 +1,11 @@
 package it.unibo.casestudy
 
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ ScafiAlchemistSupport, _ }
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
 
-//TODO
-trait SmartCollarBehaviour
+/**
+ * some utils for manage the "smart collar" behaviours
+ */
+trait SmartCollarUtils
     extends AggregateProgram
     with StandardSensors
     with ScafiAlchemistSupport
@@ -18,7 +20,10 @@ trait SmartCollarBehaviour
 
   def isDanger: Boolean = sense("danger")
 
-  def dangerAnimalField(): Map[ID, P] = {
+  /**
+   * @return the animal in danger found locally
+   */
+  protected def dangerAnimalField(): Map[ID, P] = {
     val isStation: Boolean = sense[Boolean]("station")
     branch(isStation)(Map.empty[ID, P]) {
       foldhood(Map.empty[ID, P])((left, right) => combineDangerMap(left, right)) {
@@ -31,12 +36,18 @@ trait SmartCollarBehaviour
     }
   }
 
-  def canHealAnimal(): Boolean = {
+  /**
+   * @return true if an animal could be healed, false otherwise
+   */
+  protected def canHealAnimal(): Boolean = {
     val targetIdField: Map[ID, Int] = excludingSelf.reifyField(nbr(sense[Int]("targetId")))
     targetIdField.values.count(_ == mid()) >= sense[Double]("healerNecessary")
   }
 
-  def combineDangerMap(left: Map[ID, P], right: Map[ID, P]): Map[ID, P] = {
+  /**
+   * combination logic of danger animal map
+   */
+  protected def combineDangerMap(left: Map[ID, P], right: Map[ID, P]): Map[ID, P] = {
     val same = left.keySet intersect right.keySet
     val union = left ++ right
     val mergeSameNode = same.map(id => id -> (left(id) + right(id)) / 2)

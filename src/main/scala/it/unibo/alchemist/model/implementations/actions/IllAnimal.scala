@@ -1,9 +1,10 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.{ Animal2D, SimpleNodeManager }
-import it.unibo.alchemist.model.interfaces.{ Action, Context, Environment, Node, Position, Reaction }
+import it.unibo.alchemist.model.implementations.nodes.{Animal2D, SimpleNodeManager}
+import it.unibo.alchemist.model.interfaces._
 import it.unibo.alchemist.toList
 import org.apache.commons.math3.random.RandomGenerator
+
 import scala.collection.mutable.ArrayBuffer
 
 /**

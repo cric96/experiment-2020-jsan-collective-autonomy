@@ -56,7 +56,7 @@ variables:
   animalsForGroup: &animalsForGroup
     formula: 20
 
-  drones: &drones
+  explorers: &explorers
     formula: 40
 
   healer: &healer
@@ -91,7 +91,7 @@ variables:
   explorationRange: &explorationRange
     formula: worldSize / 2 #meter
 
-  droneVelocity: &droneVelocity
+  rescueNodeVelocity: &rescueNodeVelocity
     formula: 16.3 #m/s
 
   healerVelocity: &healerVelocity
@@ -195,7 +195,7 @@ pools:
           - type: RunScafiProgram
             parameters: [ it.unibo.casestudy.WildlifeMonitoring, 5.0 ] # second argument is retention time
       - program: send #broadcast the value to the node neighbourhood
-  # Drone movement behaviour
+  # rescueNode movement behaviour
   - pool: &areaExplore
       - time-distribution: *movementRate
         type: MotorSchemaReaction
@@ -272,13 +272,13 @@ emptyZoneCount: &emptyZoneCount
   concentration: 0.0
 
 displacements:
-  # DRONES DISPLACEMENT
+  # RESCUE NODES DISPLACEMENT
   - in:
       type: Rectangle
-      parameters: [ *drones, *bottom, *bottom, *worldSize, *worldSize ]
+      parameters: [ *explorers, *bottom, *bottom, *worldSize, *worldSize ]
     nodes:
-      type: DroneNode2D
-      parameters: [ *droneVelocity ]
+      type: RescueNode2D
+      parameters: [ *rescueNodeVelocity ]
     programs:
       - *program
       - *areaExplore
@@ -286,7 +286,7 @@ displacements:
       #Domain logic
       - molecule: station
         concentration: false
-      - molecule: drone
+      - molecule: rescueNode
         concentration: true
       - molecule: danger
         concentration: false
@@ -316,7 +316,7 @@ displacements:
       type: Rectangle
       parameters: [ *healer, *bottom, *bottom, *worldSize, *worldSize ]
     nodes:
-      type: DroneNode2D
+      type: RescueNode2D
       parameters: [ *healerVelocity ]
     programs:
       - *program
@@ -325,7 +325,7 @@ displacements:
       #Domain logic
       - molecule: station
         concentration: false
-      - molecule: drone
+      - molecule: rescueNode
         concentration: true
       - molecule: danger
         concentration: false
@@ -363,7 +363,7 @@ displacements:
     contents: &animalContent
       - molecule: station
         concentration: false
-      - molecule: drone
+      - molecule: rescueNode
         concentration: false
       - molecule: danger
         concentration: false
@@ -429,7 +429,7 @@ displacements:
     contents:
       - molecule: station
         concentration: true
-      - molecule: drone
+      - molecule: rescueNode
         concentration: false
       - molecule: danger
         concentration: false

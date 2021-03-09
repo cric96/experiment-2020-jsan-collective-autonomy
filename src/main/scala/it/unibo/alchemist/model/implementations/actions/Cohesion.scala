@@ -1,9 +1,9 @@
 package it.unibo.alchemist.model.implementations.actions
 
+import it.unibo.alchemist._
 import it.unibo.alchemist.model.implementations.nodes.MobileNode
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{ Action, Environment, Node, Reaction }
-import it.unibo.alchemist._
+import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
 
 /**
  * MOTOR SCHEMA BEHAVIOUR

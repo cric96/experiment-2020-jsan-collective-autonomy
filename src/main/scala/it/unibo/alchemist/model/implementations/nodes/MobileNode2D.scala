@@ -4,10 +4,7 @@ import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
 import it.unibo.alchemist.model.interfaces.Environment
 
 /**
- * @param env
- * @param maximumSpeed
- * @param group
- * @tparam T
+ * a mobile node that lives in a 2D space
  */
 class MobileNode2D[T](
   env: Environment[T, Euclidean2DPosition],
