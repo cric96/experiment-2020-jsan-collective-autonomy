@@ -1,5 +1,5 @@
 the_plots_labels:
-  - Time                 #0
+  - Time(s)                 #0
   - 'danger count (0.0)'
   - 'danger trigger'
   - 'healed count (0.0)'
@@ -42,6 +42,7 @@ the_plots_labels:
   - 'no leader zone count (1.0)'
 the_plots_formats:
   - [0,6,14,22,30,38]
+y_labels: ['meters', '#spawn', '# healed count', '# healed count','# healed count','# healed count','# healed count']
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 default_colors: &default_colors
@@ -94,3 +95,6 @@ legend_size: 12
 force_limit_plot_y:
 force_limit_plot_x:
 sampling: true
+title_prefix: 'healer count = 2'
+#excluded_titles: [0,2,3,11,19,27,35]
+

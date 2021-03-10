@@ -19,7 +19,7 @@ variables:
   random: &random
     min: 0
     max: 100
-    step: 10
+    step: 2
     default: 0
 
   mutableArea: &mutableArea

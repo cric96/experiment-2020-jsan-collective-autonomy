@@ -160,6 +160,7 @@ makeTest(name="wildLifeLocalGlobalData", file = "wildlife-monitoring-mutable", t
 makeTest(name="wildLifeAreaDataFast", file = "wildlife-monitoring-mutable", time = 50.0, vars = setOf("random", "mutableArea"))
 makeTest(name="wildLifeAreaCheckAlpha", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "alpha"))
 makeTest(name="wildLifeAreaCheckGrain", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "grain", "mutableArea"))
+makeTest(name="wildLifeLocalGlobalCheckGrain", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "grain", "collectiveBehaviour"))
 makeTest(name="wildLifeAreaCheckHealer", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "healerNecessary", "mutableArea"))
 makeTest(name="wildLifeLocalGlobalCheckHealer", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "healerNecessary", "collectiveBehaviour"))
 makeTest(name="wildLifeAreaCheckThr", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "movementThr"))

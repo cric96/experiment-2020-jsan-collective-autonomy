@@ -1,5 +1,5 @@
 the_plots_labels:
-  - Time                 #0
+  - Time(s)                 #0
   - 'danger count'
   - 'danger trigger'
   - 'healed count'
@@ -10,6 +10,7 @@ the_plots_formats:
   - [0,1,2,4,5]
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2]
+y_labels: ['# animal count', '#spawn', '# healed count', '# healed count','# healed count','# healed count','# healed count']
 default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan"]
 the_plots_colors:
   - *default_colors

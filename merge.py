@@ -41,7 +41,6 @@ path = sys.argv[1]
 left_folder = sys.argv[2]
 right_folder = sys.argv[3]
 matrices = np.array([processFolder(index + 2) for index in range(len(sys.argv) - 2)])
-
 rightData = matrices[1:][:, :, 1:]
 leftData = matrices[:1]
 
@@ -57,7 +56,7 @@ else:
 for i in range(len(leftDataReshaped)):
     merged = leftDataReshaped[i]
     for f in range(rightDataReshaped.shape[0]):
-        merged = np.concatenate((merged, rightDataReshaped[f - 1][i][:]))
+        merged = np.concatenate((merged, rightDataReshaped[f][i][:]))
     #merged = np.concatenate((leftDataReshaped[i], rightDataReshaped[i][:]))
     pretty_print = np.column_stack(merged)
     file_name = path + "/-merge_random-" + str(i) + ".0.txt"
