@@ -1,0 +1,39 @@
+incarnation: scafi
+#Time unit: Seconds
+variables:
+  random: &random
+    min: 0
+    max: 100
+    step: 2
+    default: 0
+  evaluationRate: &evaluationRate
+    formula: 1
+seeds:
+  scenario: *random
+  simulation: *random
+
+export:
+  - time
+
+network-model:
+  type: ConnectWithinDistance
+  parameters: [20]
+
+pools:
+  # Main aggregate program evaluation
+  - pool: &program
+      - time-distribution:
+          type: ExponentialTime
+          parameters: [ *evaluationRate ]
+        type: Event
+        actions:
+          - type: RunScafiProgram
+            parameters: [ it.unibo.casestudy.market.MarketBasedTaskAllocation, 5.0 ] # second argument is retention time
+      - program: send #broadcast the value to the node neighbourhood
+
+displacements:
+  - in:
+      type: Grid
+      parameters: [ 0, 0, 40, 40, 20, 20, 0, 0 ]
+    programs:
+      - *program

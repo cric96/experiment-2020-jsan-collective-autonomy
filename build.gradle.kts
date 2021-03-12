@@ -154,6 +154,7 @@ fun makeTest(
         }
     }*/
 }
+//Experiment #1
 makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
 makeTest(name="wildLifeAreaData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "mutableArea"))
 makeTest(name="wildLifeLocalGlobalData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "collectiveBehaviour"))
@@ -165,4 +166,6 @@ makeTest(name="wildLifeAreaCheckHealer", file = "wildlife-monitoring-mutable", t
 makeTest(name="wildLifeLocalGlobalCheckHealer", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "healerNecessary", "collectiveBehaviour"))
 makeTest(name="wildLifeAreaCheckThr", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "movementThr"))
 makeTest(name="wildLifeAreaCheckWindow", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "movementWindow"))
+//Experiment #2
+makeTest(name="marketBasedGui", file = "market-based-approach")
 defaultTasks("fatJar")
