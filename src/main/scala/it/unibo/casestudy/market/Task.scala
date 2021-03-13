@@ -19,4 +19,7 @@ case class Audition(
 
   def todo: Set[Effort] = selected.efforts.filterNot(effort => founded.exists(_.effort == effort))
 
+  def complete(efforts: Set[Effort]): Audition =
+    this.copy(founded = founded, done = done ++ efforts)
+
 }

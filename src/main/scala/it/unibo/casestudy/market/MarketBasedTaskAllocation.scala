@@ -23,9 +23,9 @@ class MarketBasedTaskAllocation
 
   type BidPicked = (Boolean, Set[Bid])
 
-  def period: Int = 10
+  type Completed = (Boolean, Map[K, Set[Bid]])
 
-  def capabilities: Map[String, Int] = Map("bibo" -> 10, "pippo1" -> 20)
+  val state = State.empty.deallocCapability("pippo", 10).deallocCapability("pippo2", 10)
 
   case class Continuation[D](data: D, continue: Boolean)
 
@@ -33,9 +33,11 @@ class MarketBasedTaskAllocation
 
   val metric: Metric = nbrRange //
   override def main(): Any =
-    rep(State.empty) { state =>
+    rep(state) { state =>
       var vState = state
       vState = vState.addTasks(newTask())
+      val solved = rep(0)(i => mux(goesUp(state.audition.nonEmpty))(i + 1)(i))
+      node.put("solved", solved)
       val keys = mux(vState.tasks.isEmpty)(Set.empty[K])(Set(mid()))
       val audition =
         if (vState.audition.isEmpty && vState.tasks.nonEmpty)
@@ -48,7 +50,13 @@ class MarketBasedTaskAllocation
       val auditions = csspawn(auditionSpawn, keys, vState.audition)
 
       val pickOne = mux(vState.bidDone.isEmpty) {
-        auditions.find { case (leaderK, (auditKey, efforts)) => efforts.nonEmpty }.map {
+        auditions.map {
+          case (leaderK, (auditKey, efforts)) =>
+            (leaderK, (auditKey, efforts.filter(vState.canCompute)))
+        }.map {
+          case (leaderK, (auditKey, efforts)) =>
+            (leaderK, (auditKey, efforts.filterNot(e => vState.alreadyEval(leaderK, auditKey, e.capability))))
+        }.find { case (leaderK, (auditKey, efforts)) => efforts.nonEmpty }.map {
           case (leaderK, (auditKey, efforts)) => (leaderK, auditKey, Bid(mid(), efforts.head))
         }
       }(vState.bidDone)
@@ -56,7 +64,7 @@ class MarketBasedTaskAllocation
 
       val offers = csspawn[K, Offers, Set[Bid]](offersSpawn, keys, (vState.audition.nonEmpty, pickOne))
       val currentAudition = vState.audition
-      val evalOffers = branch(impulsesEvery(period) && offers.contains(mid()) && currentAudition.isDefined) {
+      val evalOffers = branch(offers.contains(mid()) && currentAudition.isDefined) {
         val offersForMe = offers(mid())
         val founded = currentAudition.get.todo
           .filter(data => offersForMe.exists(_.effort.capability == data.capability))
@@ -65,28 +73,35 @@ class MarketBasedTaskAllocation
         currentAudition.map(audit => audit.copy(founded = founded ++ audit.founded))
       }(currentAudition)
       vState = vState.changeAudition(evalOffers)
-      val bidsFounded: Set[Bid] = audition.map(_.founded).getOrElse(Set.empty[Bid])
-
+      val bidsFounded: Set[Bid] = vState.audition.map(_.founded).getOrElse(Set.empty[Bid])
       val winAudition = csspawn[K, BidPicked, Set[Bid]](winBidSpawn, keys, (vState.audition.nonEmpty, bidsFounded))
+      vState = vState.cleanExecution(auditions)
       val haveWin = pickOne.flatMap(bid => winAudition.find { case (_, bids) => bids.contains(bid._3) })
-      vState = mux(haveWin.nonEmpty)(vState.updateBid(None))(vState)
+      val toRelease = pickOne.filter(bid => winAudition.get(bid._1).exists(data => data.contains(bid._3)))
+      vState = mux(haveWin.nonEmpty) {
+        vState
+          .updateBid(None)
+          .updateExecution(pickOne.map {
+            case (leader, auditionK: AuditionK, bid) => (leader, auditionK, bid, bid.effort)
+          })
+      }(vState)
+      vState = branch(toRelease.isEmpty && pickOne.nonEmpty) {
+        val effort = pickOne.get._3.effort
+        vState.updateBid(None).deallocCapability(effort.capability, effort.quantity)
+      }(vState)
+      vState = vState.exec()
 
+      val completedEfforts =
+        csspawn[K, Completed, Set[Bid]](completedEffort, keys, (vState.audition.nonEmpty, vState.completed()))
+          .mapValues(bids => bids.map(_.effort))
+      vState =
+        vState.changeAudition(vState.audition.map(_.complete(completedEfforts.getOrElse(mid(), Set.empty[Effort]))))
       val finished = vState.audition
-        .filter(audit => audit.founded.size == audit.selected.efforts.size)
+        .filter(audit => audit.selected.efforts.size == audit.done.size)
         .map(_.selected)
 
       vState = vState.changeAudition(mux(finished.isEmpty)(vState.audition)(None))
-      if (finished.nonEmpty) {
-        println(finished, vState.tasks.headOption)
-        println(vState.removeTask().tasks)
-        println(vState.tasks)
-      }
-      node.put("offer", offers)
-      node.put("audition", currentAudition)
-      node.put("tasks", vState.tasks)
-      node.put("auditions", auditions)
-      node.put("auditions", auditions)
-      node.put("audition", vState.audition)
+
       branch(vState.tasks.nonEmpty && vState.tasks.headOption == finished)(vState.removeTask())(vState)
     }
 
@@ -123,6 +138,15 @@ class MarketBasedTaskAllocation
       winner -> status
   }
 
+  val completedEffort: K => Completed => (Set[Bid], Spawn.Status) = leader => {
+    case (continue, completed) =>
+      val source = leader == mid()
+      val status = evalStatus(leader, continue)
+      val potential = distanceTo(source, metric)
+      val completedPerceived = C[Double, Set[Bid]](potential, _ ++ _, completed.getOrElse(leader, Set.empty), Set.empty)
+      completedPerceived -> status
+  }
+
   def evalStatus(leader: K, enabled: Boolean): Spawn.Status = {
     val areaEnabled = broadcast(leader == mid(), enabled)
     if (areaEnabled)
@@ -132,7 +156,10 @@ class MarketBasedTaskAllocation
   }
 
   def newTask(): Queue[Task] =
-    if (randomGen.nextDouble() < 0.001) Queue(Task(Set(Effort("pippo", mid()), Effort("pippo2", mid() + 1))))
-    else Queue.empty
+    if (randomGen.nextDouble() < 0.001) {
+      val old = node.get[Double]("fire")
+      node.put[Double]("fire", old + 1)
+      Queue(Task(Set(Effort("pippo", 9), Effort("pippo2", 9))))
+    } else Queue.empty
 
 }

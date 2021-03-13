@@ -2,7 +2,7 @@ package it.unibo.alchemist.model.implementations.actions
 
 import it.unibo.alchemist._
 import it.unibo.alchemist.model.implementations.nodes.MobileNode
-import it.unibo.alchemist.model.interfaces.{Context, Environment, Position}
+import it.unibo.alchemist.model.interfaces.{ Context, Environment, Position }
 
 /**
  * This action cannot be used outside of a MotorSchemaReaction.

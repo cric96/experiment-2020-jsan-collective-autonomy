@@ -1,7 +1,7 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
-import it.unibo.casestudy.Task.{Anyone, Capability}
+import it.unibo.casestudy.Task.{ Anyone, Capability }
 import it.unibo.casestudy.WildlifeMonitoring.Program
 import it.unibo.casestudy.WildlifeTasks.NoTask
 

@@ -1,8 +1,8 @@
 package it.unibo.alchemist.model.implementations.actions
 
-import it.unibo.alchemist.model.implementations.nodes.{MobileNode, SimpleNodeManager}
+import it.unibo.alchemist.model.implementations.nodes.{ MobileNode, SimpleNodeManager }
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{Action, Environment, Node, Reaction}
+import it.unibo.alchemist.model.interfaces.{ Action, Environment, Node, Reaction }
 import org.apache.commons.math3.random.RandomGenerator
 
 /**

@@ -4,7 +4,7 @@ variables:
   random: &random
     min: 0
     max: 100
-    step: 2
+    step: 10
     default: 0
   evaluationRate: &evaluationRate
     formula: 1
@@ -14,6 +14,10 @@ seeds:
 
 export:
   - time
+  - molecule : solved
+    aggregators: [ sum ]
+  - molecule: fire
+    aggregators: [ sum ]
 
 network-model:
   type: ConnectWithinDistance
@@ -34,6 +38,11 @@ pools:
 displacements:
   - in:
       type: Grid
-      parameters: [ -20, -20, 20, 20, 20, 20, 0, 0 ]
+      parameters: [ -20, -20, 20, 20, 10, 10, 0, 0 ]
     programs:
       - *program
+    contents:
+      - molecule: solved
+        concentration: 0.0
+      - molecule: fire
+        concentration: 0.0

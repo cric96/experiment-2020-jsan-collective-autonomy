@@ -1,7 +1,7 @@
 package it.unibo
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import it.unibo.alchemist.model.interfaces.{ Environment, Position }
 import org.danilopianini.util.ListSet
 
 import java.util

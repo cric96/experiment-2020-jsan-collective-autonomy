@@ -1,7 +1,7 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.implementations.nodes.NodeManager
-import it.unibo.casestudy.Actuation.{Explore, Heal, NoActuation}
+import it.unibo.casestudy.Actuation.{ Explore, Heal, NoActuation }
 
 /**
  * A facade used to interpret node actuation

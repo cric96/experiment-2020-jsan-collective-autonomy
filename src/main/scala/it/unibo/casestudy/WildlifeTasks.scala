@@ -1,8 +1,8 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist._
-import it.unibo.casestudy.Actuation.{Explore, Heal, NoActuation}
-import it.unibo.casestudy.Task.{Anyone, Capability, Specific}
+import it.unibo.casestudy.Actuation.{ Explore, Heal, NoActuation }
+import it.unibo.casestudy.Task.{ Anyone, Capability, Specific }
 import it.unibo.casestudy.WildlifeMonitoring.Program
 
 /**

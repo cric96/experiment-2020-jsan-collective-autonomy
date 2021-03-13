@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import it.unibo.alchemist.model.interfaces.{ Environment, Position }
 
 /**
  * A node that could change its position in time

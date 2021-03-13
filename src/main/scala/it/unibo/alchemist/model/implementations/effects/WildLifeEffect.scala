@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes._
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
+import it.unibo.alchemist.model.interfaces.{ Environment, Node, Position2D }
 import it.unibo.scafi.space.Point3D
 
 import java.awt._

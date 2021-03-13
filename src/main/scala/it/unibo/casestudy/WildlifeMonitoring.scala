@@ -1,10 +1,10 @@
 package it.unibo.casestudy
 
 import it.unibo.alchemist.model.implementations.positions.Euclidean2DPosition
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ ScafiAlchemistSupport, _ }
 import it.unibo.casestudy.Task._
 import it.unibo.casestudy.WildlifeMonitoring.Program
-import it.unibo.casestudy.WildlifeTasks.{ExploreTask, HealTask}
+import it.unibo.casestudy.WildlifeTasks.{ ExploreTask, HealTask }
 import it.unibo.scafi.space.Point3D
 
 //Example inspired by https://www.sciencedirect.com/science/article/pii/S0167739X20304775

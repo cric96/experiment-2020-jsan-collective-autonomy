@@ -1,6 +1,6 @@
 package it.unibo.casestudy
 
-import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ScafiAlchemistSupport, _}
+import it.unibo.alchemist.model.scafi.ScafiIncarnationForAlchemist.{ ScafiAlchemistSupport, _ }
 
 /**
  * some utils for manage the "smart collar" behaviours

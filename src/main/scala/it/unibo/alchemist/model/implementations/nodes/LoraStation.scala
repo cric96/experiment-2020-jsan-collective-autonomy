@@ -1,6 +1,6 @@
 package it.unibo.alchemist.model.implementations.nodes
 
-import it.unibo.alchemist.model.interfaces.{Environment, Position}
+import it.unibo.alchemist.model.interfaces.{ Environment, Position }
 
 /**
  * it is used only to mark a node as station

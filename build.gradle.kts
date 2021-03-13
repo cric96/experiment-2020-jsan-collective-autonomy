@@ -168,4 +168,5 @@ makeTest(name="wildLifeAreaCheckThr", file = "wildlife-monitoring-mutable", time
 makeTest(name="wildLifeAreaCheckWindow", file = "wildlife-monitoring-mutable", time = 200.0, vars = setOf("random", "movementWindow"))
 //Experiment #2
 makeTest(name="marketBasedGui", file = "market-based-approach")
+makeTest(name="marketBasedData", file = "market-based-approach", time = 1000.0, vars = setOf("random"))
 defaultTasks("fatJar")
