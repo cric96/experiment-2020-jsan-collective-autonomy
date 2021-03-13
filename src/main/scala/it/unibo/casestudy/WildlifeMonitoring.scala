@@ -60,12 +60,12 @@ class WildlifeMonitoring
   override def nbrRange(): Double = super.nbrRange() + 20 //ad a penality of each hop
 
   override def main(): Any = {
-    val dangerAnimal = animalBehaviour()
-    branch(!isAnimal)(rescueBehaviour(dangerAnimal)) {}
+    val targets = animalInDanger()
+    branch(!isAnimal)(rescue(targets)) {}
   }
 
   //check if an animal could be rescue and compute the animal in danger map (id -> position)
-  private def animalBehaviour(): Map[ID, P] = {
+  private def animalInDanger(): Map[ID, P] = {
     val dangerAnimal = dangerAnimalField()
     val save = canHealAnimal()
     val status = node.get[Boolean]("danger")
@@ -81,7 +81,7 @@ class WildlifeMonitoring
     dangerAnimal
   }
 
-  private def rescueBehaviour(dangerAnimal: Map[ID, P]): Unit = {
+  private def rescue(dangerAnimal: Map[ID, P]): Unit = {
     val leader = branch(isStationary)(S(grain, nbrRange))(false)
     rep(0.0) { influence =>
       val influencePenalization = influence * influenceFactor
