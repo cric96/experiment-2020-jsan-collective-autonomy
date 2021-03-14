@@ -71,8 +71,7 @@ The main files and directories of the project are the following:
 
 ### Main source files
 
-- `src/main/scala/it/unibo/casestudy/WildlifeMonitoring.scala`: contains the implementation of the tuple operations as ScaFi aggregate processes
-- `src/main/scala/it/unibo/casestudy/SpatialTuplesStorm.scala`: contains the program played by the nodes in the correctness simulation described
+- `src/main/scala/it/unibo/casestudy/SpatialTuplesStorm.scala`: contains the program played by the nodes in the wildlife monitoring simulation described
   by file `src/main/yaml/wildlife-monitoring-mutable.yaml`
 
 ## Simulations about collective behaviour
@@ -121,12 +120,10 @@ Color information: each animal belongs to one group. The animals in the same gro
 #### Mobile nodes
 Color information: each mobile node belongs to a zone created by sparse choice (S). The color is the same as the leader.
 ##### Healer
-Since experiment #2, we include node capabilities. In this case, this node could heal an animal.
-
 ![](./assets/gui/healer.png)
 
 ##### Healer in action
-The healer's shape changes when he has a animal target
+The healer's shape changes when he has an animal target.
 
 ![](./assets/gui/healer-target.png)
 
