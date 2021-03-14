@@ -105,27 +105,26 @@ Data produced by the simulator will be writted to directory data/ (the output is
 They are fixed nodes. Here, the leader election happens. The circular area is an
 approximation of the zone of leader influence.
 
-<div style = "width : 70px">
-
-![](assets/gui/area.png)
-</div>
+<img src="./assets/gui/area.png" width="100" height="100">
 
 #### Animal
 Color information: each animal belongs to one group. The animals in the same group have the same color.
 ##### Healthy
-![](assets/gui/animal.png)
+<img src="./assets/gui/animal.png" width="100" height="100"/>
+
 ##### In danger
-![](./assets/gui/animal-danger.png)
+
+<img src="./assets/gui/animal-danger.png" width="100" height="100">
 
 #### Mobile nodes
 Color information: each mobile node belongs to a zone created by sparse choice (S). The color is the same as the leader.
 ##### Healer
-![](./assets/gui/healer.png)
+<img src="./assets/gui/healer.png" width="100" height="100">
 
 ##### Healer in action
 The healer's shape changes when he has an animal target.
 
-![](./assets/gui/healer-target.png)
+<img src="./assets/gui/healer-target.png" width="100" height="100">
 
 ##### Explorer
-![](./assets/gui/explorer.png)
+<img src="./assets/gui/explorer.png" width="100" height="100">
