@@ -91,9 +91,9 @@ Data produced by the simulator will be writted to directory data/ (the output is
 
 ### High-resolution plots
 
-- [Plot 1](assets/imgs/healed-2.png)
-- [Plot 2](assets/imgs/healed-4.png)
-- [Plot 3](assets/imgs/healed-6.png)
+- [Plot 1](assets/result/paper/healer-count/healed-2.png)
+- [Plot 2](assets/result/paper/healer-count/healed-4.png)
+- [Plot 3](assets/result/paper/healer-count/healed-6.png)
 
 ### Simulation result
 
