@@ -15,10 +15,31 @@ The experiments marked with ~~experiment~~ aren't valid anymore.
 **NB**: each task name has Data (for data gathering) and GUI (for simulation visualization)
 
 **NB**: every experiment before 2.3 is inconsistent due different bugs in the code.
+# Experiment #3: Wildlife monitoring, local / global autonomy relationship
 
-# Experiment #2.3: wildlife-monitoring: right results.
+## Research question: how individual autonomy could influence the collective autonomy and the overall system behaviour?
+The application goal is similar to previous experiments (SCR + rescue), but here we analyse the collective behaviour varying the agent local autonomy.
+Furthermore, we add two parameters:
+- p: is the probability to follow the collective choice, 1 - p is the probability to act selfishly; bigger is p lesser the agent autonomous w.r.t the collective.
+- *healerCount°: the nodes needed to rescue an animal. A higher value of healerCount needs greater control on local agent behaviour in order to accomplish the collective task
+
+So, what we except is that most the system is locally autonomous less the collective autonomy influences the overall behaviour.
+
+![Plot 1](assets/result/paper/healer-count/healed-2.png)
+![Plot 2](assets/result/paper/healer-count/healed-4.png)
+![Plot 3](assets/result/paper/healer-count/healed-6.png)
+# Experiment #2.3: wildlife monitoring: right results.
 Fixing some bugs in the aggregate scripts, fixed and dynamic area experiments behave similarly.
 
+
+![](./assets/result/14-03-21/taskcount_023_mutableArea-0..png)
+
+Mutable area behaviour
+
+
+![](./assets/result/14-03-21/taskcount_023_mutableArea-1..png)
+
+Fixed area behaviour
 #  ~~Experiment #2.2 (02-03-2021) wildlife monitoring: add local feedback to global structure.~~
 
 After **81fe172d0abe84c882cec25484a8bd21a6271ef7**, The stationary/explorer type depends upon the distance travelled by nodes.
