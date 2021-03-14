@@ -71,7 +71,7 @@ The main files and directories of the project are the following:
 
 ### Main source files
 
-- `src/main/scala/it/unibo/casestudy/SpatialTuplesStorm.scala`: contains the program played by the nodes in the wildlife monitoring simulation described
+- `src/main/scala/it/unibo/casestudy/WildlifeMonitoring.scala`: contains the program played by the nodes in the wildlife monitoring simulation described
   by file `src/main/yaml/wildlife-monitoring-mutable.yaml`
 
 ## Simulations about collective behaviour
