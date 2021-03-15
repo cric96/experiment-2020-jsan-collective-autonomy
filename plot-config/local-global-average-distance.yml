@@ -5,7 +5,7 @@ the_plots_labels:
   - 'healed count (0.0)'
   - 'dangers detected (0.0)'
   - 'animals rescue count (0.0)'
-  - 'average distance (0.0)'
+  - 'p = 0.0'
   - 'empty zone count (0.0)'
   - 'no leader zone count (0.0)'
   - 'danger count (0.25)'
@@ -13,7 +13,7 @@ the_plots_labels:
   - 'healed count (0.25)'
   - 'dangers detected (0.25)'
   - 'animals rescue count (0.25)'
-  - 'average distance (0.25)'
+  - 'p = 0.25'
   - 'empty zone count (0.25)'
   - 'no leader zone count (0.25)'
   - 'danger count (0.5)'
@@ -21,7 +21,7 @@ the_plots_labels:
   - 'healed count (0.5)'
   - 'dangers detected (0.5)'
   - 'animals rescue count (0.5)'
-  - 'average distance (0.5)'
+  - 'p = 0.5'
   - 'empty zone count (0.5)'
   - 'no leader zone count (0.5)'
   - 'danger count (0.75)'
@@ -29,7 +29,7 @@ the_plots_labels:
   - 'healed count (0.75)'
   - 'dangers detected (0.75)'
   - 'animals rescue count (0.75)'
-  - 'average distance (0.75)'
+  - 'p = 0.75'
   - 'empty zone count (0.75)'
   - 'no leader zone count (0.75)'
   - 'danger count (1.0)'
@@ -37,12 +37,12 @@ the_plots_labels:
   - 'healed count (1.0)'
   - 'dangers detected (1.0)'
   - 'animals rescue count (1.0)'
-  - 'average distance (1.0)'
+  - 'p = 1.0'
   - 'empty zone count (1.0)'
   - 'no leader zone count (1.0)'
 the_plots_formats:
   - [0,6,14,22,30,38]
-y_labels: ['meters', '#spawn', '# healed count', '# healed count','# healed count','# healed count','# healed count']
+y_labels: ['average distance (meters)', '#spawn', '# healed count', '# healed count','# healed count','# healed count','# healed count']
 line_widths:
   - [2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2,2]
 default_colors: &default_colors
@@ -95,6 +95,6 @@ legend_size: 12
 force_limit_plot_y:
 force_limit_plot_x:
 sampling: true
-title_prefix: 'healer count = 2'
+title_prefix: 'healer count = 6'
 #excluded_titles: [0,2,3,11,19,27,35]
 
