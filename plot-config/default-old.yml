@@ -1,0 +1,21 @@
+the_plots_labels:
+  - Time                 #0
+  - 'danger count'
+  - 'danger trigger'
+  - 'healed count'
+  - 'dangers detected'
+  - 'animals rescue count'
+  - 'average distance'
+the_plots_formats:
+  - [0,1]
+line_widths:
+  - [2,2,2,2,2,2,2,2,2,2,2]
+default_colors: &default_colors ["black", "blue", "green", "purple", "pink", "yellow", "cyan"]
+the_plots_colors:
+  - *default_colors
+legend_position:
+  - "best"
+legend_size: 12
+force_limit_plot_y:
+force_limit_plot_x:
+sampling: true
