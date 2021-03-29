@@ -154,6 +154,10 @@ fun makeTest(
         }
     }*/
 }
+//for reference
+makeTest(name="runGui", file = "wildlife-monitoring-mutable", effectFile = "paper")
+makeTest(name="exportData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "healerNecessary", "collectiveBehaviour"))
+//all experiments
 makeTest(name="wildLifeAreaGUI", file = "wildlife-monitoring-mutable", effectFile = "paper")
 makeTest(name="wildLifeAreaData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "mutableArea"))
 makeTest(name="wildLifeLocalGlobalData", file = "wildlife-monitoring-mutable", time = 300.0, vars = setOf("random", "collectiveBehaviour"))

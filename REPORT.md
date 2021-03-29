@@ -1,39 +1,47 @@
 # Experiments references
 |   | Configuration file            | node / station Scala file | "animal" Scala file  | Behaviour                            | Experiments | Task                     |
 |---|-------------------------------|---------------------------|----------------------|--------------------------------------|-------------|--------------------------| 
-| 1 | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour | SCR + mutable area via feedback loop |       #2    |wildLifeArea              |
-| 2* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
-| 3* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
+| 1 | wildlife-monitoring-mutable   | WildLifeMonitoring        |      -----           | SCR + different exogenous autonomy level | #3      | wildLifeLocalGlobalData  |
+| 2° | wildlife-monitoring-mutable   | FeedbackMutableArea       | SmartCollarBehaviour | SCR + mutable area via feedback loop |       #2    |wildLifeArea              |
+| 3* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR + leader tendency                |       #1    |wildLifeMonitoring        |
+| 4* | wildlife-monitoring-structure | WildLifeMonitoring        | AnimalBehaviour      | SCR                                  |       #1    |wildLifeMonitoringNoLeader|
 
 *since commit **81fe172d0abe84c882cec25484a8bd21a6271ef7**. The reference now is wildlife-monitoring-mutable.
 
+°the data report are incorrect.
+
+The experiments marked with ~~experiment~~ aren't valid anymore.
+
 **NB**: each task name has Data (for data gathering) and GUI (for simulation visualization)
-# GUI Shapes explanation
-## Station
-They are fixed nodes. Here, the leader election happens. The circular area is an
-approximation of the zone of leader influence.
 
-<div style = "width : 70px">
+**NB**: every experiment before 2.3 is inconsistent due different bugs in the code.
+# Experiment #3: Wildlife monitoring, local / global autonomy relationship
 
-![](assets/gui/area.png)
-</div>
+## Research question: how individual autonomy could influence the collective autonomy and the overall system behaviour?
+The application goal is similar to previous experiments (SCR + rescue), but here we analyse the collective behaviour varying the agent local autonomy.
+Furthermore, we add two parameters:
+- p: is the probability to follow the collective choice, 1 - p is the probability to act selfishly; bigger is p lesser the agent autonomous w.r.t the collective.
+- *healerCount°: the nodes needed to rescue an animal. A higher value of healerCount needs greater control on local agent behaviour in order to accomplish the collective task
 
-## Animal
-Color information: each animal belongs to one group. The animals in the same group have the same color.
-### Healthy
-![](assets/gui/animal.png)
-### In danger
-![](./assets/gui/animal-danger.png)
+So, what we except is that most the system is locally autonomous less the collective autonomy influences the overall behaviour.
 
-## Mobile nodes
-Color information: each mobile node belongs to a zone created by sparse choice (S). The color is the same as the leader.
-### Healer
-Since experiment #2, we include node capabilities. In this case, this node could heal an animal.
+![Plot 1](assets/result/paper/healer-count/healed-2.png)
+![Plot 2](assets/result/paper/healer-count/healed-4.png)
+![Plot 3](assets/result/paper/healer-count/healed-6.png)
+# Experiment #2.3: wildlife monitoring: right results.
+Fixing some bugs in the aggregate scripts, fixed and dynamic area experiments behave similarly.
 
-![](./assets/gui/healer.png)
-### Explorer
-![](./assets/gui/explorer.png)
-# Experiment #2.2 (02-03-2021) wildlife monitoring: add local feedback to global structure.
+
+![](./assets/result/14-03-21/taskcount_023_mutableArea-0..png)
+
+Mutable area behaviour
+
+
+![](./assets/result/14-03-21/taskcount_023_mutableArea-1..png)
+
+Fixed area behaviour
+#  ~~Experiment #2.2 (02-03-2021) wildlife monitoring: add local feedback to global structure.~~
+
 After **81fe172d0abe84c882cec25484a8bd21a6271ef7**, The stationary/explorer type depends upon the distance travelled by nodes.
 The hyper-parameters of simulations are:
 - *alpha* : used to tune the feedback loop to compute the leader influence;
@@ -42,20 +50,20 @@ The hyper-parameters of simulations are:
 - *influenceFactor* : used to amplify the influence compute by feedback loop. In FGCS Danilo set it at 2.
 - *movementThr* : the value used to identify a node as stationary or explorer
 
-Currently, there is evidence of overall better performance with the dynamic area.
-In the following part, there are some plots made by 30 simulation runs, 15 with a dynamic area and 15 with a fixed area.
+~~Currently, there is evidence of overall better performance with the dynamic area.
+In the following part, there are some plots made by 30 simulation runs, 15 with a dynamic area and 15 with a fixed area.~~
 
 ![](./assets/result/02-03-21/danger-count_014_.png)
 
-The evolution in time of animals in danger. Dynamic areas succeeds in heal the animals 
-(there is a decreasing tendency).
+~~The evolution in time of animals in danger. Dynamic areas succeeds in heal the animals 
+(there is a decreasing tendency).~~
 
 ![](./assets/result/02-03-21/danger-count_0236_.png)
 
-The evolution in time of animals healed by the aggregate. Dynamic areas heal more animals than a fixed area.
-The green line is the "ground truth", namely animals that are turned to "danger" during the simulation.
+~~The evolution in time of animals healed by the aggregate. Dynamic areas heal more animals than a fixed area.
+The green line is the "ground truth", namely animals that are turned to "danger" during the simulation.~~
 
-# Experiment #2.1 (24-02-2021) wildlife monitoring: problem with #2
+# ~~Experiment #2.1 (24-02-2021) wildlife monitoring: problem with #2~~
 The plot in #2 was too noisy to make some conclusion. For this reason I try to run multiple run of this simulation.
 Unfortunately, with 500 runs for each configuration, the average results converge.
 
@@ -69,7 +77,7 @@ with 200 runs
 
 with 500 runs.
 
-# Experiment #2 (22-02-2021) wildlife monitoring: mutable area formation based on entity capabilities.
+# ~~Experiment #2 (22-02-2021) wildlife monitoring: mutable area formation based on entity capabilities.~~
 
 ## **Research question**: How local behaviour (autonomy) could infect the collective behaviour and structure?
 
@@ -95,7 +103,7 @@ statistical test is needed.
 
 *The plot of leader tendency tests. Result from ./gradlew wildLifeMonitoring *
 
-# Experiment #1 (31-01-2021) wildlife monitoring: rescue animals in danger. 
+# ~~Experiment #1 (31-01-2021) wildlife monitoring: rescue animals in danger.~~
 
 ## **Research question**:  How different collectives affect the system? (Autonomy/structure relationship)
 
