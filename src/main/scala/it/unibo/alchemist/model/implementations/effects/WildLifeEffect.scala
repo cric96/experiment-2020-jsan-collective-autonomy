@@ -7,7 +7,7 @@ import it.unibo.alchemist.model.implementations.molecules.SimpleMolecule
 import it.unibo.alchemist.model.implementations.nodes._
 import it.unibo.alchemist.model.interfaces.environments.EuclideanPhysics2DEnvironment
 import it.unibo.alchemist.model.interfaces.geometry.AwtShapeCompatible
-import it.unibo.alchemist.model.interfaces.{Environment, Node, Position2D}
+import it.unibo.alchemist.model.interfaces.{ Environment, Node, Position2D }
 import it.unibo.scafi.space.Point3D
 
 import java.awt._
@@ -182,13 +182,13 @@ object WildLifeEffect {
 
   val STATION: SimpleMolecule = new SimpleMolecule("station")
 
-  val STATION_SIZE = 24.0
+  val STATION_SIZE = 30.0
 
   val STATION_ALPHA = 30
 
-  val DRONE_SIZE = 6.0
+  val DRONE_SIZE = 12.0
 
-  val ANIMAL_SIZE = 12.0
+  val ANIMAL_SIZE = 24.0
 
   val DRONE_COLOR: Color = Color.BLACK
 
